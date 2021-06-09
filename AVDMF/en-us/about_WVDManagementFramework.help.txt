@@ -1,0 +1,11 @@
+﻿TOPIC
+	about_WVDManagementFramework
+	
+SHORT DESCRIPTION
+	Explains how to use the WVDManagementFramework powershell module
+	
+LONG DESCRIPTION
+	<Insert Content here>
+
+KEYWORDS
+	WVDManagementFramework
