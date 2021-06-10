@@ -1,0 +1,2 @@
+# Local configuration folder should not be committed, instead update the sample configuration with non-private info.
+LocalConfiguration/
