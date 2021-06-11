@@ -11,17 +11,28 @@ function Add-AVDMFTag {
 
         # Resource Object
         [Parameter(Mandatory = $true)]
-        $ResourceObject,
-
-        # Tags to attach to this specific resource
-        [Parameter(Mandatory = $false)]
-        [Hashtable]$ResourceSpecificTags #This is not yet developed
+        $ResourceObject
     )
+    # Tags that apply to all resources
+    if($Script:Tags['All']){
+        $effectiveTags = $Script:Tags['All'].Clone()
+    }
 
-    $genericTags = $Script:Tags[$ResourceType]
+    # Tags that apply to all instaces of a specific resource type
+    if($Script:Tags[$ResourceType]){
+        $resourceTypeTags = $Script:Tags[$ResourceType]
+        foreach($item in $resourceTypeTags.GetEnumerator()) {$effectiveTags[$item.Key] = $item.Value}
+    }
 
-    if ($genericTags) {
-        $ResourceObject | Add-Member -MemberType NoteProperty -Name Tags -Value $genericTags
+    if($ResourceObject.Tags){
+        $resourceSpecificTags = $ResourceObject.Tags | ConvertTo-PSFHashtable
+        foreach($item in $resourceSpecificTags.GetEnumerator()) {$effectiveTags[$item.Key] = $item.Value}
+    }
+
+
+
+    if ($effectiveTags) {
+        $ResourceObject | Add-Member -MemberType NoteProperty -Name Tags -Value $effectiveTags -Force
     }
 
     $ResourceObject

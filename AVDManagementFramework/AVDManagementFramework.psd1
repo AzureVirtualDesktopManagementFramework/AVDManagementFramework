@@ -18,7 +18,7 @@
 	Copyright         = 'Copyright (c) 2021 wmoselhy'
 
 	# Description of the functionality provided by this module
-	Description       = 'Windows Virtual Desktop Managemetn Framework'
+	Description       = 'Azure Virtual Desktop Management Framework'
 
 	# Minimum version of the Windows PowerShell engine required by this module
 	PowerShellVersion = '5.0'

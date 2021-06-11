@@ -11,6 +11,7 @@ module StorageAccountModule 'Modules/StorageAccount.bicep' = [for item in Storag
     Kind: item.Kind
     Sku: item.accountType
     SoftDeleteDays: item.SoftDeleteDays
+    Tags: item.Tags
   }
 }]
 
@@ -21,6 +22,7 @@ module PrivateLinkModule 'Modules/PrivateLink.bicep' = [for item in PrivateLinks
     Location: resourceGroup().location
     StorageAccountID: item.StorageAccountID
     SubnetID: item.SubnetID
+    Tags: item.Tags
   }
   dependsOn: [
     StorageAccountModule

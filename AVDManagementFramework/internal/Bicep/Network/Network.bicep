@@ -8,6 +8,7 @@ module NetworkSecurityGroupModule 'modules/NetworkSecurityGroup.bicep' = [for ns
     NSGName: nsgitem.resourcename
     location: resourceGroup().location
     securityRules: nsgitem.SecurityRules
+    Tags: nsgitem.Tags
   }
 }]
 module VirtualNetworkModule './modules/VirtualNetwork.bicep' = [for vnetitem in VirtualNetworks: {
@@ -19,6 +20,7 @@ module VirtualNetworkModule './modules/VirtualNetwork.bicep' = [for vnetitem in 
     DNSServers: vnetitem.DNSServers
     Subnets: Subnets
     VirtualNetworkPeerings: vnetitem.VirtualNetworkPeerings
+    Tags: vnetitem.Tags
   }
   dependsOn: NetworkSecurityGroupModule
 }]

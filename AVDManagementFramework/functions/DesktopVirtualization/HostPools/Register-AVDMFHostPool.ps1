@@ -30,7 +30,9 @@ function Register-AVDMFHostPool {
         [string] $VMTemplate,
 
         [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
-        [string] $OrganizationalUnitDN
+        [string] $OrganizationalUnitDN,
+
+        [PSCustomObject] $ResourceTags = [PSCustomObject]@{}
     )
     process {
         $ResourceName = New-AVDMFResourceName -ResourceType 'HostPool' -AccessLevel $AccessLevel -HostPoolType $PoolType
@@ -78,6 +80,7 @@ function Register-AVDMFHostPool {
             SubnetID             = $subnetID
 
             VMTemplate           = $VMTemplate
+            Tags = $ResourceTags
 
         }
 

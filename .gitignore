@@ -1,2 +1,28 @@
-# Local configuration folder should not be committed, instead update the sample configuration with non-private info.
+﻿
+# ignore the settings folder and files for VSCode and PSS
+.vscode/*
+*.psproj
+*TempPoint*
+
+# Ignore staging info from Visual Studio
+library/AVDManagementFramework/.vs/*
+library/AVDManagementFramework/AVDManagementFramework/bin/*
+library/AVDManagementFramework/AVDManagementFramework/obj/*
+
+# ignore PowerShell Studio MetaData
+AVDManagementFramework/AVDManagementFramework.psproj
+AVDManagementFramework/AVDManagementFramework.psproj.bak
+AVDManagementFramework/AVDManagementFramework.psprojs
+AVDManagementFramework/AVDManagementFramework.psproj
+
+# ignore the TestResults
+TestResults/*
+
+# ignore the publishing Directory
+publish/*
+
+# ignore local configuration
 LocalConfiguration/
+
+# ignore Build And Publish script
+BuildAndPublish.ps1

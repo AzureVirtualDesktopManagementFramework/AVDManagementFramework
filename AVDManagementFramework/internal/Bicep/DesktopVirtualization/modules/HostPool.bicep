@@ -2,6 +2,7 @@ param HostPoolName string
 param Location string
 param PoolType string
 param maxSessionLimit int
+param Tags object = {}
 
 param TokenExpirationTime string = dateTimeAdd(utcNow('O'),'PT2H','O')
 
@@ -22,6 +23,7 @@ resource HostPool 'Microsoft.DesktopVirtualization/hostPools@2021-02-01-preview'
       expirationTime: TokenExpirationTime
     }
   }
+  tags:Tags
 }
 
 output registrationToken string = HostPool.properties.registrationInfo.token //TODO: set this as a secure string

@@ -3,6 +3,7 @@ param Location string
 param Kind string = 'FileStorage'
 param Sku string = 'Premium_LRS'
 param SoftDeleteDays int
+param Tags object = {}
 
 resource StorageAccount 'Microsoft.Storage/storageAccounts@2021-02-01' = {
   name: StorageAccountName

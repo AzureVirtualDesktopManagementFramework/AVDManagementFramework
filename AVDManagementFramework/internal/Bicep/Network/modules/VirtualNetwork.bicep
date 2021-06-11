@@ -4,6 +4,7 @@ param AddressSpace string
 param DNSServers array
 param Subnets array
 param VirtualNetworkPeerings array
+param Tags object = {}
 
 resource VirtualNetwork 'Microsoft.Network/virtualNetworks@2020-11-01' = {
   name: VirtualNetworkName
@@ -31,8 +32,8 @@ resource VirtualNetwork 'Microsoft.Network/virtualNetworks@2020-11-01' = {
         privateEndpointNetworkPolicies: (subnet.PrivateLink ? 'Disabled' : 'Enabled')
       })
     }]
-
   }
+  tags: Tags
 }
 
 resource Peerings 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2020-11-01' = [for peering in VirtualNetworkPeerings: {
