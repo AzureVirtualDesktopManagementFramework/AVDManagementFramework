@@ -32,7 +32,7 @@ function Register-AVDMFHostPool {
         [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
         [string] $OrganizationalUnitDN,
 
-        [PSCustomObject] $ResourceTags = [PSCustomObject]@{}
+        [PSCustomObject] $Tags = [PSCustomObject]@{}
     )
     process {
         $ResourceName = New-AVDMFResourceName -ResourceType 'HostPool' -AccessLevel $AccessLevel -HostPoolType $PoolType
@@ -58,7 +58,7 @@ function Register-AVDMFHostPool {
         # Pickup Storage Account
         #TODO: Change Storage Accounts into HashTables
         $StorageAccountRef = $StorageAccountReference #There is a bug in Script Analyzer that causes the parameter to report unused.
-        $storageAccount = $script:StorageAccounts | Where-Object {$_.ReferenceName -eq $StorageAccountRef} | Select-Object -First 1
+        $storageAccount = $script:StorageAccounts[$StorageAccountRef]
         Register-AVDMFFileShare -Name $resourceName.ToLower() -StorageAccountName $storageAccount.Name -ResourceGroupName $storageAccount.ResourceGroupName
 
         # Number of session hosts
@@ -80,11 +80,12 @@ function Register-AVDMFHostPool {
             SubnetID             = $subnetID
 
             VMTemplate           = $VMTemplate
-            Tags = $ResourceTags
+
+            Tags = $Tags
 
         }
 
-        Register-AVDMFApplicationGroup -HostPoolName $resourceName -ResourceGroupName $resourceGroupName -HostPoolResourceId $resourceID
+        Register-AVDMFApplicationGroup -HostPoolName $resourceName -ResourceGroupName $resourceGroupName -HostPoolResourceId $resourceID -Tags $Tags
 
         # Register Session Host
         $hostPoolInstance = $ResourceName.Substring($ResourceName.Length - 2, 2)
@@ -98,7 +99,7 @@ function Register-AVDMFHostPool {
                 DomainName = $domainName
                 OUPath     = $OrganizationalUnitDN
             }
-            Register-AVDMFSessionHost -ResourceGroupName $resourceGroupName -AccessLevel $AccessLevel -HostPoolType $PoolType -HostPoolInstance $hostPoolInstance -InstanceNumber $i -VMTemplate $script:VMTemplates[$VMTemplate] @SessionHostParams
+            Register-AVDMFSessionHost -ResourceGroupName $resourceGroupName -AccessLevel $AccessLevel -HostPoolType $PoolType -HostPoolInstance $hostPoolInstance -InstanceNumber $i -VMTemplate $script:VMTemplates[$VMTemplate] @SessionHostParams -Tags $Tags
         }
 
     }

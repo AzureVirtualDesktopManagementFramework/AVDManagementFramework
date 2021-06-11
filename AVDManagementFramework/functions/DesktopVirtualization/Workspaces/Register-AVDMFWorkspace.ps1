@@ -8,7 +8,9 @@ function Register-AVDMFWorkspace {
         [string] $HostPoolType,
 
         [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
-        [string] $ReferenceName
+        [string] $ReferenceName,
+
+        [PSCustomObject] $Tags = [PSCustomObject]@{}
     )
     process {
         $ResourceName = New-AVDMFResourceName -ResourceType 'Workspace' -AccessLevel $AccessLevel -HostPoolType $HostPoolType
@@ -23,6 +25,7 @@ function Register-AVDMFWorkspace {
             ReferenceName              = $ReferenceName
             ResourceGroupName          = $resourceGroupName
             ApplicationGroupReferences = @()
+            Tags = $Tags
         }
     }
 }

@@ -12,9 +12,9 @@ $Script:AddressSpaces = @()
 $script:NetworkSecurityGroups = @{}
 
 # Storage
-$script:StorageAccounts = @()
+$script:StorageAccounts = @{}
 $script:FileShares = @{}
-$script:PrivateLinks = @()
+$script:PrivateLinks = @{}
 
 # DesktopVirtualization
 $script:HostPools = @{}
@@ -24,4 +24,4 @@ $script:VMTemplates = @{}
 $script:SessionHosts = @{}
 
 # Tags
-$script:Tags = @{}
+$script:GlobalTags = @{}

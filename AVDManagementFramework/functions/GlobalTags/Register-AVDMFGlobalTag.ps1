@@ -1,4 +1,4 @@
-function Register-AVDMFTag {
+function Register-AVDMFGlobalTag {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
@@ -18,6 +18,6 @@ function Register-AVDMFTag {
             $Tags[$item.Key] = $item.Value
         }
         #TODO: Create a name mapping function that converts all types.
-        $script:Tags[$ResourceType] = $Tags
+        $script:GlobalTags[$ResourceType] = $Tags
     }
 }

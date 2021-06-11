@@ -10,8 +10,7 @@ function Register-AVDMFApplicationGroup {
         [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
         [string] $ResourceGroupName,
 
-        [Alias("Tags")]
-        [hashtable] $ResourceTags = @{}
+        [PSCustomObject] $Tags = [PSCustomObject]@{}
     )
     process{
         $ResourceName = New-AVDMFResourceName -ResourceType 'ApplicationGroup' -ParentName $HostPoolName
@@ -22,7 +21,7 @@ function Register-AVDMFApplicationGroup {
             PSTypeName        = 'AVDMF.DesktopVirtualization.ApplicationGroup'
             ResourceGroupName = $ResourceGroupName
             HostPoolId        = $HostPoolResourceId
-            Tags = $ResourceTags
+            Tags = $Tags
         }
 
         # Link Application group to workspace

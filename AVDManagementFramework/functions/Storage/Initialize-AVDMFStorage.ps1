@@ -7,24 +7,20 @@ function Initialize-AVDMFStorage {
         [string] $ResourceGroupName
     )
 
-    $filteredStorageAccounts = @()
-    $filteredPrivateLinks = @()
+    $filteredStorageAccounts = @{}
+    $filteredPrivateLinks = @{}
     $filteredFileShares = @{}
 
-    foreach ($item in ($script:StorageAccounts | Where-Object { $_.ResourceGroupName -eq $ResourceGroupName }) ) {
-        $filteredStorageAccounts += $item
-    }
+    $script:StorageAccounts.GetEnumerator() | Where-Object { $_.value.ResourceGroupName -eq $ResourceGroupName } | ForEach-Object { $filteredStorageAccounts.Add($_.Key, $_.Value) }
 
-    foreach ($item in ($script:PrivateLinks | Where-Object { $_.ResourceGroupName -eq $ResourceGroupName }) ) {
-        $filteredPrivateLinks += $item
-    }
+    $script:PrivateLinks.GetEnumerator() | Where-Object { $_.value.ResourceGroupName -eq $ResourceGroupName } | ForEach-Object { $filteredPrivateLinks.Add($_.Key, $_.Value) }
 
     $script:FileShares.GetEnumerator() | Where-Object { $_.value.ResourceGroupName -eq $ResourceGroupName } | ForEach-Object {$filteredFileShares.Add($_.Key, $_.Value)}
 
 
     $templateParams = @{
-        StorageAccounts = [array] ($filteredStorageAccounts | ConvertTo-PSFHashtable)
-        PrivateLinks = [array] ($filteredPrivateLinks | ConvertTo-PSFHashtable)
+        StorageAccounts = [array] ($filteredStorageAccounts | Convert-HashtableToArray)
+        PrivateLinks = [array] ($filteredPrivateLinks | Convert-HashtableToArray)
         FileShares = [array] ($filteredFileShares | Convert-HashtableToArray)
     }
     $templateParams

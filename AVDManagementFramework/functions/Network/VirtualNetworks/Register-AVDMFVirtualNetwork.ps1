@@ -16,7 +16,9 @@ function Register-AVDMFVirtualNetwork {
         [array] $VirtualNetworkPeerings,
 
         [string] $AccessLevel = 'All',
-        [string] $HostPoolType = 'All'
+        [string] $HostPoolType = 'All',
+
+        [PSCustomObject] $Tags = [PSCustomObject]@{}
     )
     process {
         $resourceName = New-AVDMFResourceName -ResourceType 'VirtualNetwork' -AccessLevel $AccessLevel -HostPoolType $HostPoolType
@@ -52,6 +54,7 @@ function Register-AVDMFVirtualNetwork {
             AddressSpace           = $addressSpace
             DNSServers             = $DNSServers
             VirtualNetworkPeerings = $peerings
+            Tags = $Tags
         }
 
         #Register Default Subnets

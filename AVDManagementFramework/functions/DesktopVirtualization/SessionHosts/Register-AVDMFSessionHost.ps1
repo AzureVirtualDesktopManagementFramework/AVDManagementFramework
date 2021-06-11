@@ -22,7 +22,9 @@ function Register-AVDMFSessionHost {
         [string] $DomainName,
 
         [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
-        [string] $OUPath
+        [string] $OUPath,
+
+        [PSCustomObject] $Tags = [PSCustomObject]@{}
 
     )
     process {
@@ -36,6 +38,7 @@ function Register-AVDMFSessionHost {
             AdminUsername     = $VMTemplate.AdminUserName
             AdminPassword     = $VMTemplate.AdminPassword
             ImageReference    = $VMTemplate.ImageReference
+            Tags = $Tags
 
             # Add Session Host
             WVDArtifactsURL   = $VMTemplate.WVDArtifactsURL

@@ -82,12 +82,12 @@ function Set-AVDMFConfiguration {
 
     #endregion: Naming Conventions
 
-    #region: Register Tags
+    #region: Register Global Tags
     $tagFields = [ordered] @{
-        'Tags' = (Get-Command Register-AVDMFTag)
+        'GlobalTags' = (Get-Command Register-AVDMFGlobalTag)
     }
     foreach ($key in $tagFields.Keys) {
-        $tagsConfigPath = Join-Path -Path $ConfigurationPath -ChildPath "Tags"
+        $tagsConfigPath = Join-Path -Path $ConfigurationPath -ChildPath "GlobalTags"
         if (-not (Test-Path $tagsConfigPath)) { continue }
 
         foreach ($file in Get-ChildItem -Path $tagsConfigPath -Recurse -Filter "*.json") {
@@ -96,7 +96,7 @@ function Set-AVDMFConfiguration {
             }
         }
     }
-    #endregion: Register Tags
+    #endregion: Register Global Tags
 
     #region Network
     $networkFields = [ordered] @{
@@ -175,7 +175,7 @@ function Set-AVDMFConfiguration {
     )
     foreach ($resourceType in $taggedResources){
         $scriptVariable = Get-Variable -Scope script -Name "$($resourceType)s" -ValueOnly
-        if (($script:Tags.keys -contains $resourceType) -or ($script:Tags.keys -contains 'All')) {
+        if (($script:GlobalTags.keys -contains $resourceType) -or ($script:GlobalTags.keys -contains 'All')) {
             $keys = [array] $scriptVariable.Keys
             foreach ($key in $keys) { $scriptVariable[$key] = Add-AVDMFTag -ResourceType $resourceType -ResourceObject $scriptVariable[$key] }
         }

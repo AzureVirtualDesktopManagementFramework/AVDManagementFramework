@@ -14,13 +14,13 @@ function Add-AVDMFTag {
         $ResourceObject
     )
     # Tags that apply to all resources
-    if($Script:Tags['All']){
-        $effectiveTags = $Script:Tags['All'].Clone()
+    if($script:GlobalTags['All']){
+        $effectiveTags = $script:GlobalTags['All'].Clone()
     }
 
     # Tags that apply to all instaces of a specific resource type
-    if($Script:Tags[$ResourceType]){
-        $resourceTypeTags = $Script:Tags[$ResourceType]
+    if($script:GlobalTags[$ResourceType]){
+        $resourceTypeTags = $script:GlobalTags[$ResourceType]
         foreach($item in $resourceTypeTags.GetEnumerator()) {$effectiveTags[$item.Key] = $item.Value}
     }
 

@@ -21,4 +21,5 @@ resource StorageAccount 'Microsoft.Storage/storageAccounts@2021-02-01' = {
       }
     }
   }
+  tags: Tags
 }
