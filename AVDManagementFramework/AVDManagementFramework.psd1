@@ -93,7 +93,7 @@
 		'Get-AVDMFVMTemplate'
 		'Get-AVDMFSessionHost'
 		'Get-AVDMFNameMapping'
-
+		'Get-AVDMFTag'
 	)
 
 	# Cmdlets to export from this module

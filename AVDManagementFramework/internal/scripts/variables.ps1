@@ -22,3 +22,6 @@ $script:ApplicationGroups = @{}
 $script:Workspaces = @{}
 $script:VMTemplates = @{}
 $script:SessionHosts = @{}
+
+# Tags
+$script:Tags = @{}

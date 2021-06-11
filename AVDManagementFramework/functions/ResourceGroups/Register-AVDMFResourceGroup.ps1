@@ -1,7 +1,6 @@
 function Register-AVDMFResourceGroup {
     [CmdletBinding()]
     param (
-
         [string] $Name,
         [string] $ResourceCategory
     )

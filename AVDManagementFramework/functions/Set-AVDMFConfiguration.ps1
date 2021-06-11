@@ -82,6 +82,22 @@ function Set-AVDMFConfiguration {
 
     #endregion: Naming Conventions
 
+    #region: Register Tags
+    $tagFields = [ordered] @{
+        'Tags'         = (Get-Command Register-AVDMFTag)
+    }
+    foreach ($key in $tagFields.Keys) {
+        $tagsConfigPath = Join-Path -Path $ConfigurationPath -ChildPath "Tags"
+        if (-not (Test-Path $tagsConfigPath)) { continue }
+
+        foreach ($file in Get-ChildItem -Path $tagsConfigPath -Recurse -Filter "*.json") {
+            foreach ($dataset in (Get-Content -Path $file.FullName | ConvertFrom-Json -ErrorAction Stop | ConvertTo-PSFHashtable)) {
+                & $tagFields[$key] @dataset -ErrorAction Stop
+            }
+        }
+    }
+    #endregion: Register Tags
+
     #region Network
     $networkFields = [ordered] @{
         'AddressSpaces'         = (Get-Command Register-AVDMFAddressSpace)
@@ -145,6 +161,12 @@ function Set-AVDMFConfiguration {
     }
     #endregion DesktopVirtualization
 
+    #region: Add Generic Tags
+    if($script:Tags.keys -contains 'ResourceGroup'){
+        $keys = [array] $script:ResourceGroups.Keys
+        foreach ($key in $keys) {$script:ResourceGroups[$key] = Add-AVDMFTag -ResourceType ResourceGroup -ResourceObject $script:ResourceGroups[$key] }
+    }
+    #endregion: Add Generic Tags
 
     $script:WVDConfigurationLoaded = $true
 }

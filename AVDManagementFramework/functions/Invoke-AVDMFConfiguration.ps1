@@ -6,7 +6,15 @@ function Invoke-AVDMFConfiguration {
 
     # Create resource groups
     foreach ($rg in $script:ResourceGroups.Keys) {
-        New-AzResourceGroup -Name $rg -Location $script:Location -Force
+        $newAzResourceGroup = @{
+            Name = $rg
+            Location = $script:Location
+            Force = $true
+        }
+        if($script:ResourceGroups[$rg].Tags){
+            $newAzResourceGroup['Tags'] = $script:ResourceGroups[$rg].Tags
+        }
+        New-AzResourceGroup @newAzResourceGroup
     }
     #TODO: Decide if we want to create RGs here or with deployment. decide on parallelism
 
