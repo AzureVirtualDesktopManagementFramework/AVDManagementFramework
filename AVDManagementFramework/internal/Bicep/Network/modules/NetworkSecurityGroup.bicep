@@ -1,6 +1,7 @@
 param NSGName string
 param location string
 param securityRules array
+param Tags object = {}
 
 resource NSG 'Microsoft.Network/networkSecurityGroups@2020-11-01' ={
   name: NSGName
@@ -21,4 +22,5 @@ resource NSG 'Microsoft.Network/networkSecurityGroups@2020-11-01' ={
       }
     }]
   }
+  tags: Tags
 }

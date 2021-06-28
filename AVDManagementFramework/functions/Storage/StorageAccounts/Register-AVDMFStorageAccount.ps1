@@ -17,7 +17,9 @@ function Register-AVDMFStorageAccount {
         [string] $ReferenceName,
 
         [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
-        [int] $shareSoftDeleteRetentionDays
+        [int] $shareSoftDeleteRetentionDays,
+
+        [PSCustomObject] $Tags = [PSCustomObject]@{}
     )
     process {
         $ResourceName = New-AVDMFResourceName -ResourceType 'StorageAccount' -AccessLevel $AccessLevel -HostPoolType $HostPoolType
@@ -27,16 +29,16 @@ function Register-AVDMFStorageAccount {
 
         $resourceID = "/Subscriptions/$script:AzSubscriptionId/resourceGroups/$resourceGroupName/providers/Microsoft.Storage/storageAccounts/$ResourceName"
 
-        $script:StorageAccounts += [PSCustomObject]@{
+        $script:StorageAccounts[$ReferenceName] = [PSCustomObject]@{
             PSTypeName        = 'AVDMF.Storage.StorageAccount'
-            Name              = $ResourceName
             ResourceGroupName = $resourceGroupName
             ResourceID        = $resourceID
-
+            Name              = $ResourceName
             ReferenceName     = $ReferenceName
             AccountType       = $accountType
             Kind              = $Kind
             SoftDeleteDays    = $ShareSoftDeleteRetentionDays
+            Tags              = $Tags
         }
 
         #register Private Link

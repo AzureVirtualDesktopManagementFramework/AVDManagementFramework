@@ -10,7 +10,9 @@ function Register-AVDMFNetworkSecurityGroup {
         [string] $AccessLevel,
 
         [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-        [string] $HostPoolType
+        [string] $HostPoolType,
+
+        [PSCustomObject] $Tags = [PSCustomObject]@{}
     )
     process {
         $resourceName = New-AVDMFResourceName -ResourceType 'NetworkSecurityGroup' -AccessLevel $AccessLevel -HostPoolType $HostPoolType
@@ -30,6 +32,7 @@ function Register-AVDMFNetworkSecurityGroup {
             ResourceID        = $resourceID
             ReferenceName     = $ReferenceName
             SecurityRules     = @($SecurityRules | ForEach-Object { $_ | ConvertTo-PSFHashtable })
+            Tags = $Tags
         }
     }
 }

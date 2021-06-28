@@ -6,5 +6,6 @@ module workspaceModule 'modules/Workspace.bicep' = [for workspaceitem in Workspa
     WorkspaceName:workspaceitem.name
     ApplicationGroupReferences:workspaceitem.ApplicationGroupReferences
     Location: resourceGroup().location
+    Tags: workspaceitem.Tags
   }
 }]

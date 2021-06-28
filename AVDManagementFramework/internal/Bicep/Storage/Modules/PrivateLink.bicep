@@ -2,6 +2,7 @@ param PrivateLinkName string
 param Location string
 param SubnetID string
 param StorageAccountID string
+param Tags object = {}
 
 resource PrivateLink 'Microsoft.Network/privateEndpoints@2020-11-01' = {
   name: PrivateLinkName
@@ -22,4 +23,5 @@ resource PrivateLink 'Microsoft.Network/privateEndpoints@2020-11-01' = {
     }
   ]
   }
+  tags: Tags
 }

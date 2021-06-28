@@ -8,7 +8,9 @@ function Register-AVDMFPrivateLink {
         [string] $StorageAccountName,
 
         [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
-        [string] $StorageAccountID
+        [string] $StorageAccountID,
+
+        [PSCustomObject] $Tags = [PSCustomObject]@{}
 
     )
     process {
@@ -18,14 +20,15 @@ function Register-AVDMFPrivateLink {
 
         $resourceID = "/Subscriptions/$script:AzSubscriptionId/resourceGroups/$resourceGroupName/providers/Microsoft.Network/privateEndpoints/$ResourceName"
 
-        $script:PrivateLinks += [PSCustomObject]@{
+        $script:PrivateLinks[$resourceName]= [PSCustomObject]@{
             PSTypeName        = 'AVDMF.Storage.PrivateLink'
-            Name              = $resourceName
             ResourceGroupName = $resourceGroupName
             ResourceID        = $resourceID
 
             StorageAccountID  = $StorageAccountID
             SubnetID          = $SubnetId
+
+            Tags = $Tags
 
         }
     }

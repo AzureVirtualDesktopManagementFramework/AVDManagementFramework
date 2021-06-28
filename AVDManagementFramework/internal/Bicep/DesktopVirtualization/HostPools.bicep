@@ -10,6 +10,7 @@ module hostPoolModule 'modules/HostPool.bicep' = [for hostpoolitem in HostPools:
     Location: resourceGroup().location
     PoolType: hostpoolitem.PoolType
     maxSessionLimit: hostpoolitem.MaxSessionLimit
+    Tags: hostpoolitem.Tags
   }
 }]
 module applicationGroupModule 'modules/ApplicationGroup.bicep' = [for applicationGroupItem in ApplicationGroups:{
@@ -18,6 +19,7 @@ module applicationGroupModule 'modules/ApplicationGroup.bicep' = [for applicatio
     ApplicationGroupName: applicationGroupItem.name
     Location: resourceGroup().location
     HostPoolId: applicationGroupItem.HostPoolId
+    Tags: applicationGroupItem.Tags
   }
   dependsOn: hostPoolModule
 }]
@@ -32,6 +34,7 @@ module SessionHostsModule 'modules/sessionHost.bicep' = [for sessionHostItem in 
     TimeZone: sessionHostItem.TimeZone
     VMSize: sessionHostItem.VMSize
     imageReference: sessionHostItem.ImageReference
+    Tags: sessionHostItem.Tags
 
     // Add as session host
     HostPoolName:  hostPoolModule[0].name

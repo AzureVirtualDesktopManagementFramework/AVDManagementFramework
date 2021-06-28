@@ -4,6 +4,7 @@ param TimeZone string
 param Location string
 param SubnetID string
 param AdminUsername string
+param Tags object = {}
 
 @secure()
 param AdminPassword string
@@ -38,6 +39,7 @@ resource vNIC 'Microsoft.Network/networkInterfaces@2020-11-01' ={
       }
     ]
   }
+  tags: Tags
 }
 
 resource VM 'Microsoft.Compute/virtualMachines@2020-12-01' = {
@@ -70,6 +72,7 @@ resource VM 'Microsoft.Compute/virtualMachines@2020-12-01' = {
       ]
     }
   }
+  tags: Tags
 }
 
 resource VMName_AddWVDHost 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
