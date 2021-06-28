@@ -61,11 +61,6 @@ function Register-AVDMFHostPool {
         $storageAccount = $script:StorageAccounts[$StorageAccountRef]
         Register-AVDMFFileShare -Name $resourceName.ToLower() -StorageAccountName $storageAccount.Name -ResourceGroupName $storageAccount.ResourceGroupName
 
-        # Number of session hosts
-        $sessionHostsCount = [math]::Ceiling($NumberOfSessionHosts * ($script:SessionHostPercentage / 100))
-        if ($sessionHostsCount -lt 2) { $sessionHostsCount = 2 }
-        if ($script:DeploymentStage -eq 'GeneralPreview') { $sessionHostsCount = $NumberOfSessionHosts - $sessionHostsCount }
-
         $script:HostPools[$ResourceName] = [PSCustomObject]@{
             PSTypeName           = 'AVDMF.DesktopVirtualization.HostPool'
             ResourceGroupName    = $resourceGroupName
@@ -73,7 +68,7 @@ function Register-AVDMFHostPool {
 
             PoolType             = $PoolType
             MaxSessionLimit      = $MaxSessionLimit
-            NumberOfSessionHosts = $sessionHostsCount
+            NumberOfSessionHosts = $NumberOfSessionHosts
 
             WorkSpaceReference   = $WorkSpaceReference
 

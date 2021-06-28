@@ -53,7 +53,7 @@ function Set-AVDMFConfiguration {
     $generalConfiguration = Get-Content -Path (Join-Path -Path $ConfigurationPath -ChildPath '\GeneralConfiguration\GeneralConfiguration.json' -ErrorAction Stop ) | ConvertFrom-Json -ErrorAction Stop
     $script:Location = $GeneralConfiguration.Location
     $script:TimeZone = $generalConfiguration.TimeZone
-    $script:SessionHostPercentage = $generalConfiguration.sessionhostpercentage.$script:DeploymentStage
+
     $Script:DomainJoinUserName = $generalConfiguration.DomainJoinCredential.SecretName
     $Script:DomainJoinPassword = Get-AzKeyVaultSecret -ResourceId $generalConfiguration.DomainJoinCredential.KeyVaultID -Name $generalConfiguration.DomainJoinCredential.SecretName -AsPlainText
     <#
@@ -147,6 +147,9 @@ function Set-AVDMFConfiguration {
         foreach ($file in Get-ChildItem -Path $desktopVirtualizationConfigPath -Recurse -Filter "*.json") {
 
             foreach ($dataset in (Get-Content -Path $file.FullName | ConvertFrom-Json -ErrorAction Stop | ConvertTo-PSFHashtable -Include $($desktopVirtualizationFields[$key].Parameters.Keys))) {
+                #region: Replace stage specific entries
+                Set-AVDMFStageEntries -Dataset $dataset # TODO: Ask Fred - Ask why we do not need to return object from the function!
+                #endregion: Replace stage specific entries
                 foreach ($item in ($dataset.GetEnumerator() | Where-Object { $_.Value.GetType().Name -eq 'String' })) {
                     $nameMappings = ([regex]::Matches($item.Value, '%.+?%')).Value | ForEach-Object { if ($_) { $_ -replace "%", "" } }
                     foreach ($mapping in $nameMappings) {
