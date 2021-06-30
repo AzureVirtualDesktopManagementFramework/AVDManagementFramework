@@ -112,7 +112,6 @@ function Set-AVDMFConfiguration {
 
                 Write-PSFMessage -Level Verbose -Message "`t`tRegistering dataset:`r`n $($dataset | Format-List | Out-String -Width 120)"
                 $dataset = Set-AVDMFNameMapping -Dataset $dataset
-                if($dataset.Keys -contains 'AddressSpace') {$BP='Here'}
                 $dataset = Set-AVDMFStageEntries -Dataset $dataset
                 & $components[$key].Command @dataset -ErrorAction Stop
             }
