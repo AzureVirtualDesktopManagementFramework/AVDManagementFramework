@@ -87,7 +87,7 @@ function Register-AVDMFHostPool {
 
         $domainName = ($OrganizationalUnitDN -split "," | Where-Object { $_ -like "DC=*" } | ForEach-Object { $_.replace("DC=", "") }) -join "."
 
-        for ($i = 1; $i -le $sessionHostsCount; $i++) {
+        for ($i = 1; $i -le $NumberOfSessionHosts; $i++) {
             #TODO: Change all parameters to use splatting
             $SessionHostParams = @{
                 subnetID   = $subnetID
@@ -96,6 +96,5 @@ function Register-AVDMFHostPool {
             }
             Register-AVDMFSessionHost -ResourceGroupName $resourceGroupName -AccessLevel $AccessLevel -HostPoolType $PoolType -HostPoolInstance $hostPoolInstance -InstanceNumber $i -VMTemplate $script:VMTemplates[$VMTemplate] @SessionHostParams -Tags $Tags
         }
-
     }
 }

@@ -82,87 +82,43 @@ function Set-AVDMFConfiguration {
 
     #endregion: Naming Conventions
 
-    #region: Register Global Tags
-    $tagFields = [ordered] @{
-        'GlobalTags' = (Get-Command Register-AVDMFGlobalTag)
+    #region: Define Registrable Components
+    $components = [ordered] @{
+        # Tags
+        'GlobalTags'            = @{Command = (Get-Command -Name Register-AVDMFGlobalTag); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "GlobalTags") }
+        # Network
+        'AddressSpaces'         = @{Command = (Get-Command Register-AVDMFAddressSpace); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "Network\AddressSpaces") }
+        'VirtualNetworks'       = @{Command = (Get-Command Register-AVDMFVirtualNetwork); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "Network\VirtualNetworks") }
+        'NetworkSecurityGroups' = @{Command = (Get-Command Register-AVDMFNetworkSecurityGroup); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "Network\NetworkSecurityGroups") }
+        # Storage
+        'StorageAccounts'       = @{Command = (Get-Command Register-AVDMFStorageAccount); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "Storage\StorageAccounts") }
+        # Desktop Virtualization
+        'Workspaces'            = @{Command = (Get-Command Register-AVDMFWorkspace); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "DesktopVirtualization\Workspaces") }
+        'VMTemplates'           = @{Command = (Get-Command Register-AVDMFVMTemplate); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "DesktopVirtualization\VMTemplates") }
+        'HostPools'             = @{Command = (Get-Command Register-AVDMFHostPool); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "DesktopVirtualization\HostPools") }
     }
-    foreach ($key in $tagFields.Keys) {
-        $tagsConfigPath = Join-Path -Path $ConfigurationPath -ChildPath "GlobalTags"
-        if (-not (Test-Path $tagsConfigPath)) { continue }
+    #endregion: Define Registrable Components
 
-        foreach ($file in Get-ChildItem -Path $tagsConfigPath -Recurse -Filter "*.json") {
-            foreach ($dataset in (Get-Content -Path $file.FullName | ConvertFrom-Json -ErrorAction Stop | ConvertTo-PSFHashtable)) {
-                & $tagFields[$key] @dataset -ErrorAction Stop
+    #region: Load Component Configuration
+    foreach ($key in $components.Keys) {
+        if (-not (Test-Path $components[$key].ConfigurationPath)) { continue }
+
+        Write-PSFMessage -Level Verbose -Message "Loading configuration for $key"
+
+        foreach ($file in Get-ChildItem -Path $components[$key].ConfigurationPath -Recurse -Filter "*.json") {
+            Write-PSFMessage -Level Verbose -Message "`tLoading $key from $($file.FullName)"
+
+            foreach ($dataset in (Get-Content -Path $file.FullName | ConvertFrom-Json -ErrorAction Stop | ConvertTo-PSFHashtable -Include $($components[$key].Command.Parameters.Keys))) {
+
+                Write-PSFMessage -Level Verbose -Message "`t`tRegistering dataset:`r`n $($dataset | Format-List | Out-String -Width 120)"
+                $dataset = Set-AVDMFNameMapping -Dataset $dataset
+                if($dataset.Keys -contains 'AddressSpace') {$BP='Here'}
+                $dataset = Set-AVDMFStageEntries -Dataset $dataset
+                & $components[$key].Command @dataset -ErrorAction Stop
             }
         }
     }
-    #endregion: Register Global Tags
-
-    #region Network
-    $networkFields = [ordered] @{
-        'AddressSpaces'         = (Get-Command Register-AVDMFAddressSpace)
-        'VirtualNetworks'       = (Get-Command Register-AVDMFVirtualNetwork)
-        'NetworkSecurityGroups' = (Get-Command Register-AVDMFNetworkSecurityGroup)
-    }
-    foreach ($key in $networkFields.Keys) {
-        $networkConfigPath = Join-Path -Path $ConfigurationPath -ChildPath "Network\$key"
-        if (-not (Test-Path $networkConfigPath)) { continue }
-
-        foreach ($file in Get-ChildItem -Path $networkConfigPath -Recurse -Filter "*.json") {
-            foreach ($dataset in (Get-Content -Path $file.FullName | ConvertFrom-Json -ErrorAction Stop | ConvertTo-PSFHashtable)) {
-                & $networkFields[$key] @dataset -ErrorAction Stop
-            }
-        }
-    }
-    #endregion Network
-
-    #region Storage
-    $storageFields = [ordered] @{
-        'StorageAccounts' = (Get-Command Register-AVDMFStorageAccount)
-        #'VirtualNetworks'       = (Get-Command Register-AVDMFVirtualNetwork)
-        #'NetworkSecurityGroups' = (Get-Command Register-AVDMFNetworkSecurityGroup)
-    }
-    foreach ($key in $storageFields.Keys) {
-        $storageConfigPath = Join-Path -Path $ConfigurationPath -ChildPath "Storage\$key"
-        if (-not (Test-Path $storageConfigPath)) { continue }
-
-        foreach ($file in Get-ChildItem -Path $storageConfigPath -Recurse -Filter "*.json") {
-            foreach ($dataset in (Get-Content -Path $file.FullName | ConvertFrom-Json -ErrorAction Stop | ConvertTo-PSFHashtable)) {
-                & $storageFields[$key] @dataset -ErrorAction Stop
-            }
-        }
-    }
-    #endregion Storage
-
-    #region DesktopVirtualization
-    $desktopVirtualizationFields = [ordered] @{
-        'Workspaces'  = (Get-Command Register-AVDMFWorkspace)
-        'VMTemplates' = (Get-Command Register-AVDMFVMTemplate)
-        'HostPools'   = (Get-Command Register-AVDMFHostPool)
-    }
-    foreach ($key in $desktopVirtualizationFields.Keys) {
-        $desktopVirtualizationConfigPath = Join-Path -Path $ConfigurationPath -ChildPath "DesktopVirtualization\$key"
-        if (-not (Test-Path $desktopVirtualizationConfigPath)) { throw "No $key defined under $desktopVirtualizationConfigPath" }
-
-        foreach ($file in Get-ChildItem -Path $desktopVirtualizationConfigPath -Recurse -Filter "*.json") {
-
-            foreach ($dataset in (Get-Content -Path $file.FullName | ConvertFrom-Json -ErrorAction Stop | ConvertTo-PSFHashtable -Include $($desktopVirtualizationFields[$key].Parameters.Keys))) {
-                #region: Replace stage specific entries
-                Set-AVDMFStageEntries -Dataset $dataset # TODO: Ask Fred - Ask why we do not need to return object from the function!
-                #endregion: Replace stage specific entries
-                foreach ($item in ($dataset.GetEnumerator() | Where-Object { $_.Value.GetType().Name -eq 'String' })) {
-                    $nameMappings = ([regex]::Matches($item.Value, '%.+?%')).Value | ForEach-Object { if ($_) { $_ -replace "%", "" } }
-                    foreach ($mapping in $nameMappings) {
-                        $mappedValue = $script:NameMappings[$mapping]
-                        $item.Value = $item.Value -replace "%$mapping%", $mappedValue
-                    }
-                    $dataset[$item.Key] = $item.Value
-                }
-                & $desktopVirtualizationFields[$key] @dataset -ErrorAction Stop
-            }
-        }
-    }
-    #endregion DesktopVirtualization
+    #endregion: Load Component Configuration
 
     #region: Add Tags
     $taggedResources = @(
@@ -176,7 +132,7 @@ function Set-AVDMFConfiguration {
         'Workspace'
         'SessionHost'
     )
-    foreach ($resourceType in $taggedResources){
+    foreach ($resourceType in $taggedResources) {
         $scriptVariable = Get-Variable -Scope script -Name "$($resourceType)s" -ValueOnly
         if (($script:GlobalTags.keys -contains $resourceType) -or ($script:GlobalTags.keys -contains 'All')) {
             $keys = [array] $scriptVariable.Keys
