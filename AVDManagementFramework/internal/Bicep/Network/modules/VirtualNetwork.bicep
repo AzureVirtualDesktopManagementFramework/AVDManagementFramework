@@ -44,7 +44,7 @@ resource Peerings 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2020
     }
     allowForwardedTraffic: true
     allowVirtualNetworkAccess: true
-    useRemoteGateways: true
+    useRemoteGateways: peering.useRemoteGateways
   }
   dependsOn:[
     VirtualNetwork

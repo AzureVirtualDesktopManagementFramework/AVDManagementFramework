@@ -36,10 +36,11 @@ function Register-AVDMFVirtualNetwork {
 
         # Configure Peerings
         $peerings = @(foreach($peering in $VirtualNetworkPeerings){
-            $RemoteNetworkName = ($peering -split "/")[-1]
+            $RemoteNetworkName = ($peering.RemoteVnetId -split "/")[-1]
             @{
                 Name = "PeeringTo_$RemoteNetworkName"
-                RemoteNetworkID = $peering
+                RemoteNetworkID = $peering.RemoteVnetId
+                UseRemoteGateways = [bool] $peering.useRemoteGateways
             }
         })
 

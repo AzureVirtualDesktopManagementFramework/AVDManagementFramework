@@ -19,11 +19,11 @@ function Invoke-AVDMFConfiguration {
     #TODO: Decide if we want to create RGs here or with deployment. decide on parallelism
 
     # Create network resources
-    Invoke-AVDMFNetwork
+    Invoke-AVDMFNetwork -ErrorAction Stop
 
     #Create storage resources
-    Invoke-AVDMFStorage
+    Invoke-AVDMFStorage -ErrorAction Stop
 
     # Create Host Pools and Session Hosts
-    Invoke-AVDMFDesktopVirtualization
+    Invoke-AVDMFDesktopVirtualization -ErrorAction Stop
 }
