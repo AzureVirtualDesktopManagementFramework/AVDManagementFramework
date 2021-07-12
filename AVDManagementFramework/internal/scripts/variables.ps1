@@ -10,6 +10,7 @@ $script:VirtualNetworks = @{}
 $script:Subnets = @{}
 $Script:AddressSpaces = @()
 $script:NetworkSecurityGroups = @{}
+$script:RemotePeerings = @{}
 
 # Storage
 $script:StorageAccounts = @{}

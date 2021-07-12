@@ -94,6 +94,7 @@
 		'Get-AVDMFSessionHost'
 		'Get-AVDMFNameMapping'
 		'Get-AVDMFGlobalTag'
+		'Get-AVDMFRemotePeering'
 	)
 
 	# Cmdlets to export from this module

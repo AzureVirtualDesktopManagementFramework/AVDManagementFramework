@@ -4,9 +4,9 @@ function Invoke-AVDMFNetwork {
 
     )
 
-    #region: Initialize Variables
+    #Initialize Variables
     $bicepVirtualNetwork = "$($moduleRoot)\internal\Bicep\Network\Network.bicep"
-    #endregion: Initialize Variables
+
 
     foreach ($rg in $script:ResourceGroups.Keys) {
         if ($script:ResourceGroups[$rg].ResourceCategory -eq 'Network') {
@@ -22,4 +22,13 @@ function Invoke-AVDMFNetwork {
             New-AzResourceGroupDeployment -ResourceGroupName $rg -Mode Complete -TemplateFile $bicepVirtualNetwork @templateParams -ErrorAction Stop -Confirm:$false -Force
         }
     }
+
+    # Create remote peerings
+    if($script:RemotePeerings.count){
+        $bicepRemotePeerings = "$($moduleRoot)\internal\Bicep\Network\RemotePeerings.bicep"
+        $templateParams =  Initialize-AVDMFRemotePeering
+        New-AzResourceGroupDeployment -ResourceGroupName $rg -TemplateFile $bicepRemotePeerings @templateParams -ErrorAction Stop -Confirm:$false -Force
+    }
+
+
 }

@@ -37,12 +37,22 @@ function Register-AVDMFVirtualNetwork {
         # Configure Peerings
         $peerings = @(foreach($peering in $VirtualNetworkPeerings){
             $RemoteNetworkName = ($peering.RemoteVnetId -split "/")[-1]
+            Write-PSFMessage -Level Verbose -Message "Configuring peering with $RemoteNetworkName"
             @{
                 Name = "PeeringTo_$RemoteNetworkName"
                 RemoteNetworkID = $peering.RemoteVnetId
                 UseRemoteGateways = [bool] $peering.useRemoteGateways
             }
+            if($peering.CreateRemotePeering){
+                Write-PSFMessage -Level Verbose -Message "Registering remote peering."
+                Register-AVDMFRemotePeering -RemoteVNetResourceID $peering.RemoteVNetId -LocalVNetResourceId $resourceID
+            }
+            else {
+                Write-PSFMessage -Level Warning -Message "Peering of Virtual Network '$ReferenceName ($resourceName)' to '$RemoteNetworkName' is not configured to create remote peering. You must manually create peering in the remote network." # Add link to help on website.
+            }
         })
+
+
 
         $script:VirtualNetworks[$ReferenceName] = [PSCustomObject]@{
             PSTypeName             = 'AVDMF.Network.VirtualNetwork'
