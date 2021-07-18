@@ -6,17 +6,9 @@ function Set-AVDMFConfiguration {
         [string]
         $ConfigurationPath,
 
-        [string] $DeploymentStage, #TODO Remove default setting or use environment variable.
         [string] $AzSubscriptionId = (Get-AzContext).Subscription.Id,
         [switch] $Force
     )
-    #region: Set DeploymentStage
-    if ([string]::IsNullOrEmpty($DeploymentStage) -or [string]::IsNullOrWhiteSpace($DeploymentStage)) {
-        throw "Deployment Stage is not defined, if running from local device use the -DeploymentStage parameter. Otherwise review environment variables."
-        #TODO: Include environment variable name in error message.
-    }
-    $script:DeploymentStage = $DeploymentStage
-    #endregion: Set DeploymentStage
 
     #region: Load Custom Environment Variables
     $environmentVariablesFilePath = Join-Path -Path $ConfigurationPath -ChildPath 'EnvironmentVariables.json'
@@ -27,6 +19,16 @@ function Set-AVDMFConfiguration {
         $null = $environmentVariables.GetEnumerator() | ForEach-Object { New-Item -Path $_.Key -Value $_.Value -Force }
     }
     #endregion: Load Custom Environment Variables
+    #region: Set DeploymentStage
+    $script:DeploymentStage = $env:SYSTEM_STAGEDISPLAYNAME
+    if ([string]::IsNullOrEmpty($DeploymentStage) -or [string]::IsNullOrWhiteSpace($DeploymentStage)) {
+        throw "Deployment Stage is not defined, if running from local device create EnvironmentVariables.json file. Otherwise review environment variables."
+        #TODO: Include environment variable name in error message.
+    }
+
+    #endregion: Set DeploymentStage
+
+
 
     #region: Register Name Mappings
 
