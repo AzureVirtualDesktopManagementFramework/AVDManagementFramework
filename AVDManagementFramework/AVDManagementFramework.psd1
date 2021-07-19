@@ -95,6 +95,7 @@
 		'Get-AVDMFNameMapping'
 		'Get-AVDMFGlobalTag'
 		'Get-AVDMFRemotePeering'
+		'Get-AVDMFRouteTable'
 	)
 
 	# Cmdlets to export from this module

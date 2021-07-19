@@ -11,6 +11,7 @@ $script:Subnets = @{}
 $Script:AddressSpaces = @()
 $script:NetworkSecurityGroups = @{}
 $script:RemotePeerings = @{}
+$script:RouteTables = @{}
 
 # Storage
 $script:StorageAccounts = @{}

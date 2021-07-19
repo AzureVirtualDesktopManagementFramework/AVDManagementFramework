@@ -22,6 +22,9 @@ function Register-AVDMFHostPool {
         [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
         [string] $SubnetNSG,
 
+        [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
+        [string] $SubnetRouteTable,
+
         [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
         [string] $StorageAccountReference,
 
@@ -41,16 +44,14 @@ function Register-AVDMFHostPool {
 
         $resourceID = "/Subscriptions/$script:AzSubscriptionId/resourceGroups/$resourceGroupName/providers/Microsoft.DesktopVirtualization/hostpools/$ResourceName"
 
-        # Pickup Network Security Group
-        $nsgID = $script:NetworkSecurityGroups[$SubnetNSG].ResourceID
-
         #Register Subnet
         $subnetParams = @{
             Scope              = $AccessLevel + 'Access'  #TODO: Change the parameter name from scope to Access Level, also change it in subnet configurations
             NamePrefix         = $resourceName
             VirtualNetworkName = $script:VirtualNetworks[$VirtualNetworkReference].ResourceName
             VirtualNetworkID   = $script:VirtualNetworks[$VirtualNetworkReference].ResourceID
-            NSGID              = $nsgID
+            NSGID              = $script:NetworkSecurityGroups[$SubnetNSG].ResourceID
+            RouteTableID       = $script:RouteTables[$SubnetRouteTable].ResourceID
         }
 
         $subnetID = Register-AVDMFSubnet @subnetParams -PassThru
@@ -76,7 +77,7 @@ function Register-AVDMFHostPool {
 
             VMTemplate           = $VMTemplate
 
-            Tags = $Tags
+            Tags                 = $Tags
 
         }
 

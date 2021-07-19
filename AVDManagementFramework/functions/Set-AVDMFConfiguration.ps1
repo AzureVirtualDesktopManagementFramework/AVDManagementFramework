@@ -91,6 +91,7 @@ function Set-AVDMFConfiguration {
         # Network
         'AddressSpaces'         = @{Command = (Get-Command Register-AVDMFAddressSpace); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "Network\AddressSpaces") }
         'VirtualNetworks'       = @{Command = (Get-Command Register-AVDMFVirtualNetwork); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "Network\VirtualNetworks") }
+        'RouteTables'           = @{Command = (Get-Command Register-AVDMFRouteTable); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "Network\RouteTables") }
         'NetworkSecurityGroups' = @{Command = (Get-Command Register-AVDMFNetworkSecurityGroup); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "Network\NetworkSecurityGroups") }
         # Storage
         'StorageAccounts'       = @{Command = (Get-Command Register-AVDMFStorageAccount); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "Storage\StorageAccounts") }
@@ -126,6 +127,7 @@ function Set-AVDMFConfiguration {
         'ResourceGroup'
         'VirtualNetwork'
         'NetworkSecurityGroup'
+        'RouteTable'
         'StorageAccount'
         'PrivateLink'
         'HostPool'
@@ -134,6 +136,7 @@ function Set-AVDMFConfiguration {
         'SessionHost'
     )
     foreach ($resourceType in $taggedResources) {
+        #if($resourceType -eq 'RouteTable' ) {$BP="HERE"}
         $scriptVariable = Get-Variable -Scope script -Name "$($resourceType)s" -ValueOnly
         if (($script:GlobalTags.keys -contains $resourceType) -or ($script:GlobalTags.keys -contains 'All')) {
             $keys = [array] $scriptVariable.Keys

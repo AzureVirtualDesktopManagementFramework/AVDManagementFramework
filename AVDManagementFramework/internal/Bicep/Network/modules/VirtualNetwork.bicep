@@ -21,16 +21,8 @@ resource VirtualNetwork 'Microsoft.Network/virtualNetworks@2020-11-01' = {
     subnets: [for subnet in Subnets: {
       //TODO: Account for subnets belonging to different vnets
       name: subnet.Name
-      properties: (subnet.NSGID != ''? { // Conditional deployment if NSG is defined only.
-        addressPrefix: subnet.AddressPrefix
-        privateEndpointNetworkPolicies: (subnet.PrivateLink ? 'Disabled' : 'Enabled')
-        networkSecurityGroup: {
-          id: subnet.NSGId
-        }
-      }: {
-        addressPrefix: subnet.AddressPrefix
-        privateEndpointNetworkPolicies: (subnet.PrivateLink ? 'Disabled' : 'Enabled')
-      })
+
+     properties: subnet.properties
     }]
   }
   tags: Tags

@@ -11,7 +11,7 @@ function Invoke-AVDMFNetwork {
     foreach ($rg in $script:ResourceGroups.Keys) {
         if ($script:ResourceGroups[$rg].ResourceCategory -eq 'Network') {
             $templateParams = Initialize-AVDMFNetwork -ResourceGroupName $rg
-
+            $BP = 'HERE'
             try{
                 $null = Get-AzResourceGroup -Name $rg -ErrorAction Stop
             }

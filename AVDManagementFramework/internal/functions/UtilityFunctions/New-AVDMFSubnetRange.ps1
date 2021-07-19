@@ -121,7 +121,7 @@ function New-AVDMFSubnetRange {
     Write-Verbose -Message "ENTER: Collect vNet information"
 
     $vNetSubnets = foreach ($key in $script:Subnets.Keys) {
-        if ((ConvertFrom-DecimalIPtoBinary ($script:Subnets[$key].AddressPrefix.Substring(0, $script:Subnets[$key].AddressPrefix.IndexOf("/")))).Substring(0, $AddressSpaceMaskBits) `
+        if ((ConvertFrom-DecimalIPtoBinary ($script:Subnets[$key].Properties.AddressPrefix.Substring(0, $script:Subnets[$key].Properties.AddressPrefix.IndexOf("/")))).Substring(0, $AddressSpaceMaskBits) `
                 -eq
             (ConvertFrom-DecimalIPtoBinary ($AddressSpaceID)).Substring(0, $AddressSpaceMaskBits)) {
             $script:Subnets[$key]
