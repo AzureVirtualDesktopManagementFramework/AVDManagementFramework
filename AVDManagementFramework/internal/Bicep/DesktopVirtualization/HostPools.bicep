@@ -20,6 +20,7 @@ module applicationGroupModule 'modules/ApplicationGroup.bicep' = [for applicatio
     Location: resourceGroup().location
     HostPoolId: applicationGroupItem.HostPoolId
     Tags: applicationGroupItem.Tags
+    PrincipalId: applicationGroupItem.PrincipalId
   }
   dependsOn: hostPoolModule
 }]
