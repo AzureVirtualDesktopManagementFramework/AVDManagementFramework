@@ -33,11 +33,11 @@ function Register-AVDMFApplicationGroup {
                         $id = (Get-AzADGroup -DisplayName $user -ErrorAction Stop).Id
                     }
                     if($null -eq $id){
-                        throw "Could not resolve id for: $user"
+                        throw
                     }
                 }
                 catch {
-                    throw "Could not resolve id for $user"
+                    throw "Could not resolve id for $user - If the name is correct then ensure the service principal used is assigned 'Directory readers' role."
                 }
             }
         }

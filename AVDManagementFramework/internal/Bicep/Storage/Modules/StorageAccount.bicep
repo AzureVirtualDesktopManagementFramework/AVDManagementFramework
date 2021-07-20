@@ -13,7 +13,7 @@ resource StorageAccount 'Microsoft.Storage/storageAccounts@2021-02-01' = {
     name:Sku
   }
   resource FileServices 'fileServices' ={
-    name: 'Default'
+    name: 'default'
     properties:{
       shareDeleteRetentionPolicy: {
         enabled: true
