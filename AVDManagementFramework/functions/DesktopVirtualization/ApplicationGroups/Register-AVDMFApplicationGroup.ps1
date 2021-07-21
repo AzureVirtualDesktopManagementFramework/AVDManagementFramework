@@ -10,6 +10,9 @@ function Register-AVDMFApplicationGroup {
         [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
         [string] $ResourceGroupName,
 
+        [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
+        [string] $FriendlyName,
+
         [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
         [string[]] $Users,
 
@@ -32,7 +35,7 @@ function Register-AVDMFApplicationGroup {
                         Write-PSFMessage -Level Verbose -Message "Resolving Id for group: $user"
                         $id = (Get-AzADGroup -DisplayName $user -ErrorAction Stop).Id
                     }
-                    if($null -eq $id){
+                    if ($null -eq $id) {
                         throw
                     }
                     $id
@@ -47,6 +50,7 @@ function Register-AVDMFApplicationGroup {
             PSTypeName        = 'AVDMF.DesktopVirtualization.ApplicationGroup'
             ResourceGroupName = $ResourceGroupName
             HostPoolId        = $HostPoolResourceId
+            FriendlyName      = $FriendlyName
             PrincipalId       = $principalId
             Tags              = $Tags
         }

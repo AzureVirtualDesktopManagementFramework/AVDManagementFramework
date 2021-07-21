@@ -10,22 +10,6 @@ function Invoke-AVDMFDesktopVirtualization {
     $bicepHostPools = "$($moduleRoot)\internal\Bicep\DesktopVirtualization\HostPools.bicep"
     #endregion: Initialize Variables
 
-    # Workspaces
-    Write-PSFMessage -Level Host -Message "Creating workspaces"
-    foreach ($rg in $script:ResourceGroups.Keys) {
-        if ($script:ResourceGroups[$rg].ResourceCategory -eq 'Workspace') {
-            $templateParams = Initialize-AVDMFDesktopVirtualization -ResourceGroupName $rg -ResourceCategory 'Workspace'
-
-            try{
-                $null = Get-AzResourceGroup -Name $rg -ErrorAction Stop
-            }
-            catch{
-                New-AzResourceGroup -Name $rg -Location $script:Location
-            }
-            New-AzResourceGroupDeployment -ResourceGroupName $rg -Mode Complete -TemplateFile $bicepWorkspaces @templateParams -ErrorAction Stop -Confirm:$false -Force
-        }
-    }
-
     # Host Pools
     $hostPoolJobs = @()
     foreach ($rg in $script:ResourceGroups.Keys) {
@@ -51,6 +35,20 @@ function Invoke-AVDMFDesktopVirtualization {
     Write-PSFMessage -Level Host -Message "Hostpool jobs completed. See output below."
     $hostPoolJobs | Receive-Job
 
+    # Workspaces
+    Write-PSFMessage -Level Host -Message "Creating workspaces"
+    foreach ($rg in $script:ResourceGroups.Keys) {
+        if ($script:ResourceGroups[$rg].ResourceCategory -eq 'Workspace') {
+            $templateParams = Initialize-AVDMFDesktopVirtualization -ResourceGroupName $rg -ResourceCategory 'Workspace'
 
+            try{
+                $null = Get-AzResourceGroup -Name $rg -ErrorAction Stop
+            }
+            catch{
+                New-AzResourceGroup -Name $rg -Location $script:Location
+            }
+            New-AzResourceGroupDeployment -ResourceGroupName $rg -Mode Complete -TemplateFile $bicepWorkspaces @templateParams -ErrorAction Stop -Confirm:$false -Force
+        }
+    }
 
 }

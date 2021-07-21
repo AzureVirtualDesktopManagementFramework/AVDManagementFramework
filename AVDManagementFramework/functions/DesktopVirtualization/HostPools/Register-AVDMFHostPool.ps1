@@ -14,6 +14,9 @@ function Register-AVDMFHostPool {
         [int] $NumberOfSessionHosts,
 
         [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
+        [string] $FriendlyName,
+
+        [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
         [string] $WorkSpaceReference,
 
         [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
@@ -84,7 +87,7 @@ function Register-AVDMFHostPool {
         }
 
         #TODO: Change this into splatting and check if users are provided.
-        Register-AVDMFApplicationGroup -HostPoolName $resourceName -ResourceGroupName $resourceGroupName -HostPoolResourceId $resourceID -Tags $Tags -Users $Users
+        Register-AVDMFApplicationGroup -HostPoolName $resourceName -ResourceGroupName $resourceGroupName -HostPoolResourceId $resourceID -Tags $Tags -Users $Users -FriendlyName $FriendlyName
 
         # Register Session Host
         $hostPoolInstance = $ResourceName.Substring($ResourceName.Length - 2, 2)

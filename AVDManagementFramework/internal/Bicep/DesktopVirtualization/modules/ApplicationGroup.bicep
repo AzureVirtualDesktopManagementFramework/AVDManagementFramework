@@ -1,6 +1,7 @@
 param ApplicationGroupName string
 param Location string
 param HostPoolId string
+param FriendlyName string
 param Tags object = {}
 param RoleDefinitionId string = '1d18fff3-a72a-46b5-b4a9-0b38a3cd7e63'
 param PrincipalId array
@@ -11,6 +12,7 @@ resource ApplicationGroup 'Microsoft.DesktopVirtualization/applicationGroups@202
   properties:{
     hostPoolArmPath: HostPoolId
     applicationGroupType: 'Desktop' //TODO: Add this as a configuration
+    friendlyName: FriendlyName
   }
   tags: Tags
 }
