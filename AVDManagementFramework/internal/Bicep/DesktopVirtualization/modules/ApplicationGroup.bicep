@@ -16,7 +16,7 @@ resource ApplicationGroup 'Microsoft.DesktopVirtualization/applicationGroups@202
 }
 
 resource RoleAssignment 'Microsoft.Authorization/roleAssignments@2020-08-01-preview' = [for item in PrincipalId:{
-  name: item
+  name: guid(item,ApplicationGroup.id)
   scope: ApplicationGroup
   properties:{
     roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions', RoleDefinitionId)

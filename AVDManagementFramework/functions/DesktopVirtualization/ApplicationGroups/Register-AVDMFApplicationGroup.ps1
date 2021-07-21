@@ -35,6 +35,7 @@ function Register-AVDMFApplicationGroup {
                     if($null -eq $id){
                         throw
                     }
+                    $id
                 }
                 catch {
                     throw "Could not resolve id for $user - If the name is correct then ensure the service principal used is assigned 'Directory readers' role."

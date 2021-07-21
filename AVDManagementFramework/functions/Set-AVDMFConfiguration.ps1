@@ -8,7 +8,12 @@ function Set-AVDMFConfiguration {
 
         [string] $AzSubscriptionId = (Get-AzContext).Subscription.Id,
         [switch] $Force
+
     )
+
+    #region: Initialize Variables
+        $configurationVersion = '1.0.11'
+    #endregion: Initialize Variables
 
     #region: Load Custom Environment Variables
     $environmentVariablesFilePath = Join-Path -Path $ConfigurationPath -ChildPath 'EnvironmentVariables.json'
@@ -27,8 +32,6 @@ function Set-AVDMFConfiguration {
     }
 
     #endregion: Set DeploymentStage
-
-
 
     #region: Register Name Mappings
 
@@ -53,6 +56,11 @@ function Set-AVDMFConfiguration {
 
     #region: General Configuration
     $generalConfiguration = Get-Content -Path (Join-Path -Path $ConfigurationPath -ChildPath '\GeneralConfiguration\GeneralConfiguration.json' -ErrorAction Stop ) | ConvertFrom-Json -ErrorAction Stop
+
+    if($generalConfiguration.ConfigurationVersion -ne $configurationVersion) {
+        throw "current configuration version $($generalConfiguration.ConfigurationVersion) must match $configurationVersion."
+    }
+
     $script:Location = $GeneralConfiguration.Location
     $script:TimeZone = $generalConfiguration.TimeZone
 
