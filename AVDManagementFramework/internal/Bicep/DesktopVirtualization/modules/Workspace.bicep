@@ -1,7 +1,7 @@
 param WorkspaceName string
 param Location string
 param ApplicationGroupReferences array
-param FriendlyName array
+param FriendlyName string
 param Tags object = {}
 
 resource Workspace 'Microsoft.DesktopVirtualization/workspaces@2021-02-01-preview' = {
