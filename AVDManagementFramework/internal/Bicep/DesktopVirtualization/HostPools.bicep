@@ -19,6 +19,7 @@ module applicationGroupModule 'modules/ApplicationGroup.bicep' = [for applicatio
     ApplicationGroupName: applicationGroupItem.name
     Location: resourceGroup().location
     HostPoolId: applicationGroupItem.HostPoolId
+    FriendlyName: applicationGroupItem.FriendlyName
     Tags: applicationGroupItem.Tags
     PrincipalId: applicationGroupItem.PrincipalId
   }
