@@ -26,23 +26,23 @@ function Invoke-AVDMFDesktopVirtualization {
 
         }
         $dateTime = Get-Date
-        while ($hostPoolJobs.State -contains "Running") {
-            Start-Sleep -Seconds 5
-            $timeSpan = New-TimeSpan -Start $dateTime -End (Get-Date)
-            $count = ($hostPoolJobs | Where-Object { $_.State -eq "Running" }).count
-            Write-PSFMessage -Level Host -Message "Waiting for $count hostpool deployments to complete - Been waiting for $($timeSpan.ToString())"
-        }
-        Write-PSFMessage -Level Host -Message "Hostpool jobs completed. See output below."
-        $hostPoolJobs | Receive-Job
-
-        #region: Update SessionDesktop name
-        #TODO: Check if there is a put method yet for 'Microsoft.DesktopVirtualization/applicationgroups/desktops'
-            foreach ($item in $script:ApplicationGroups.GetEnumerator()){
-                Write-PSFMessage -Level Verbose -Message 'Updating SessionDesktop Friendly Name'
-                $null = Update-AzWvdDesktop -ResourceGroupName $item.Value.ResourceGroupName -ApplicationGroupName $item.Key -Name 'SessionDesktop' -FriendlyName $item.Value.FriendlyName -ErrorAction Stop
-            }
-        #endregion
     }
+    while ($hostPoolJobs.State -contains "Running") {
+        Start-Sleep -Seconds 5
+        $timeSpan = New-TimeSpan -Start $dateTime -End (Get-Date)
+        $count = ($hostPoolJobs | Where-Object { $_.State -eq "Running" }).count
+        Write-PSFMessage -Level Host -Message "Waiting for $count hostpool deployments to complete - Been waiting for $($timeSpan.ToString())"
+    }
+    Write-PSFMessage -Level Host -Message "Hostpool jobs completed. See output below."
+    $hostPoolJobs | Receive-Job
+
+    #region: Update SessionDesktop name
+    #TODO: Check if there is a put method yet for 'Microsoft.DesktopVirtualization/applicationgroups/desktops'
+    foreach ($item in $script:ApplicationGroups.GetEnumerator()) {
+        Write-PSFMessage -Level Host -Message 'Updating SessionDesktop Friendly Name'
+        $null = Update-AzWvdDesktop -ResourceGroupName $item.Value.ResourceGroupName -ApplicationGroupName $item.Key -Name 'SessionDesktop' -FriendlyName $item.Value.FriendlyName -ErrorAction Stop
+    }
+    #endregion
 
     # Workspaces
     Write-PSFMessage -Level Host -Message "Creating workspaces"
