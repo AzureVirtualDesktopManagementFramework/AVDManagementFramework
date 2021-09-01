@@ -1,0 +1,17 @@
+name: Publish PowerShell Module
+
+on:
+  push:
+    branches:
+      - Development
+
+jobs:
+  publish-to-gallery:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build and Publish
+        env:
+          APIKey: ${{ secrets.APIKey }}
+        shell: pwsh
+        run: |
+          ./build/vsts-build.ps1 -ApiKey $env:APIKey -AutoVersion
