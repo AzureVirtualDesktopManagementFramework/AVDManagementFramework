@@ -7,13 +7,14 @@ param Tags object = {}
 param TokenExpirationTime string = dateTimeAdd(utcNow('O'),'PT2H','O')
 
 var loadBalancerType = (PoolType == 'Personal') ? 'Persistent' : 'BreadthFirst'
+var hostPoolType = (PoolType == 'Personal') ? 'Personal' : 'Pooled'
 
 
 resource HostPool 'Microsoft.DesktopVirtualization/hostPools@2021-02-01-preview' = {
   name: HostPoolName
   location: Location
   properties: {
-    hostPoolType: PoolType
+    hostPoolType: hostPoolType
     loadBalancerType: loadBalancerType
     preferredAppGroupType: 'Desktop'
     maxSessionLimit: maxSessionLimit

@@ -11,7 +11,6 @@ function Invoke-AVDMFNetwork {
     foreach ($rg in $script:ResourceGroups.Keys) {
         if ($script:ResourceGroups[$rg].ResourceCategory -eq 'Network') {
             $templateParams = Initialize-AVDMFNetwork -ResourceGroupName $rg
-            $BP = 'HERE'
             try{
                 $null = Get-AzResourceGroup -Name $rg -ErrorAction Stop
             }
@@ -25,6 +24,7 @@ function Invoke-AVDMFNetwork {
 
     # Create remote peerings
     if($script:RemotePeerings.count){
+        # TODO: THERE IS A BUG HERE - need to ensure we change context to the right subscrtiption then back to the current one.
         $bicepRemotePeerings = "$($moduleRoot)\internal\Bicep\Network\RemotePeerings.bicep"
         $templateParams =  Initialize-AVDMFRemotePeering
         New-AzResourceGroupDeployment -ResourceGroupName $rg -TemplateFile $bicepRemotePeerings @templateParams -ErrorAction Stop -Confirm:$false -Force
