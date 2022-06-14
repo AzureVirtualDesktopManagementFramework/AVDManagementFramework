@@ -1,3 +1,5 @@
+
+param Location string = resourceGroup().location
 param HostPools array
 param ApplicationGroups array
 param SessionHosts array
@@ -7,7 +9,7 @@ module hostPoolModule 'modules/HostPool.bicep' = [for hostpoolitem in HostPools:
   name: hostpoolitem.name
   params:{
     HostPoolName: hostpoolitem.name
-    Location: resourceGroup().location
+    Location: Location
     PoolType: hostpoolitem.PoolType
     maxSessionLimit: hostpoolitem.MaxSessionLimit
     Tags: hostpoolitem.Tags
@@ -17,7 +19,7 @@ module applicationGroupModule 'modules/ApplicationGroup.bicep' = [for applicatio
   name: applicationGroupItem.name
   params:{
     ApplicationGroupName: applicationGroupItem.name
-    Location: resourceGroup().location
+    Location: Location
     HostPoolId: applicationGroupItem.HostPoolId
     FriendlyName: applicationGroupItem.FriendlyName
     Tags: applicationGroupItem.Tags
@@ -29,7 +31,7 @@ module SessionHostsModule 'modules/sessionHost.bicep' = [for sessionHostItem in 
   name: sessionHostItem.name
   params:{
     VMName: sessionHostItem.name
-    Location: resourceGroup().location
+    Location: Location
     AdminUsername: sessionHostItem.AdminUsername
     AdminPassword: sessionHostItem.AdminPassword
     SubnetID: sessionHostItem.SubnetID
