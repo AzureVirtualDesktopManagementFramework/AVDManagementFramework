@@ -45,7 +45,7 @@ resource vNIC 'Microsoft.Network/networkInterfaces@2020-11-01' = {
   tags: Tags
 }
 
-resource VM 'Microsoft.Compute/virtualMachines@2020-12-01' = {
+resource VM 'Microsoft.Compute/virtualMachines@2020-12-01' =  {
   name: VMName
   location: Location
   identity: (JoinObject.SessionHostJoinType == 'AAD') ? { type:'SystemAssigned'} : null
@@ -76,6 +76,7 @@ resource VM 'Microsoft.Compute/virtualMachines@2020-12-01' = {
         }
       ]
     }
+    licenseType: 'Windows_Client'
 
   }
   resource AADJoin 'extensions@2022-08-01' = if (JoinObject.SessionHostJoinType == 'AAD') {
