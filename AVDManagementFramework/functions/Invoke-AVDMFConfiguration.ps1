@@ -15,7 +15,7 @@ function Invoke-AVDMFConfiguration {
         if($script:ResourceGroups[$rg].Tags){
             $newAzResourceGroup['Tags'] = $script:ResourceGroups[$rg].Tags
         }
-        New-AzResourceGroup @newAzResourceGroup
+        $null = New-AzResourceGroup @newAzResourceGroup
     }
     #TODO: Decide if we want to create RGs here or with deployment. decide on parallelism
 

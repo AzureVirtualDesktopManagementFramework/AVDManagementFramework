@@ -3,7 +3,7 @@ function Register-AVDMFVirtualNetwork {
         [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
         [string] $ReferenceName,
 
-        [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
         [string[]] $DNSServers,
 
         [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
