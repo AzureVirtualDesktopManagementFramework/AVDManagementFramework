@@ -16,23 +16,26 @@ param HostPoolToken string
 param WVDArtifactsURL string
 
 //Domain Join
-param DomainName string
-param OUPath string
-param DomainJoinUserName string
+param JoinObject object
+/*
+param SessionHostJoinType string
+param DomainName string = '' //Non-Mandatory parameters // TODO: How about we make Domain Join and Object?
+param OUPath string = ''
+param DomainJoinUserName string = ''
 
 @secure()
-param DomainJoinPassword string
+param DomainJoinPassword string = ''
+*/
 
-
-resource vNIC 'Microsoft.Network/networkInterfaces@2020-11-01' ={
+resource vNIC 'Microsoft.Network/networkInterfaces@2020-11-01' = {
   name: '${VMName}-vNIC'
   location: Location
-  properties:{
-    ipConfigurations:[
+  properties: {
+    ipConfigurations: [
       {
         name: 'ipconfig1'
-        properties:{
-          subnet:{
+        properties: {
+          subnet: {
             id: SubnetID
           }
         }
@@ -44,84 +47,95 @@ resource vNIC 'Microsoft.Network/networkInterfaces@2020-11-01' ={
 
 resource VM 'Microsoft.Compute/virtualMachines@2020-12-01' = {
   name: VMName
-  location:Location
-  properties:{
-    osProfile:{
-      computerName:VMName
+  location: Location
+  identity: (JoinObject.SessionHostJoinType == 'AAD') ? { type:'SystemAssigned'} : null
+
+  properties: {
+    osProfile: {
+      computerName: VMName
       adminUsername: AdminUsername
       adminPassword: AdminPassword
-      windowsConfiguration:{
+      windowsConfiguration: {
         timeZone: TimeZone
       }
     }
-    hardwareProfile:{
+    hardwareProfile: {
       vmSize: VMSize
     }
-    storageProfile:{
-      osDisk:{
+    storageProfile: {
+      osDisk: {
         name: '${VMName}-OSDisk'
         createOption: 'FromImage'
       }
       imageReference: imageReference
     }
-    networkProfile:{
-      networkInterfaces:[
+    networkProfile: {
+      networkInterfaces: [
         {
           id: vNIC.id
         }
       ]
     }
-  }
-  tags: Tags
-}
 
-resource VMName_AddWVDHost 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
-  // Documentation is available here: https://docs.microsoft.com/en-us/azure/virtual-machines/extensions/dsc-template
-  // TODO: Update to the new format for DSC extension, see documentation above.
-  name: '${VMName}/dscextension'
-  location: Location
-  properties:{
-    publisher: 'Microsoft.PowerShell'
-    type: 'DSC'
-    typeHandlerVersion: '2.77'
-    autoUpgradeMinorVersion: true
-    settings: {
-      modulesUrl: WVDArtifactsURL
-      configurationFunction: 'Configuration.ps1\\AddSessionHost'
-      properties:{
-        hostPoolName: HostPoolName
-        registrationInfoToken: HostPoolToken
+  }
+  resource AADJoin 'extensions@2022-08-01' = if (JoinObject.SessionHostJoinType == 'AAD') {
+    name: 'AADLoginForWindows'
+    location: Location
+    properties: {
+      publisher: 'Microsoft.Azure.ActiveDirectory'
+      type: 'AADLoginForWindows'
+      typeHandlerVersion: '1.0'
+      autoUpgradeMinorVersion: true
+      settings: json('null') // TODO: Add support for intune managed. string in template is -  "settings": "[if(parameters('intune'), createObject('mdmId','0000000a-0000-0000-c000-000000000000'), json('null'))]"
+    }
+  }
+  resource DomainJoin 'extensions@2022-08-01' = if (JoinObject.SessionHostJoinType == 'ADDS') {
+    // Documentation is available here: https://docs.microsoft.com/en-us/azure/active-directory-domain-services/join-windows-vm-template#azure-resource-manager-template-overview
+    name: 'DomainJoin'
+    location: Location
+    properties: {
+      publisher: 'Microsoft.Compute'
+      type: 'JSonADDomainExtension'
+      typeHandlerVersion: '1.3'
+      autoUpgradeMinorVersion: true
+      settings: {
+        Name: JoinObject.DomainName
+        OUPath: JoinObject.OUPath
+        User: '${JoinObject.DomainName}\\${JoinObject.DomainJoinUserName}'
+        Restart: 'true'
+
+        //will join the domain and create the account on the domain. For more information see https://msdn.microsoft.com/en-us/library/aa392154(v=vs.85).aspx'
+        Options: 3
+      }
+      protectedSettings: {
+        Password: JoinObject.DomainJoinPassword
       }
     }
   }
-  dependsOn: [
-    VMName_JoinDomain
-  ]
-}
 
-resource VMName_JoinDomain 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
-  // Documentation is available here: https://docs.microsoft.com/en-us/azure/active-directory-domain-services/join-windows-vm-template#azure-resource-manager-template-overview
-  name: '${VMName}/joindomain'
-  location: Location
-  properties: {
-    publisher: 'Microsoft.Compute'
-    type: 'JSonADDomainExtension'
-    typeHandlerVersion: '1.3'
-    autoUpgradeMinorVersion: true
-    settings: {
-      Name: DomainName
-      OUPath: OUPath
-      User: '${DomainName}\\${DomainJoinUserName}'
-      Restart: 'true'
+  resource AddWVDHost 'extensions@2022-08-01' = {
+    // Documentation is available here: https://docs.microsoft.com/en-us/azure/virtual-machines/extensions/dsc-template
+    // TODO: Update to the new format for DSC extension, see documentation above.
+    name: 'dscextension'
+    location: Location
+    properties: {
+      publisher: 'Microsoft.PowerShell'
+      type: 'DSC'
+      typeHandlerVersion: '2.77'
+      autoUpgradeMinorVersion: true
+      settings: {
+        modulesUrl: WVDArtifactsURL
+        configurationFunction: 'Configuration.ps1\\AddSessionHost'
+        properties: {
+          hostPoolName: HostPoolName
+          registrationInfoToken: HostPoolToken
+          aadJoin: JoinObject.SessionHostJoinType == 'AAD' ? true : false
+          useAgentDownloadEndpoint: true
 
-      //will join the domain and create the account on the domain. For more information see https://msdn.microsoft.com/en-us/library/aa392154(v=vs.85).aspx'
-      Options: 3
+        }
+      }
     }
-    protectedSettings:{
-      Password: DomainJoinPassword
-    }
+    dependsOn: (JoinObject.SessionHostJoinType == 'AAD') ? [AADJoin] : [DomainJoin]
   }
-  dependsOn:[
-    VM
-  ]
+  tags: Tags
 }

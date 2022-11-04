@@ -15,12 +15,16 @@ function Initialize-AVDMFDesktopVirtualization {
             $filteredApplicationGroups = @{}
             $script:ApplicationGroups.GetEnumerator() | Where-Object { $_.value.ResourceGroupName -eq $ResourceGroupName } | ForEach-Object { $filteredApplicationGroups.Add($_.Key, $_.Value) }
 
+            $filteredRemoteApps = @{}
+            $script:RemoteApps.GetEnumerator() | Where-Object { $_.value.ResourceGroupName -eq $ResourceGroupName } | ForEach-Object { $filteredRemoteApps.Add($_.Key, $_.Value) }
+
             $filteredSessionHosts = @{}
             $script:SessionHosts.GetEnumerator() | Where-Object { $_.value.ResourceGroupName -eq $ResourceGroupName } | ForEach-Object { $filteredSessionHosts.Add($_.Key, $_.Value) }
 
             $templateParams = @{
                 HostPools         = [array] ($filteredHostPools | Convert-HashtableToArray)
                 ApplicationGroups = [array] ($filteredApplicationGroups | Convert-HashtableToArray)
+                RemoteApps        = [array] ($filteredRemoteApps | Convert-HashtableToArray)
                 SessionHosts      = [array] ($filteredSessionHosts | Convert-HashtableToArray)
             }
         }

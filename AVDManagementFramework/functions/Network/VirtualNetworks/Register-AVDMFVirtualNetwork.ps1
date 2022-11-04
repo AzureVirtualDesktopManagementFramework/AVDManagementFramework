@@ -9,7 +9,7 @@ function Register-AVDMFVirtualNetwork {
         [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
         [array] $DefaultSubnets,
 
-        [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
         [array] $VirtualNetworkPeerings,
 
         [string] $AccessLevel = 'All',
@@ -33,7 +33,7 @@ function Register-AVDMFVirtualNetwork {
         if (-not ($addressSpace -match '^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\/\d{2}$')) {
             throw "$addressSpace is not a valid address space"
         }
-
+        Write-PSFMessage -Level Verbose -Message 'Configuring peerings'
         # Configure Peerings
         $peerings = @(foreach($peering in $VirtualNetworkPeerings){
             $RemoteNetworkName = ($peering.RemoteVnetId -split "/")[-1]

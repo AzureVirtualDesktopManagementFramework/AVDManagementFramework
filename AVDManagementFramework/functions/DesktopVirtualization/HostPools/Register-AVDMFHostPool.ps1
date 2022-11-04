@@ -1,10 +1,35 @@
 function Register-AVDMFHostPool {
+    <#
+    .SYNOPSIS
+        A short one-line action-based description, e.g. 'Tests if a function is valid'
+    .DESCRIPTION
+        A longer description of the function, its purpose, common use cases, etc.
+    .NOTES
+        Information or caveats about the function e.g. 'This function is not supported in Linux'
+    .LINK
+        Specify a URI to a help page, this will show when Get-Help -Online is used.
+    .EXAMPLE
+            Application Groups for RemoteApp Host Pools
+                {
+                    "Name": "Common Apps",
+                    "RemoteAppReference":[
+                        "SAPAnalyzer",
+                        "SAPLogon"
+                    ],
+                    "Users":[
+                        "BusinessAppGroup@oq.com"
+                    ]
+                }
+    #>
+
+
     [CmdletBinding()]
     param (
         [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
         [string] $AccessLevel,
 
         [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
+        [ValidateSet("Personal", "Pooled", "RemoteApp")]
         [string] $PoolType,
 
         [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
@@ -32,12 +57,19 @@ function Register-AVDMFHostPool {
         [string] $StorageAccountReference,
 
         [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
+        $RemoteAppGroups,
+
+        [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
         [string[]] $Users,
 
         [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
         [string] $VMTemplate,
 
-        [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
+        [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
+        [ValidateSet("AAD", "ADDS")]
+        [string] $SessionHostJoinType = $script:SessionHostJoinType,
+
+        [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
         [string] $OrganizationalUnitDN,
 
         [PSCustomObject] $Tags = [PSCustomObject]@{}
@@ -82,24 +114,72 @@ function Register-AVDMFHostPool {
 
             VMTemplate           = $VMTemplate
 
+            SessionHostJoinType  = $script:SessionHostJoinType
+
             Tags                 = $Tags
+
+
 
         }
 
-        #TODO: Change this into splatting and check if users are provided.
-        Register-AVDMFApplicationGroup -HostPoolName $resourceName -ResourceGroupName $resourceGroupName -HostPoolResourceId $resourceID -Tags $Tags -Users $Users -FriendlyName $FriendlyName
+        #TODO: Check if users are provided.
+        if ($PoolType -eq "RemoteApp") {
+            # We assume only Remote App AGs are used for RemoteApp Host Pools
+            foreach ($applicationGroup in $RemoteAppGroups) {
+                # Register each application group
+                $applicationGroupParams = @{
+                    HostPoolName         = $resourceName
+                    ResourceGroupName    = $resourceGroupName
+                    HostPoolResourceId   = $resourceID
+                    Users                = $applicationGroup.Users
+                    Name                 = $applicationGroup.Name
+                    FriendlyName         = $applicationGroup.Name
+                    ApplicationGroupType = 'RemoteApp'
+                    RemoteAppReference   = $applicationGroup.RemoteAppReference
+                    SessionHostJoinType  = $script:SessionHostJoinType
+
+
+                }
+                #TODO: Add logic to check if all remote app references exist
+                Register-AVDMFApplicationGroup @applicationGroupParams
+            }
+        }
+        else {
+            # This would apply for pooled and personal pools. Only creating one AG of type Desktop.
+            $applicationGroupParams = @{
+                HostPoolName         = $resourceName
+                ResourceGroupName    = $resourceGroupName
+                HostPoolResourceId   = $resourceID
+                Users                = $Users
+                FriendlyName         = $FriendlyName
+                ApplicationGroupType = 'Desktop'
+                SessionHostJoinType  = $script:SessionHostJoinType
+            }
+            Register-AVDMFApplicationGroup @applicationGroupParams
+        }
+
 
         # Register Session Host
         $hostPoolInstance = $ResourceName.Substring($ResourceName.Length - 2, 2)
 
-        $domainName = ($OrganizationalUnitDN -split "," | Where-Object { $_ -like "DC=*" } | ForEach-Object { $_.replace("DC=", "") }) -join "."
+        switch ($SessionHostJoinType) {
+            "AAD" {
+                # TODO: Handle Intune managed session hosts
+            }
+            "ADDS" {
+                $domainName = ($OrganizationalUnitDN -split "," | Where-Object { $_ -like "DC=*" } | ForEach-Object { $_.replace("DC=", "") }) -join "."
+            }
+        }
 
         for ($i = 1; $i -le $NumberOfSessionHosts; $i++) {
             #TODO: Change all parameters to use splatting
             $SessionHostParams = @{
-                subnetID   = $subnetID
-                DomainName = $domainName
-                OUPath     = $OrganizationalUnitDN
+                subnetID            = $subnetID
+                SessionHostJoinType = $SessionHostJoinType
+            }
+            if ($SessionHostJoinType -eq "ADDS") {
+                $SessionHostParams['DomainName'] = $domainName
+                $SessionHostParams['OUPath'] = $OrganizationalUnitDN
             }
             Register-AVDMFSessionHost -ResourceGroupName $resourceGroupName -AccessLevel $AccessLevel -HostPoolType $PoolType -HostPoolInstance $hostPoolInstance -InstanceNumber $i -VMTemplate $script:VMTemplates[$VMTemplate] @SessionHostParams -Tags $Tags
         }

@@ -11,15 +11,28 @@ function Register-AVDMFApplicationGroup {
         [string] $ResourceGroupName,
 
         [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
+        [string] $Name,
+
+        [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
         [string] $FriendlyName,
+
+        [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
+        [ValidateSet('Desktop', 'RemoteApp')]
+        [string] $ApplicationGroupType,
+
+        [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
+        [string[]] $RemoteAppReference,
 
         [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
         [string[]] $Users,
 
+        [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
+        [string] $SessionHostJoinType,
+
         [PSCustomObject] $Tags = [PSCustomObject]@{}
     )
     process {
-        $ResourceName = New-AVDMFResourceName -ResourceType 'ApplicationGroup' -ParentName $HostPoolName
+        $resourceName = New-AVDMFResourceName -ResourceType 'ApplicationGroup' -ParentName $HostPoolName -NameSuffix $Name
 
         $resourceID = "/Subscriptions/$script:AzSubscriptionId/resourceGroups/$resourceGroupName/providers/Microsoft.DesktopVirtualization/applicationgroups/$ResourceName"
 
@@ -46,17 +59,34 @@ function Register-AVDMFApplicationGroup {
             }
         }
 
-        $script:ApplicationGroups[$ResourceName] = [PSCustomObject]@{
-            PSTypeName        = 'AVDMF.DesktopVirtualization.ApplicationGroup'
-            ResourceGroupName = $ResourceGroupName
-            HostPoolId        = $HostPoolResourceId
-            FriendlyName      = $FriendlyName
-            PrincipalId       = $principalId
-            Tags              = $Tags
+        $script:ApplicationGroups[$resourceName] = [PSCustomObject]@{
+            PSTypeName           = 'AVDMF.DesktopVirtualization.ApplicationGroup'
+            ResourceGroupName    = $ResourceGroupName
+            HostPoolId           = $HostPoolResourceId
+            ApplicationGroupType = $ApplicationGroupType
+            FriendlyName         = $FriendlyName
+            PrincipalId          = $principalId
+            SessionHostJoinType  = $SessionHostJoinType
+            Tags                 = $Tags
         }
 
         # Link Application group to workspace
         $script:Workspaces.GetEnumerator() | Where-Object { $_.value.ReferenceName -eq $script:hostpools.$hostpoolname.WorkspaceReference } | ForEach-Object { $_.value.ApplicationGroupReferences += $resourceID }
 
+        Write-PSFMessage -Level Verbose -Message "Registering Remote Apps"
+        # Register remote Apps
+        foreach ($remoteApp in $RemoteAppReference) {
+            if ($script:RemoteAppTemplates[$remoteApp]) {
+                $registerRemoteAppParams = @{
+                    ResourceGroupName    = $resourceGroupName
+                    ApplicationGroupName = $resourceName
+                    RemoteAppTemplate    = $script:RemoteAppTemplates[$remoteApp]
+                }
+                Register-AVDMFRemoteApp @registerRemoteAppParams
+            }
+            else {
+                throw "Could not find RemoteApp Template: $remoteApp"
+            }
+        }
     }
 }

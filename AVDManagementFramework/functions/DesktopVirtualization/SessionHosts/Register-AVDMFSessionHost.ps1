@@ -19,9 +19,13 @@ function Register-AVDMFSessionHost {
         [object] $SubnetID,
 
         [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
+        [ValidateSet("AAD", "ADDS")]
+        [string] $SessionHostJoinType,
+
+        [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
         [string] $DomainName,
 
-        [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
+        [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
         [string] $OUPath,
 
         [PSCustomObject] $Tags = [PSCustomObject]@{}
@@ -30,24 +34,32 @@ function Register-AVDMFSessionHost {
     process {
         $ResourceName = New-AVDMFResourceName -ResourceType 'VirtualMachine' -AccessLevel $AccessLevel -HostPoolType $HostPoolType -HostPoolInstance $HostPoolInstance -InstanceNumber $InstanceNumber
 
-        $script:SessionHosts[$resourceName] = [PSCustomObject]@{
-            ResourceGroupName = $ResourceGroupName
-            VMSize            = $VMTemplate.VMSize
-            TimeZone          = $script:TimeZone
-            SubnetID          = $SubnetID
-            AdminUsername     = $VMTemplate.AdminUserName
-            AdminPassword     = $VMTemplate.AdminPassword
-            ImageReference    = $VMTemplate.ImageReference
-            Tags = $Tags
+        $script:SessionHosts[$resourceName] = [PSCustomObject]@{ # TODO: Is it a good idea to switch this to hashtable not custom object?
+            ResourceGroupName  = $ResourceGroupName
+            VMSize             = $VMTemplate.VMSize
+            TimeZone           = $script:TimeZone
+            SubnetID           = $SubnetID
+            AdminUsername      = $VMTemplate.AdminUserName
+            AdminPassword      = $VMTemplate.AdminPassword
+            ImageReference     = $VMTemplate.ImageReference
+            Tags               = $Tags
 
             # Add Session Host
-            WVDArtifactsURL   = $VMTemplate.WVDArtifactsURL
+            WVDArtifactsURL    = $VMTemplate.WVDArtifactsURL
 
-            # Domain Join
-            DomainName = $DomainName
-            OUPath = $OUPath
-            DomainJoinUserName = $script:DomainJoinUserName
-            DomainJoinPassword = $script:DomainJoinPassword
+            SessionHostJoinType = $SessionHostJoinType
+        }
+        # AAD or Domain Join
+        switch ($SessionHostJoinType) {
+            "AAD" {
+
+            }
+            "ADDS" {
+                $script:SessionHosts[$resourceName] | Add-Member -MemberType NoteProperty -Name DomainName -Value $DomainName
+                $script:SessionHosts[$resourceName] | Add-Member -MemberType NoteProperty -Name OUPath -Value $OUPath
+                $script:SessionHosts[$resourceName] | Add-Member -MemberType NoteProperty -Name DomainJoinUserName -Value $script:DomainJoinUserName
+                $script:SessionHosts[$resourceName] | Add-Member -MemberType NoteProperty -Name DomainJoinPassword -Value $script:DomainJoinPassword
+            }
         }
     }
 }

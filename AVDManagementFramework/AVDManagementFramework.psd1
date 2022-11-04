@@ -96,6 +96,13 @@
 		'Get-AVDMFGlobalTag'
 		'Get-AVDMFRemotePeering'
 		'Get-AVDMFRouteTable'
+		'Get-AVDMFRemoteAppTemplate'
+		'Register-AVDMFRemoteAppTemplate'
+		'Unregister-AVDMFRemoteAppTemplate'
+		'Get-AVDMFRemoteApp'
+		'Register-AVDMFRemoteApp'
+		'Unregister-AVDMFRemoteApp'
+		'Get-AVDMFWorkspace'
 	)
 
 	# Cmdlets to export from this module

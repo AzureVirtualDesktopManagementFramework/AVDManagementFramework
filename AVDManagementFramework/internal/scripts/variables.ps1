@@ -21,6 +21,8 @@ $script:PrivateLinks = @{}
 # DesktopVirtualization
 $script:HostPools = @{}
 $script:ApplicationGroups = @{}
+$script:RemoteAppTemplates = @{}
+$script:RemoteApps = @{}
 $script:Workspaces = @{}
 $script:VMTemplates = @{}
 $script:SessionHosts = @{}

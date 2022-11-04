@@ -38,7 +38,7 @@ function Invoke-AVDMFDesktopVirtualization {
 
     #region: Update SessionDesktop name
     #TODO: Check if there is a put method yet for 'Microsoft.DesktopVirtualization/applicationgroups/desktops'
-    foreach ($item in $script:ApplicationGroups.GetEnumerator()) {
+    foreach ($item in ($script:ApplicationGroups.GetEnumerator() |  Where-Object {$_.Value.ApplicationGroupType -eq 'Desktop'}) ) {
         Write-PSFMessage -Level Host -Message 'Updating SessionDesktop Friendly Name'
         $null = Update-AzWvdDesktop -ResourceGroupName $item.Value.ResourceGroupName -ApplicationGroupName $item.Key -Name 'SessionDesktop' -FriendlyName $item.Value.FriendlyName -ErrorAction Stop
     }

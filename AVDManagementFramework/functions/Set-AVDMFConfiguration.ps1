@@ -12,13 +12,13 @@ function Set-AVDMFConfiguration {
     )
 
     #region: Initialize Variables
-        $configurationVersion = '1.0.25'
+    $configurationVersion = '1.0.45'
     #endregion: Initialize Variables
 
     #region: Load Custom Environment Variables
-    $environmentVariablesFilePath = Join-Path -Path $ConfigurationPath -ChildPath 'EnvironmentVariables.json'
+    $environmentVariablesFilePath = Join-Path -Path $ConfigurationPath -ChildPath 'EnvironmentVariables.jsonc'
     if (Test-Path -Path $environmentVariablesFilePath) {
-        Write-Warning -Message "EnvironmentVariables.json file detected. This is not supposed to exist on DevOps. Please add it to .gitignore"
+        Write-PSFMessage -Level Warning -Message "EnvironmentVariables.json file detected. This is not supposed to exist on DevOps. Please add it to .gitignore"
 
         $environmentVariables = Get-Content -Path $environmentVariablesFilePath | ConvertFrom-Json | ConvertTo-PSFHashtable
         $null = $environmentVariables.GetEnumerator() | ForEach-Object { New-Item -Path $_.Key -Value $_.Value -Force }
@@ -37,7 +37,7 @@ function Set-AVDMFConfiguration {
 
     $nameMappingConfigPath = Join-Path -Path $ConfigurationPath -ChildPath "NameMappings"
     if (Test-Path $nameMappingConfigPath) {
-        foreach ($file in Get-ChildItem -Path $nameMappingConfigPath -Filter "*.json") {
+        foreach ($file in Get-ChildItem -Path $nameMappingConfigPath -filter "*.json*") {
             foreach ($dataset in (Get-Content -Path $file.FullName | ConvertFrom-Json -ErrorAction Stop | ConvertTo-PSFHashtable )) {
                 Register-AVDMFNameMapping @dataset
             }
@@ -55,25 +55,34 @@ function Set-AVDMFConfiguration {
     if ($Force) { & "$moduleRoot\internal\scripts\variables.ps1" }
 
     #region: General Configuration
-    $generalConfiguration = Get-Content -Path (Join-Path -Path $ConfigurationPath -ChildPath '\GeneralConfiguration\GeneralConfiguration.json' -ErrorAction Stop ) | ConvertFrom-Json -ErrorAction Stop
+    $generalConfiguration = Get-Content -Path (Join-Path -Path $ConfigurationPath -ChildPath '\GeneralConfiguration\GeneralConfiguration.jsonc' -ErrorAction Stop ) | ConvertFrom-Json -ErrorAction Stop
 
-    if($generalConfiguration.ConfigurationVersion -ne $configurationVersion) {
+    if ($generalConfiguration.ConfigurationVersion -ne $configurationVersion) {
         throw "current configuration version $($generalConfiguration.ConfigurationVersion) must match $configurationVersion."
     }
+    Write-PSFMessage -Message "Configuration version: {0}" -StringValues $configurationVersion
 
     $script:Location = $GeneralConfiguration.Location
     $script:TimeZone = $generalConfiguration.TimeZone
 
-    $Script:DomainJoinUserName = $generalConfiguration.DomainJoinCredential.SecretName
-    $Script:DomainJoinPassword = Get-AzKeyVaultSecret -ResourceId $generalConfiguration.DomainJoinCredential.KeyVaultID -Name $generalConfiguration.DomainJoinCredential.SecretName -AsPlainText
-    <#
-    $script:DomainJoinCredential = @{
-            reference = @{
-                keyVault = @{ id = $generalConfiguration.DomainJoinCredential.KeyVaultID}
-                secretName = $generalConfiguration.DomainJoinCredential.SecretName
-            }
+    # Azure AD or Domain Joined
+    $script:SessionHostJoinType = $generalConfiguration.SessionHostJoinType
+    switch ($script:SessionHostJoinType) {
+        # AAD => Azure AD Joined Session Hosts
+        "AAD" {
+            #TODO: Build logic for Intune managed session hosts.
+         }
+
+        # ADDS => Domain Joined Session Hosts
+        "ADDS" {
+            $Script:DomainJoinUserName = $generalConfiguration.DomainJoinCredential.SecretName
+            $Script:DomainJoinPassword = Get-AzKeyVaultSecret -ResourceId $generalConfiguration.DomainJoinCredential.KeyVaultID -Name $generalConfiguration.DomainJoinCredential.SecretName -AsPlainText
+
+        }
+
+        Default { throw "SessionHostJoin in GeneralConfiguration.jsonc must be ADDS or AAD "}
     }
-    #>
+
     #endregion
 
     #region: Naming Conventions
@@ -83,7 +92,7 @@ function Set-AVDMFConfiguration {
 
     $namingConventionsComponentsRoot = Join-Path -Path $namingConventionsRoot -ChildPath "Components"
 
-    foreach ($componentNC in (Get-ChildItem -Path $namingConventionsComponentsRoot -Filter "*.json")) {
+    foreach ($componentNC in (Get-ChildItem -Path $namingConventionsComponentsRoot -filter "*.json*")) {
         # We create a script variable for each component by adding 'NC' to the name of the file
 
         $NCContent = Get-Content -Path $componentNC.FullName -ErrorAction Stop | ConvertFrom-Json -ErrorAction Stop
@@ -106,6 +115,7 @@ function Set-AVDMFConfiguration {
         # Desktop Virtualization
         'Workspaces'            = @{Command = (Get-Command Register-AVDMFWorkspace); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "DesktopVirtualization\Workspaces") }
         'VMTemplates'           = @{Command = (Get-Command Register-AVDMFVMTemplate); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "DesktopVirtualization\VMTemplates") }
+        'RemoteAppTemplates'    = @{Command = (Get-Command Register-AVDMFRemoteAppTemplate); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "DesktopVirtualization\RemoteAppTemplates") }
         'HostPools'             = @{Command = (Get-Command Register-AVDMFHostPool); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "DesktopVirtualization\HostPools") }
     }
     #endregion: Define Registrable Components
@@ -116,7 +126,7 @@ function Set-AVDMFConfiguration {
 
         Write-PSFMessage -Level Verbose -Message "Loading configuration for $key"
 
-        foreach ($file in Get-ChildItem -Path $components[$key].ConfigurationPath -Recurse -Filter "*.json") {
+        foreach ($file in Get-ChildItem -Path $components[$key].ConfigurationPath -Recurse -filter "*.json*") {
             Write-PSFMessage -Level Verbose -Message "`tLoading $key from $($file.FullName)"
 
             foreach ($dataset in (Get-Content -Path $file.FullName | ConvertFrom-Json -ErrorAction Stop | ConvertTo-PSFHashtable -Include $($components[$key].Command.Parameters.Keys))) {
@@ -144,7 +154,6 @@ function Set-AVDMFConfiguration {
         'SessionHost'
     )
     foreach ($resourceType in $taggedResources) {
-        #if($resourceType -eq 'RouteTable' ) {$BP="HERE"}
         $scriptVariable = Get-Variable -Scope script -Name "$($resourceType)s" -ValueOnly
         if (($script:GlobalTags.keys -contains $resourceType) -or ($script:GlobalTags.keys -contains 'All')) {
             $keys = [array] $scriptVariable.Keys

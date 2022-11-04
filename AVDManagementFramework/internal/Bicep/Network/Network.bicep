@@ -1,3 +1,4 @@
+param Location string =  resourceGroup().location
 param VirtualNetworks array
 param Subnets array
 param NetworkSecurityGroups array
@@ -7,8 +8,8 @@ module NetworkSecurityGroupModule 'modules/NetworkSecurityGroup.bicep' = [for ns
   name: nsgitem.resourcename
   params:{
     NSGName: nsgitem.resourcename
-    location: resourceGroup().location
-    securityRules: nsgitem.SecurityRules
+    location: Location
+    securityRules: !empty(nsgitem.SecurityRules) ? nsgitem.SecurityRules : []
     Tags: nsgitem.Tags
   }
 }]
@@ -16,7 +17,7 @@ module RouteTableModule 'modules/RouteTable.bicep' = [for routetableitem in Rout
   name: routetableitem.ResourceName
   params: {
     Name: routetableitem.ResourceName
-    Location: resourceGroup().location
+    Location: Location
     routes: routetableitem.Routes
     disableBgpRoutePropagation: routetableitem.DisableBgpRoutePropagation
     Tags: routetableitem.Tags
@@ -26,7 +27,7 @@ module VirtualNetworkModule './modules/VirtualNetwork.bicep' = [for vnetitem in 
   name: vnetitem.Name
   params:{
     VirtualNetworkName: vnetitem.ResourceName
-    Location: resourceGroup().location
+    Location: Location
     AddressSpace: vnetitem.AddressSpace
     DNSServers: vnetitem.DNSServers
     Subnets: Subnets

@@ -3,6 +3,8 @@ param Location string
 param PoolType string
 param maxSessionLimit int
 param Tags object = {}
+param SessionHostJoinType string
+
 
 param TokenExpirationTime string = dateTimeAdd(utcNow('O'),'PT2H','O')
 
@@ -23,6 +25,7 @@ resource HostPool 'Microsoft.DesktopVirtualization/hostPools@2021-02-01-preview'
       registrationTokenOperation: 'Update'
       expirationTime: TokenExpirationTime
     }
+    customRdpProperty: (SessionHostJoinType == 'AAD') ?  'targetisaadjoined:i:1;enablerdsaadauth:i:1' : null
   }
   tags:Tags
 }

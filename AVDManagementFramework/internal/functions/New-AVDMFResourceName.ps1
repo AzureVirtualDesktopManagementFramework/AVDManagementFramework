@@ -22,7 +22,8 @@ function New-AVDMFResourceName {
         [Parameter()]
         [string] $ResourceType,
         [string] $DeploymentStage = $script:DeploymentStage,
-        [string] $ResourceCategory,
+        [string] $ResourceCategory, #This is part of the ABV category
+        [string] $NameSuffix,
         [string] $AccessLevel, # Enterprise, Specialist, Privileged
         [string] $HostPoolType, # Shared, Dedicated
 
@@ -31,8 +32,8 @@ function New-AVDMFResourceName {
         [string] $ParentName,
         [string] $AddressPrefix,
 
-
-        [Int] $InstanceNumber
+        [Int] $InstanceNumber,
+        [string] $UniqueNameString # For resources that require global name uniqueness (Storage Accounts)
 
         #TODO: Change parameters to overloads so we don't have to provide them. (Except deployment stage?)
     )
@@ -47,7 +48,7 @@ function New-AVDMFResourceName {
             $componentName = $component -replace "Abv", ""
             $componentNC = $component -replace "Abv", "NC"
 
-            #Check if component naming convention is avaialbe
+            #Check if component naming convention is available
             # TODO: Use hashtable for naming conventions instead of dynamic variable names!
             # Assumption - hashtable stored in $script:namingConvention
             try { Get-Variable -Name $componentNC -ErrorAction Stop | Out-Null }
@@ -78,10 +79,17 @@ function New-AVDMFResourceName {
             if (-not $abv) {throw "Could not find any abbreviation for $componentName`: $((Get-Variable -Name $componentName).Value)" }
             $abv
         }
+
+        if($component -like "static_*"){ $component -replace "static_","" }
+
         if ($component -in ('-', '_')) { $component }
 
         if ($component -eq 'ParentName') {
             $ParentName
+        }
+
+        if ($component -eq 'NameSuffix'){
+            $NameSuffix
         }
 
         if ($component -eq 'AddressPrefix') {
@@ -113,7 +121,11 @@ function New-AVDMFResourceName {
         }
     }
 
-    if ($resourceName.length -gt $namingStyle.MaxLength) { throw "resulting resource name is longer than $($namingStyle.MaxLength) characters '$resourceName'" }
+    if($namingStyle.NameComponents -contains 'UniqueNameString'){
+        $resourceName = "{0}{1}" -f $resourceName,$UniqueNameString
+    }
+
+    if ($resourceName.length -gt $namingStyle.MaxLength) { throw "Resulting resource name is longer than $($namingStyle.MaxLength) characters '$resourceName'" }
 
     $resourceName
 }

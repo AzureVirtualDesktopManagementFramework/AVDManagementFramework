@@ -19,10 +19,15 @@ function Register-AVDMFStorageAccount {
         [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
         [int] $shareSoftDeleteRetentionDays,
 
+        [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
+        [string] $UniqueNameString,
+
         [PSCustomObject] $Tags = [PSCustomObject]@{}
     )
     process {
-        $ResourceName = New-AVDMFResourceName -ResourceType 'StorageAccount' -AccessLevel $AccessLevel -HostPoolType $HostPoolType
+
+        $ResourceName = New-AVDMFResourceName -ResourceType 'StorageAccount' -AccessLevel $AccessLevel -HostPoolType $HostPoolType -UniqueNameString $UniqueNameString
+
         $resourceGroupName = New-AVDMFResourceName -ResourceType "ResourceGroup" -ResourceCategory 'Storage' -AccessLevel 'All' -HostPoolType 'All' -InstanceNumber 1
         Register-AVDMFResourceGroup -Name $resourceGroupName -ResourceCategory 'Storage'
         # At the moment we do not have a reason for multiple storage RGs.
