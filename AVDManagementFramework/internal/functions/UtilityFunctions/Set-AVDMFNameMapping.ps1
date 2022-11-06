@@ -10,8 +10,6 @@ function Set-AVDMFNameMapping {
     )
 
     foreach ($item in ($dataset.GetEnumerator() | Where-Object { $null -ne $_.Value } )){
-        $bp2 = 'here'
-        #if('AVD-%StageNameAbv%-RemoteApp01-AG-MAFDashboard' -eq $item.Value[0]  ) {$bp='here'}
         if ($item.Value.GetType().Name -eq 'String'){
             $stringMappings = ([regex]::Matches($item.Value, '%.+?%')).Value | ForEach-Object { if ($_) { $_ -replace "%", "" } }
             foreach ($mapping in $stringMappings) {
@@ -23,8 +21,6 @@ function Set-AVDMFNameMapping {
         if ($item.Value.GetType().Name -eq 'PSCustomObject') {
             $dataset[$item.Key] =[PSCustomObject] (Set-AVDMFNameMapping -Dataset ($item.Value | ConvertTo-PSFHashtable))
         }
-        if($item.key -eq 'RemoteAppGroups') {$bp3='here'}
-
         if ($item.Value.GetType().Name -eq 'Object[]') {
             for($i=0;$i -lt $item.Value.Count;$i++){
                 if($item.Value[$i].GetType().Name -eq 'String'){

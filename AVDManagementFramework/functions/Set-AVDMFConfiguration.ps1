@@ -12,7 +12,7 @@ function Set-AVDMFConfiguration {
     )
 
     #region: Initialize Variables
-    $configurationVersion = '1.0.45'
+    $configurationVersion = '1.0.52'
     #endregion: Initialize Variables
 
     #region: Load Custom Environment Variables

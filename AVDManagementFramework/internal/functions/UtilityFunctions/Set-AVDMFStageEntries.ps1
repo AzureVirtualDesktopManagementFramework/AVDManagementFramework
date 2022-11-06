@@ -48,8 +48,20 @@ function Set-AVDMFStageEntries {
                     throw "Could not resolve stage value ($DeploymentStage) for `r`n $($Dataset | Out-String)"
                 }
             }
-            else { # key is a PSCustomObject that does not have a stage token, maybe one of its children.
+            else {
+                # key is a PSCustomObject that does not have a stage token, maybe one of its children.
                 $Dataset[$key] = [PSCustomObject] (Set-AVDMFStageEntries -Dataset ($Dataset[$key] | ConvertTo-PSFHashtable))
+            }
+        }
+        if ($Dataset[$key].GetType().Name -eq 'Object[]') {
+            # Key is an array of objects (example, SessionHosts > RemoteAppGroups)
+            $Dataset[$key] = $Dataset[$key] | ForEach-Object {
+                if ($_.GetType().Name -ne 'string') {
+                    [PSCustomObject](Set-AVDMFStageEntries -Dataset ( $_ | ConvertTo-PSFHashtable) )
+                }
+                else {
+                    $_
+                }
             }
         }
     }
