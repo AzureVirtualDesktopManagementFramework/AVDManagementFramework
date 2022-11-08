@@ -49,7 +49,9 @@ resource VM 'Microsoft.Compute/virtualMachines@2020-12-01' =  {
   name: VMName
   location: Location
   identity: (JoinObject.SessionHostJoinType == 'AAD') ? { type:'SystemAssigned'} : null
-
+  zones: [
+    '1'
+  ]
   properties: {
     osProfile: {
       computerName: VMName
@@ -79,6 +81,20 @@ resource VM 'Microsoft.Compute/virtualMachines@2020-12-01' =  {
     licenseType: 'Windows_Client'
 
   }
+  resource amdGPUdrivers 'extensions@2022-08-01' = if (startsWith(VMSize,'Standard_NV') && endsWith(VMSize,'as_v4')) {
+    // This is for AMD GPU enabled VMs in the family NVas_v4
+    name: 'AMDGPUDriver'
+    location: Location
+    properties:{
+      publisher: 'Microsoft.HpcCompute'
+      type: 'AmdGpuDriverWindows'
+      typeHandlerVersion: '1.1'
+      autoUpgradeMinorVersion: true
+      settings: {}
+    }
+  }
+  // TODO: Drivers for Intel NVV3 VMs
+
   resource AADJoin 'extensions@2022-08-01' = if (JoinObject.SessionHostJoinType == 'AAD') {
     name: 'AADLoginForWindows'
     location: Location
@@ -138,5 +154,20 @@ resource VM 'Microsoft.Compute/virtualMachines@2020-12-01' =  {
     }
     dependsOn: (JoinObject.SessionHostJoinType == 'AAD') ? [AADJoin] : [DomainJoin]
   }
+
+  resource runCommand 'runCommands@2022-08-01' = {
+    name: 'PostSetupCommands'
+    location: Location
+    properties: {
+      source: {
+        scriptUri: 'https://stcopdscdev2112.blob.core.windows.net/dsc/DCSTest2.ps1'
+      }
+    }
+    dependsOn: [
+      AddWVDHost
+    ]
+
+  }
+
   tags: Tags
 }
