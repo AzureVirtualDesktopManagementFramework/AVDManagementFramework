@@ -28,6 +28,9 @@ function Register-AVDMFSessionHost {
         [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
         [string] $OUPath,
 
+        [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
+        [string] $AvailabilityZone = '',
+
         [PSCustomObject] $Tags = [PSCustomObject]@{}
 
     )
@@ -35,19 +38,22 @@ function Register-AVDMFSessionHost {
         $ResourceName = New-AVDMFResourceName -ResourceType 'VirtualMachine' -AccessLevel $AccessLevel -HostPoolType $HostPoolType -HostPoolInstance $HostPoolInstance -InstanceNumber $InstanceNumber
 
         $script:SessionHosts[$resourceName] = [PSCustomObject]@{ # TODO: Is it a good idea to switch this to hashtable not custom object?
-            ResourceGroupName  = $ResourceGroupName
-            VMSize             = $VMTemplate.VMSize
-            TimeZone           = $script:TimeZone
-            SubnetID           = $SubnetID
-            AdminUsername      = $VMTemplate.AdminUserName
-            AdminPassword      = $VMTemplate.AdminPassword
-            ImageReference     = $VMTemplate.ImageReference
-            Tags               = $Tags
+            ResourceGroupName     = $ResourceGroupName
+            VMSize                = $VMTemplate.VMSize
+            TimeZone              = $script:TimeZone
+            SubnetID              = $SubnetID
+            AdminUsername         = $VMTemplate.AdminUserName
+            AdminPassword         = $VMTemplate.AdminPassword
+            ImageReference        = $VMTemplate.ImageReference
+            AcceleratedNetworking = $VMTemplate.AcceleratedNetworking
+            Tags                  = $Tags
+            AvailabilityZone      = $AvailabilityZone
+            PreJoinRunCommand     = $VMTemplate.PreJoinRunCommand
 
             # Add Session Host
-            WVDArtifactsURL    = $VMTemplate.WVDArtifactsURL
+            WVDArtifactsURL       = $VMTemplate.WVDArtifactsURL
 
-            SessionHostJoinType = $SessionHostJoinType
+            SessionHostJoinType   = $SessionHostJoinType
         }
         # AAD or Domain Join
         switch ($SessionHostJoinType) {

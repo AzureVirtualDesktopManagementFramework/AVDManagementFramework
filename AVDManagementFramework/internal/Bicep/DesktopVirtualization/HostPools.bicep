@@ -53,7 +53,10 @@ module SessionHostsModule 'modules/sessionHost.bicep' = [for sessionHostItem in 
     SubnetID: sessionHostItem.SubnetID
     TimeZone: sessionHostItem.TimeZone
     VMSize: sessionHostItem.VMSize
+    PreJoinRunCommand: sessionHostItem.PreJoinRunCommand
     imageReference: sessionHostItem.ImageReference
+    AvailabilityZone: sessionHostItem.AvailabilityZone
+    AcceleratedNetworking: sessionHostItem.AcceleratedNetworking
     Tags: sessionHostItem.Tags
 
     // Add as session host

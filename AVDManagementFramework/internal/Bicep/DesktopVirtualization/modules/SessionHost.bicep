@@ -4,6 +4,11 @@ param TimeZone string
 param Location string
 param SubnetID string
 param AdminUsername string
+
+param AvailabilityZone string
+
+param AcceleratedNetworking bool
+
 param Tags object = {}
 
 @secure()
@@ -14,6 +19,9 @@ param imageReference object
 param HostPoolName string
 param HostPoolToken string
 param WVDArtifactsURL string
+
+// RunCommands
+param PreJoinRunCommand array
 
 //Domain Join
 param JoinObject object
@@ -41,17 +49,16 @@ resource vNIC 'Microsoft.Network/networkInterfaces@2020-11-01' = {
         }
       }
     ]
+    enableAcceleratedNetworking: AcceleratedNetworking
   }
   tags: Tags
 }
 
-resource VM 'Microsoft.Compute/virtualMachines@2020-12-01' =  {
+resource VM 'Microsoft.Compute/virtualMachines@2020-12-01' = {
   name: VMName
   location: Location
-  identity: (JoinObject.SessionHostJoinType == 'AAD') ? { type:'SystemAssigned'} : null
-  zones: [
-    '1'
-  ]
+  identity: (JoinObject.SessionHostJoinType == 'AAD') ? { type: 'SystemAssigned' } : null
+  zones: empty(AvailabilityZone) ? [] : [ '${AvailabilityZone}' ]
   properties: {
     osProfile: {
       computerName: VMName
@@ -71,6 +78,11 @@ resource VM 'Microsoft.Compute/virtualMachines@2020-12-01' =  {
       }
       imageReference: imageReference
     }
+    diagnosticsProfile: {
+      bootDiagnostics: {
+        enabled: true
+      }
+    }
     networkProfile: {
       networkInterfaces: [
         {
@@ -81,11 +93,11 @@ resource VM 'Microsoft.Compute/virtualMachines@2020-12-01' =  {
     licenseType: 'Windows_Client'
 
   }
-  resource amdGPUdrivers 'extensions@2022-08-01' = if (startsWith(VMSize,'Standard_NV') && endsWith(VMSize,'as_v4')) {
+  resource amdGPUdrivers 'extensions@2022-08-01' = if (startsWith(VMSize, 'Standard_NV') && endsWith(VMSize, 'as_v4')) {
     // This is for AMD GPU enabled VMs in the family NVas_v4
     name: 'AMDGPUDriver'
     location: Location
-    properties:{
+    properties: {
       publisher: 'Microsoft.HpcCompute'
       type: 'AmdGpuDriverWindows'
       typeHandlerVersion: '1.1'
@@ -105,6 +117,7 @@ resource VM 'Microsoft.Compute/virtualMachines@2020-12-01' =  {
       autoUpgradeMinorVersion: true
       settings: json('null') // TODO: Add support for intune managed. string in template is -  "settings": "[if(parameters('intune'), createObject('mdmId','0000000a-0000-0000-c000-000000000000'), json('null'))]"
     }
+    dependsOn: startsWith(VMSize, 'Standard_NV') ? [ amdGPUdrivers ] : [] // TODO: Drivers for Intel NVV3 VMs
   }
   resource DomainJoin 'extensions@2022-08-01' = if (JoinObject.SessionHostJoinType == 'ADDS') {
     // Documentation is available here: https://docs.microsoft.com/en-us/azure/active-directory-domain-services/join-windows-vm-template#azure-resource-manager-template-overview
@@ -130,6 +143,31 @@ resource VM 'Microsoft.Compute/virtualMachines@2020-12-01' =  {
     }
   }
 
+
+
+  resource PreJoinCommand 'runCommands@2022-08-01' = [for (item, index) in PreJoinRunCommand: {
+    name: 'PreJoinCommand${index+1}-${item.Name}'
+    location: Location
+    properties: {
+      source: {
+        scriptUri: item.ScriptURL
+      }
+    }
+    dependsOn:  (JoinObject.SessionHostJoinType == 'AAD') ? [ AADJoin ] : [ DomainJoin ]
+  }]
+  /*
+    resource importLocalGPO 'runCommands@2022-08-01' = {
+    name: 'ImportLocalGPO4'
+    location: Location
+    properties: {
+      source: {
+        scriptUri: 'https://stcopdscdev2112.blob.core.windows.net/dsc/GPO/ImportLocalGPO.ps1'
+      }
+    }
+
+    dependsOn: (JoinObject.SessionHostJoinType == 'AAD') ? [ AADJoin ] : [ DomainJoin ]
+  }
+  */
   resource AddWVDHost 'extensions@2022-08-01' = {
     // Documentation is available here: https://docs.microsoft.com/en-us/azure/virtual-machines/extensions/dsc-template
     // TODO: Update to the new format for DSC extension, see documentation above.
@@ -152,21 +190,9 @@ resource VM 'Microsoft.Compute/virtualMachines@2020-12-01' =  {
         }
       }
     }
-    dependsOn: (JoinObject.SessionHostJoinType == 'AAD') ? [AADJoin] : [DomainJoin]
-  }
-
-  resource runCommand 'runCommands@2022-08-01' = {
-    name: 'PostSetupCommands'
-    location: Location
-    properties: {
-      source: {
-        scriptUri: 'https://stcopdscdev2112.blob.core.windows.net/dsc/DCSTest2.ps1'
-      }
-    }
     dependsOn: [
-      AddWVDHost
+      PreJoinCommand
     ]
-
   }
 
   tags: Tags

@@ -53,7 +53,7 @@ function Register-AVDMFHostPool {
         [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
         [string] $SubnetRouteTable,
 
-        [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
+        [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
         [string] $StorageAccountReference,
 
         [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
@@ -71,6 +71,9 @@ function Register-AVDMFHostPool {
 
         [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
         [string] $OrganizationalUnitDN,
+
+        [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
+        [bool] $UseAvailabilityZones,
 
         [PSCustomObject] $Tags = [PSCustomObject]@{}
     )
@@ -95,9 +98,11 @@ function Register-AVDMFHostPool {
 
         # Pickup Storage Account
         #TODO: Change Storage Accounts into HashTables
-        $StorageAccountRef = $StorageAccountReference #There is a bug in Script Analyzer that causes the parameter to report unused.
-        $storageAccount = $script:StorageAccounts[$StorageAccountRef]
-        Register-AVDMFFileShare -Name $resourceName.ToLower() -StorageAccountName $storageAccount.Name -ResourceGroupName $storageAccount.ResourceGroupName
+        if($StorageAccountReference){
+            $storageAccount = $script:StorageAccounts[$StorageAccountReference]
+            Register-AVDMFFileShare -Name $resourceName.ToLower() -StorageAccountName $storageAccount.Name -ResourceGroupName $storageAccount.ResourceGroupName
+        }
+
 
         $script:HostPools[$ResourceName] = [PSCustomObject]@{
             PSTypeName           = 'AVDMF.DesktopVirtualization.HostPool'
@@ -171,6 +176,7 @@ function Register-AVDMFHostPool {
             }
         }
 
+        $zone=1
         for ($i = 1; $i -le $NumberOfSessionHosts; $i++) {
             #TODO: Change all parameters to use splatting
             $SessionHostParams = @{
@@ -180,6 +186,11 @@ function Register-AVDMFHostPool {
             if ($SessionHostJoinType -eq "ADDS") {
                 $SessionHostParams['DomainName'] = $domainName
                 $SessionHostParams['OUPath'] = $OrganizationalUnitDN
+            }
+            if ($UseAvailabilityZones){
+                $SessionHostParams['AvailabilityZone'] = $zone
+                $zone++
+                if($zone -eq 4) {$zone = 1}
             }
             Register-AVDMFSessionHost -ResourceGroupName $resourceGroupName -AccessLevel $AccessLevel -HostPoolType $PoolType -HostPoolInstance $hostPoolInstance -InstanceNumber $i -VMTemplate $script:VMTemplates[$VMTemplate] @SessionHostParams -Tags $Tags
         }
