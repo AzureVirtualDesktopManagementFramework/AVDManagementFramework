@@ -12,7 +12,7 @@ function Register-AVDMFReplacementPlanTemplate {
         [string] $ReplacementPlanNameSuffix,
 
         [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
-        [string] $AVDReplacementPlanURL,
+        [string] $FunctionAppZipUrl,
 
         [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
         [bool] $AssignPermissions = $true,
@@ -64,7 +64,7 @@ function Register-AVDMFReplacementPlanTemplate {
     $script:ReplacementPlanTemplates[$ReferenceName] = [PSCustomObject]@{
         PSTypeName                                   = 'AVDMF.DesktopVirtualization.AVDReplacementPlanTemplate'
         ReplacementPlanNameSuffix                    = $ReplacementPlanNameSuffix
-        AVDReplacementPlanURL                        = $AVDReplacementPlanURL
+        FunctionAppZipUrl                        = $FunctionAppZipUrl
         AssignPermissions                            = $AssignPermissions
         TagDeployTimestamp                           = $TagDeployTimestamp
         TagIncludeInAutomation                       = $TagIncludeInAutomation

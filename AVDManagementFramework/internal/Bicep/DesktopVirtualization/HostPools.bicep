@@ -77,7 +77,7 @@ module ReplacementPlanModule 'modules/ReplacementPlan.bicep' = {
     TargetSessionHostCount: ReplacementPlan.NumberOfSessionHosts
     MaxSimultaneousDeployments: ReplacementPlan.MaxSimultaneousDeployments
     SessionHostNamePrefix: ReplacementPlan.SessionHostNamePrefix
-    FunctionAppZipUrl: ReplacementPlan.AVDReplacementPlanURL
+    FunctionAppZipUrl: ReplacementPlan.FunctionAppZipUrl
     ADOrganizationalUnitPath: ReplacementPlan.ADOrganizationalUnitPath
     SessionHostTemplateUri: ReplacementPlan.SessionHostTemplateUri
     //SessionHostTemplateParametersPS1Uri: ReplacementPlan.SessionHostTemplateParametersPS1Uri

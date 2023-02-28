@@ -50,7 +50,7 @@ function Register-AVDMFReplacementPlan {
         ADOrganizationalUnitPath                     = $ADOrganizationalUnitPath
         SubnetId                                     = $SubnetId
         UseAvailabilityZones                         = $UseAvailabilityZones
-        AVDReplacementPlanURL                        = $ReplacementPlanTemplate.AVDReplacementPlanURL
+        FunctionAppZipUrl                            = $ReplacementPlanTemplate.FunctionAppZipUrl
         AssignPermissions                            = $ReplacementPlanTemplate.AssignPermissions
         TagDeployTimestamp                           = $ReplacementPlanTemplate.TagDeployTimestamp
         TagIncludeInAutomation                       = $ReplacementPlanTemplate.TagIncludeInAutomation
