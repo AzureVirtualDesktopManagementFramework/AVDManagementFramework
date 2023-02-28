@@ -26,6 +26,8 @@ $script:RemoteApps = @{}
 $script:Workspaces = @{}
 $script:VMTemplates = @{}
 $script:SessionHosts = @{}
+$script:ReplacementPlanTemplates = @{}
+$script:ReplacementPlans= @{}
 
 # Tags
 $script:GlobalTags = @{}

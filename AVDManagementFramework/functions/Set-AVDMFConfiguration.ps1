@@ -37,7 +37,7 @@ function Set-AVDMFConfiguration {
 
     $nameMappingConfigPath = Join-Path -Path $ConfigurationPath -ChildPath "NameMappings"
     if (Test-Path $nameMappingConfigPath) {
-        foreach ($file in Get-ChildItem -Path $nameMappingConfigPath -filter "*.json*") {
+        foreach ($file in Get-ChildItem -Path $nameMappingConfigPath -Filter "*.json*") {
             foreach ($dataset in (Get-Content -Path $file.FullName | ConvertFrom-Json -ErrorAction Stop | ConvertTo-PSFHashtable )) {
                 Register-AVDMFNameMapping @dataset
             }
@@ -71,7 +71,7 @@ function Set-AVDMFConfiguration {
         # AAD => Azure AD Joined Session Hosts
         "AAD" {
             #TODO: Build logic for Intune managed session hosts.
-         }
+        }
 
         # ADDS => Domain Joined Session Hosts
         "ADDS" {
@@ -80,7 +80,7 @@ function Set-AVDMFConfiguration {
 
         }
 
-        Default { throw "SessionHostJoin in GeneralConfiguration.jsonc must be ADDS or AAD "}
+        Default { throw "SessionHostJoin in GeneralConfiguration.jsonc must be ADDS or AAD " }
     }
 
     #endregion
@@ -88,11 +88,11 @@ function Set-AVDMFConfiguration {
     #region: Naming Conventions
     $namingConventionsRoot = Join-Path -Path $ConfigurationPath -ChildPath NamingConventions
 
-    $script:NamingStyles = Get-Content -Path $namingConventionsRoot\NamingStyles.json -ErrorAction Stop | ConvertFrom-Json -ErrorAction Stop
+    $script:NamingStyles = Get-Content -Path $namingConventionsRoot\NamingStyles.jsonc -ErrorAction Stop | ConvertFrom-Json -ErrorAction Stop
 
     $namingConventionsComponentsRoot = Join-Path -Path $namingConventionsRoot -ChildPath "Components"
 
-    foreach ($componentNC in (Get-ChildItem -Path $namingConventionsComponentsRoot -filter "*.json*")) {
+    foreach ($componentNC in (Get-ChildItem -Path $namingConventionsComponentsRoot -Filter "*.json*")) {
         # We create a script variable for each component by adding 'NC' to the name of the file
 
         $NCContent = Get-Content -Path $componentNC.FullName -ErrorAction Stop | ConvertFrom-Json -ErrorAction Stop
@@ -104,31 +104,31 @@ function Set-AVDMFConfiguration {
     #region: Define Registrable Components
     $components = [ordered] @{
         # Tags
-        'GlobalTags'            = @{Command = (Get-Command -Name Register-AVDMFGlobalTag); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "GlobalTags") }
+        'GlobalTags'               = @{Command = (Get-Command -Name Register-AVDMFGlobalTag); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "GlobalTags") }
         # Network
-        'AddressSpaces'         = @{Command = (Get-Command Register-AVDMFAddressSpace); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "Network\AddressSpaces") }
-        'VirtualNetworks'       = @{Command = (Get-Command Register-AVDMFVirtualNetwork); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "Network\VirtualNetworks") }
-        'RouteTables'           = @{Command = (Get-Command Register-AVDMFRouteTable); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "Network\RouteTables") }
-        'NetworkSecurityGroups' = @{Command = (Get-Command Register-AVDMFNetworkSecurityGroup); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "Network\NetworkSecurityGroups") }
+        'AddressSpaces'            = @{Command = (Get-Command Register-AVDMFAddressSpace); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "Network\AddressSpaces") }
+        'VirtualNetworks'          = @{Command = (Get-Command Register-AVDMFVirtualNetwork); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "Network\VirtualNetworks") }
+        'RouteTables'              = @{Command = (Get-Command Register-AVDMFRouteTable); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "Network\RouteTables") }
+        'NetworkSecurityGroups'    = @{Command = (Get-Command Register-AVDMFNetworkSecurityGroup); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "Network\NetworkSecurityGroups") }
         # Storage
-        'StorageAccounts'       = @{Command = (Get-Command Register-AVDMFStorageAccount); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "Storage\StorageAccounts") }
+        'StorageAccounts'          = @{Command = (Get-Command Register-AVDMFStorageAccount); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "Storage\StorageAccounts") }
         # Desktop Virtualization
-        'Workspaces'            = @{Command = (Get-Command Register-AVDMFWorkspace); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "DesktopVirtualization\Workspaces") }
-        'VMTemplates'           = @{Command = (Get-Command Register-AVDMFVMTemplate); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "DesktopVirtualization\VMTemplates") }
-        'RemoteAppTemplates'    = @{Command = (Get-Command Register-AVDMFRemoteAppTemplate); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "DesktopVirtualization\RemoteAppTemplates") }
-        'HostPools'             = @{Command = (Get-Command Register-AVDMFHostPool); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "DesktopVirtualization\HostPools") }
+        'Workspaces'               = @{Command = (Get-Command Register-AVDMFWorkspace); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "DesktopVirtualization\Workspaces") }
+        'VMTemplates'              = @{Command = (Get-Command Register-AVDMFVMTemplate); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "DesktopVirtualization\VMTemplates") }
+        'RemoteAppTemplates'       = @{Command = (Get-Command Register-AVDMFRemoteAppTemplate); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "DesktopVirtualization\RemoteAppTemplates") }
+        'ReplacementPlanTemplates' = @{Command = (Get-Command Register-AVDMFReplacementPlanTemplate); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "DesktopVirtualization\ReplacementPlanTemplates") }
+        'HostPools'                = @{Command = (Get-Command Register-AVDMFHostPool); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "DesktopVirtualization\HostPools") }
+
     }
     #endregion: Define Registrable Components
 
     #region: Load Component Configuration
     foreach ($key in $components.Keys) {
         if (-not (Test-Path $components[$key].ConfigurationPath)) { continue }
-
         Write-PSFMessage -Level Verbose -Message "Loading configuration for $key"
 
-        foreach ($file in Get-ChildItem -Path $components[$key].ConfigurationPath -Recurse -filter "*.json*") {
+        foreach ($file in Get-ChildItem -Path $components[$key].ConfigurationPath -Recurse -Filter "*.json*") {
             Write-PSFMessage -Level Verbose -Message "`tLoading $key from $($file.FullName)"
-
             foreach ($dataset in (Get-Content -Path $file.FullName | ConvertFrom-Json -ErrorAction Stop | ConvertTo-PSFHashtable -Include $($components[$key].Command.Parameters.Keys))) {
 
                 Write-PSFMessage -Level Verbose -Message "`t`tRegistering dataset:`r`n $($dataset | Format-List | Out-String -Width 120)"

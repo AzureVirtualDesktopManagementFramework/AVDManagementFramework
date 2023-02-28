@@ -18,14 +18,19 @@ function Initialize-AVDMFDesktopVirtualization {
             $filteredRemoteApps = @{}
             $script:RemoteApps.GetEnumerator() | Where-Object { $_.value.ResourceGroupName -eq $ResourceGroupName } | ForEach-Object { $filteredRemoteApps.Add($_.Key, $_.Value) }
 
-            $filteredSessionHosts = @{}
-            $script:SessionHosts.GetEnumerator() | Where-Object { $_.value.ResourceGroupName -eq $ResourceGroupName } | ForEach-Object { $filteredSessionHosts.Add($_.Key, $_.Value) }
+            #$filteredSessionHosts = @{} #TODO: Delete this
+            #$script:SessionHosts.GetEnumerator() | Where-Object { $_.value.ResourceGroupName -eq $ResourceGroupName } | ForEach-Object { $filteredSessionHosts.Add($_.Key, $_.Value) }
+            $filteredReplacementPlans = @{}
+            $script:ReplacementPlans.GetEnumerator() | Where-Object { $_.value.ResourceGroupName -eq $ResourceGroupName } | ForEach-Object { $filteredReplacementPlans.Add($_.Key, $_.Value) }
 
             $templateParams = @{
                 HostPools         = [array] ($filteredHostPools | Convert-HashtableToArray)
                 ApplicationGroups = [array] ($filteredApplicationGroups | Convert-HashtableToArray)
                 RemoteApps        = [array] ($filteredRemoteApps | Convert-HashtableToArray)
-                SessionHosts      = [array] ($filteredSessionHosts | Convert-HashtableToArray)
+                ReplacementPlan   = ([array] ($filteredReplacementPlans | Convert-HashtabletoArray))[0] #TODO: There can only be one, review the code here.
+                #SessionHosts      = [array] ($filteredSessionHosts | Convert-HashtableToArray) #TODO: Delete this
+                ResourceGroupName = $ResourceGroupName
+                Location          = $script:Location
             }
         }
         'Workspace' {

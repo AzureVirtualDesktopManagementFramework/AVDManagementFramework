@@ -25,15 +25,7 @@ param PreJoinRunCommand array
 
 //Domain Join
 param JoinObject object
-/*
-param SessionHostJoinType string
-param DomainName string = '' //Non-Mandatory parameters // TODO: How about we make Domain Join and Object?
-param OUPath string = ''
-param DomainJoinUserName string = ''
 
-@secure()
-param DomainJoinPassword string = ''
-*/
 
 resource vNIC 'Microsoft.Network/networkInterfaces@2020-11-01' = {
   name: '${VMName}-vNIC'

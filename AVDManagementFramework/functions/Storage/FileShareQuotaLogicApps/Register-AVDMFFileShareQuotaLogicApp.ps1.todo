@@ -1,0 +1,19 @@
+function Register-AVDMFFileShareQuotaLogicApp {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
+        [string] $StroageAccountResourceId
+    )
+    $script:StorageAccounts[$ReferenceName] = [PSCustomObject]@{
+        PSTypeName        = 'AVDMF.Storage.FileShareQuotaLogicApp'
+        ResourceGroupName = $resourceGroupName
+        ResourceID        = $resourceID
+        Name              = $ResourceName
+             = $ReferenceName
+        AccountType       = $accountType
+        Kind              = $Kind
+        SoftDeleteDays    = $ShareSoftDeleteRetentionDays
+        Tags              = $Tags
+    }    
+
+}

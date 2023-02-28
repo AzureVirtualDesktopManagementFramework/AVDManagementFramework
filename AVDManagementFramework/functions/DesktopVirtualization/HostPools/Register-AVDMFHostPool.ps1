@@ -33,6 +33,9 @@ function Register-AVDMFHostPool {
         [string] $PoolType,
 
         [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
+        [string] $ReplacementPlan,
+
+        [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
         [int] $MaxSessionLimit,
 
         [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
@@ -70,10 +73,13 @@ function Register-AVDMFHostPool {
         [string] $SessionHostJoinType = $script:SessionHostJoinType,
 
         [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
-        [string] $OrganizationalUnitDN,
+        [string] $ADOrganizationalUnitPath,
 
-        [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
-        [bool] $UseAvailabilityZones,
+        [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
+        [bool] $UseAvailabilityZones = $false,
+
+        [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
+        [string] $CustomRdpProperty = "drivestoredirect:s:;redirectwebauthn:i:0;redirectlocation:i:0;redirectclipboard:i:1;redirectprinters:i:0;devicestoredirect:s:;redirectcomports:i:0;redirectsmartcards:i:0;usbdevicestoredirect:s:;camerastoredirect:s:;autoreconnectionenabled:i:1;",
 
         [PSCustomObject] $Tags = [PSCustomObject]@{}
     )
@@ -98,7 +104,7 @@ function Register-AVDMFHostPool {
 
         # Pickup Storage Account
         #TODO: Change Storage Accounts into HashTables
-        if($StorageAccountReference){
+        if ($StorageAccountReference) {
             $storageAccount = $script:StorageAccounts[$StorageAccountReference]
             Register-AVDMFFileShare -Name $resourceName.ToLower() -StorageAccountName $storageAccount.Name -ResourceGroupName $storageAccount.ResourceGroupName
         }
@@ -112,6 +118,7 @@ function Register-AVDMFHostPool {
             PoolType             = $PoolType
             MaxSessionLimit      = $MaxSessionLimit
             NumberOfSessionHosts = $NumberOfSessionHosts
+            CustomRdpProperty    = $CustomRdpProperty
 
             WorkSpaceReference   = $WorkSpaceReference
 
@@ -152,17 +159,35 @@ function Register-AVDMFHostPool {
         else {
             # This would apply for pooled and personal pools. Only creating one AG of type Desktop.
             $applicationGroupParams = @{
-                HostPoolName         = $resourceName
-                ResourceGroupName    = $resourceGroupName
-                HostPoolResourceId   = $resourceID
-                Users                = $Users
-                FriendlyName         = $FriendlyName
-                ApplicationGroupType = 'Desktop'
-                SessionHostJoinType  = $script:SessionHostJoinType
+                HostPoolName             = $resourceName
+                ResourceGroupName        = $resourceGroupName
+                HostPoolResourceId       = $resourceID
+                Users                    = $Users
+                FriendlyName             = $FriendlyName
+                ApplicationGroupType     = 'Desktop'
+                SessionHostJoinType      = $SessionHostJoinType
+                ADOrganizationalUnitPath = $ADOrganizationalUnitPath
+
             }
             Register-AVDMFApplicationGroup @applicationGroupParams
         }
 
+
+        # Register Replacement Plan
+        $hostPoolInstance = $ResourceName.Substring($ResourceName.Length - 2, 2)
+        $sessionHostNamePrefix = New-AVDMFResourceName -ResourceType 'SessionHostPrefix' -AccessLevel $AccessLevel -HostPoolType $PoolType -HostPoolInstance $hostPoolInstance
+        $replacementPlanParams = @{
+            ResourceGroupName        = $resourceGroupName
+            HostPoolName             = $resourceName
+            NumberOfSessionHosts     = $NumberOfSessionHosts
+            SessionHostNamePrefix    = $sessionHostNamePrefix
+            SessionHostJoinType      = $script:SessionHostJoinType
+            ADOrganizationalUnitPath = $ADOrganizationalUnitPath
+            SubnetId                 = $subnetID
+            ReplacementPlanTemplate  = $script:ReplacementPlanTemplates[$ReplacementPlan]
+            SessionHostParameters    = $script:VMTemplates[$VMTemplate]
+        }
+        Register-AVDMFReplacementPlan @replacementPlanParams
 
         # Register Session Host
         $hostPoolInstance = $ResourceName.Substring($ResourceName.Length - 2, 2)
@@ -172,11 +197,11 @@ function Register-AVDMFHostPool {
                 # TODO: Handle Intune managed session hosts
             }
             "ADDS" {
-                $domainName = ($OrganizationalUnitDN -split "," | Where-Object { $_ -like "DC=*" } | ForEach-Object { $_.replace("DC=", "") }) -join "."
+                $domainName = ($ADOrganizationalUnitPath -split "," | Where-Object { $_ -like "DC=*" } | ForEach-Object { $_.replace("DC=", "") }) -join "."
             }
         }
 
-        $zone=1
+        $zone = 1
         for ($i = 1; $i -le $NumberOfSessionHosts; $i++) {
             #TODO: Change all parameters to use splatting
             $SessionHostParams = @{
@@ -185,12 +210,12 @@ function Register-AVDMFHostPool {
             }
             if ($SessionHostJoinType -eq "ADDS") {
                 $SessionHostParams['DomainName'] = $domainName
-                $SessionHostParams['OUPath'] = $OrganizationalUnitDN
+                $SessionHostParams['OUPath'] = $ADOrganizationalUnitPath
             }
-            if ($UseAvailabilityZones){
+            if ($UseAvailabilityZones) {
                 $SessionHostParams['AvailabilityZone'] = $zone
                 $zone++
-                if($zone -eq 4) {$zone = 1}
+                if ($zone -eq 4) { $zone = 1 }
             }
             Register-AVDMFSessionHost -ResourceGroupName $resourceGroupName -AccessLevel $AccessLevel -HostPoolType $PoolType -HostPoolInstance $hostPoolInstance -InstanceNumber $i -VMTemplate $script:VMTemplates[$VMTemplate] @SessionHostParams -Tags $Tags
         }

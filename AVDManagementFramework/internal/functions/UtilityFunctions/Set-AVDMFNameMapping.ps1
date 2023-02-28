@@ -14,7 +14,9 @@ function Set-AVDMFNameMapping {
             $stringMappings = ([regex]::Matches($item.Value, '%.+?%')).Value | ForEach-Object { if ($_) { $_ -replace "%", "" } }
             foreach ($mapping in $stringMappings) {
                 $mappedValue = $script:NameMappings[$mapping]
-                $item.Value = $item.Value -replace "%$mapping%", $mappedValue
+                if($null -ne $mappedValue ){
+                    $item.Value = $item.Value -replace "%$mapping%", $mappedValue
+                }
             }
             $dataset[$item.Key] = $item.Value
         }

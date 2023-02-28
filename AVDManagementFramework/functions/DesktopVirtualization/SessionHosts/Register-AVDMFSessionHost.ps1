@@ -35,6 +35,7 @@ function Register-AVDMFSessionHost {
 
     )
     process {
+
         $ResourceName = New-AVDMFResourceName -ResourceType 'VirtualMachine' -AccessLevel $AccessLevel -HostPoolType $HostPoolType -HostPoolInstance $HostPoolInstance -InstanceNumber $InstanceNumber
 
         $script:SessionHosts[$resourceName] = [PSCustomObject]@{ # TODO: Is it a good idea to switch this to hashtable not custom object?

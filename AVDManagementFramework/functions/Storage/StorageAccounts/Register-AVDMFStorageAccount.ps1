@@ -19,8 +19,11 @@ function Register-AVDMFStorageAccount {
         [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
         [int] $shareSoftDeleteRetentionDays,
 
-        [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
-        [string] $UniqueNameString,
+        [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
+        [string] $UniqueNameString ="",
+
+        #[Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
+        #[PSCustomObject] $FileShareQuotaOptimization,
 
         [PSCustomObject] $Tags = [PSCustomObject]@{}
     )

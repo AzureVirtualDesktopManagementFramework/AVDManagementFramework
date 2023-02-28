@@ -33,7 +33,7 @@ function New-AVDMFResourceName {
         [string] $AddressPrefix,
 
         [Int] $InstanceNumber,
-        [string] $UniqueNameString # For resources that require global name uniqueness (Storage Accounts)
+        [string] $UniqueNameString # For resources that require global name uniqueness (Storage Accounts / FunctionApps)
 
         #TODO: Change parameters to overloads so we don't have to provide them. (Except deployment stage?)
     )
@@ -76,7 +76,8 @@ function New-AVDMFResourceName {
             #FRED: $script:namingConvention[$componentName].$abbreviationMarker
             #$abv = Invoke-Expression -Command $Command #TODO:  Remove me
             $abv = ($namingConvention | Where-Object -FilterScript $filterScript).$abbreviationMarker
-            if (-not $abv) {throw "Could not find any abbreviation for $componentName`: $((Get-Variable -Name $componentName).Value)" }
+            if (-not $abv) {
+                throw "Could not find any abbreviation for $componentName`: $((Get-Variable -Name $componentName).Value)" }
             $abv
         }
 
@@ -102,7 +103,7 @@ function New-AVDMFResourceName {
     $resourceName = $nameArray -join "" -replace "-All", "" -replace "All", ""
     if ($namingStyle.LowerCase) { $resourceName = $resourceName.ToLower() }
 
-    if ($namingStyle.NameComponents[-1] -eq 'InstanceNumber') {
+    if ($namingStyle.NameComponents -contains 'InstanceNumber') {
         #TODO: Move this part to the main loop.
         if ($InstanceNumber) {
             $resourceName = "{0}{1:D2}" -f $resourceName, $InstanceNumber

@@ -103,6 +103,10 @@
 		'Register-AVDMFRemoteApp'
 		'Unregister-AVDMFRemoteApp'
 		'Get-AVDMFWorkspace'
+		'Get-AVDMFReplacementPlanTemplate'
+		'Register-AVDMFReplacementPlanTemplate'
+		'Get-AVDMFReplacementPlan'
+		'Register-AVDMFReplacementPlan'
 	)
 
 	# Cmdlets to export from this module

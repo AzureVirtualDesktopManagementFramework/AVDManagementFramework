@@ -22,7 +22,12 @@ function Invoke-AVDMFDesktopVirtualization {
             catch {
                 New-AzResourceGroup -Name $rg -Location $script:Location
             }
-            $hostPoolJobs += New-AzResourceGroupDeployment -ResourceGroupName $rg -Mode Complete -TemplateFile $bicepHostPools @templateParams -ErrorAction Stop -Confirm:$false -Force -AsJob
+            $hostPoolJobs += New-AzSubscriptionDeployment -Location $script:Location -Name 'AVDMFHostPoolDeployment' -TemplateFile $bicepHostPools -TemplateParameterObject $templateParams
+            #$hostPoolJobs += New-AzResourceGroupDeployment -ResourceGroupName $rg -Mode Incremental -TemplateFile $bicepHostPools @templateParams -ErrorAction Stop -Confirm:$false -Force -AsJob
+            #TODO: We switched to incremental for the FunctionApp to take over host deployment. We need to add logic to remove RemoteApps, Application groups, that are no longer in configuration.
+
+            #TODO: See if we can merge this into the main deployment
+
 
         }
         $dateTime = Get-Date
@@ -33,8 +38,8 @@ function Invoke-AVDMFDesktopVirtualization {
         $count = ($hostPoolJobs | Where-Object { $_.State -eq "Running" }).count
         Write-PSFMessage -Level Host -Message "Waiting for $count hostpool deployments to complete - Been waiting for $($timeSpan.ToString())"
     }
-    Write-PSFMessage -Level Host -Message "Hostpool jobs completed. See output below."
-    $hostPoolJobs | Receive-Job
+    Write-PSFMessage -Level Host -Message "Hostpool jobs completed."
+    #$hostPoolJobs | Receive-Job
 
     #region: Update SessionDesktop name
     #TODO: Check if there is a put method yet for 'Microsoft.DesktopVirtualization/applicationgroups/desktops'
