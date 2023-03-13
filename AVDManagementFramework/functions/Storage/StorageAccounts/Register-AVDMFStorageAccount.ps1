@@ -20,7 +20,20 @@ function Register-AVDMFStorageAccount {
         [int] $shareSoftDeleteRetentionDays,
 
         [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
-        [string] $UniqueNameString ="",
+        [string] $UniqueNameString = "",
+
+        [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
+        [string] $DirectoryServiceOptions,
+
+        [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
+        [string] $DomainName,
+
+        [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
+        [string] $DomainGuid,
+
+        [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
+        [string] $DefaultSharePermission,
+
 
         #[Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
         #[PSCustomObject] $FileShareQuotaOptimization,
@@ -38,15 +51,19 @@ function Register-AVDMFStorageAccount {
         $resourceID = "/Subscriptions/$script:AzSubscriptionId/resourceGroups/$resourceGroupName/providers/Microsoft.Storage/storageAccounts/$ResourceName"
 
         $script:StorageAccounts[$ReferenceName] = [PSCustomObject]@{
-            PSTypeName        = 'AVDMF.Storage.StorageAccount'
-            ResourceGroupName = $resourceGroupName
-            ResourceID        = $resourceID
-            Name              = $ResourceName
-            ReferenceName     = $ReferenceName
-            AccountType       = $accountType
-            Kind              = $Kind
-            SoftDeleteDays    = $ShareSoftDeleteRetentionDays
-            Tags              = $Tags
+            PSTypeName              = 'AVDMF.Storage.StorageAccount'
+            ResourceGroupName       = $resourceGroupName
+            ResourceID              = $resourceID
+            Name                    = $ResourceName
+            ReferenceName           = $ReferenceName
+            AccountType             = $accountType
+            Kind                    = $Kind
+            SoftDeleteDays          = $ShareSoftDeleteRetentionDays
+            DirectoryServiceOptions = $DirectoryServiceOptions
+            DomainName              = $DomainName
+            DomainGuid              = $DomainGuid
+            DefaultSharePermission  = $DefaultSharePermission
+            Tags                    = $Tags
         }
 
         #register Private Link

@@ -27,8 +27,6 @@ function Invoke-AVDMFDesktopVirtualization {
             #TODO: We switched to incremental for the FunctionApp to take over host deployment. We need to add logic to remove RemoteApps, Application groups, that are no longer in configuration.
 
             #TODO: See if we can merge this into the main deployment
-
-
         }
         $dateTime = Get-Date
     }

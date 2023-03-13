@@ -65,28 +65,33 @@ module ReplacementPlanModule 'modules/ReplacementPlan.bicep' = {
 
     //FunctionApp
     FunctionAppName: ReplacementPlan.Name
-    HostPoolResourceGroupName: ResourceGroupName
-    HostPoolName: ReplacementPlan.HostPoolName
-    TagIncludeInAutomation: ReplacementPlan.TagIncludeInAutomation
-    TagDeployTimestamp: ReplacementPlan.TagDeployTimestamp
-    TagPendingDrainTimestamp: ReplacementPlan.TagPendingDrainTimestamp
-    TargetVMAgeDays: ReplacementPlan.TargetVMAgeDays
+
+    SubscriptionId: subscription().subscriptionId
+
+
+    AllowDownsizing: ReplacementPlan.AllowDownsizing
+    AppPlanName: ReplacementPlan.AppPlanName
+    AppPlanTier: ReplacementPlan.AppPlanTier
     DrainGracePeriodHours: ReplacementPlan.DrainGracePeriodHours
     FixSessionHostTags: ReplacementPlan.FixSessionHostTags
-    SHRDeploymentPrefix: ReplacementPlan.SHRDeploymentPrefix
-    TargetSessionHostCount: ReplacementPlan.NumberOfSessionHosts
-    MaxSimultaneousDeployments: ReplacementPlan.MaxSimultaneousDeployments
-    SessionHostNamePrefix: ReplacementPlan.SessionHostNamePrefix
     FunctionAppZipUrl: ReplacementPlan.FunctionAppZipUrl
-    ADOrganizationalUnitPath: ReplacementPlan.ADOrganizationalUnitPath
-    SessionHostTemplateUri: ReplacementPlan.SessionHostTemplateUri
-    //SessionHostTemplateParametersPS1Uri: ReplacementPlan.SessionHostTemplateParametersPS1Uri
-    SessionHostParameters: ReplacementPlan.SessionHostParameters
-    SubnetId: ReplacementPlan.SubnetId
-    SubscriptionId: subscription().subscriptionId
-    SessionHostInstanceNumberPadding: ReplacementPlan.SessionHostInstanceNumberPadding
+    MaxSimultaneousDeployments: ReplacementPlan.MaxSimultaneousDeployments
     ReplaceSessionHostOnNewImageVersion: ReplacementPlan.ReplaceSessionHostOnNewImageVersion
     ReplaceSessionHostOnNewImageVersionDelayDays: ReplacementPlan.ReplaceSessionHostOnNewImageVersionDelayDays
+    SessionHostInstanceNumberPadding: ReplacementPlan.SessionHostInstanceNumberPadding
+    SHRDeploymentPrefix: ReplacementPlan.SHRDeploymentPrefix
+    TagDeployTimestamp: ReplacementPlan.TagDeployTimestamp
+    TagIncludeInAutomation: ReplacementPlan.TagIncludeInAutomation
+    TagPendingDrainTimestamp: ReplacementPlan.TagPendingDrainTimestamp
+    TagScalingPlanExclusionTag: ReplacementPlan.TagScalingPlanExclusionTag
+    TargetVMAgeDays: ReplacementPlan.TargetVMAgeDays
+    HostPoolName: ReplacementPlan.HostPoolName
+    SessionHostNamePrefix: ReplacementPlan.SessionHostNamePrefix
+    SessionHostParameters: ReplacementPlan.SessionHostParameters
+    SessionHostTemplateUri: ReplacementPlan.SessionHostTemplateUri
+    SubnetId: ReplacementPlan.SubnetId
+    TargetSessionHostCount: ReplacementPlan.TargetSessionHostCount
+    ADOrganizationalUnitPath: ReplacementPlan.ADOrganizationalUnitPath
   }
   dependsOn: hostPoolModule
 }
@@ -100,40 +105,3 @@ module RBACFunctionApphasDesktopVirtualizationVirtualMachineContributor 'modules
   }
   dependsOn: [ ReplacementPlanModule ]
 }
-
-/* //TODO: Delete this
-module SessionHostsModule 'modules/sessionHost.bicep' = [for sessionHostItem in SessionHosts: {
-  name: sessionHostItem.name
-  params: {
-    VMName: sessionHostItem.name
-    Location: Location
-    AdminUsername: sessionHostItem.AdminUsername
-    AdminPassword: sessionHostItem.AdminPassword
-    SubnetID: sessionHostItem.SubnetID
-    TimeZone: sessionHostItem.TimeZone
-    VMSize: sessionHostItem.VMSize
-    PreJoinRunCommand: sessionHostItem.PreJoinRunCommand
-    imageReference: sessionHostItem.ImageReference
-    AvailabilityZone: sessionHostItem.AvailabilityZone
-    AcceleratedNetworking: sessionHostItem.AcceleratedNetworking
-    Tags: sessionHostItem.Tags
-
-    // Add as session host
-    HostPoolName: hostPoolModule[0].name
-    HostPoolToken: hostPoolModule[0].outputs.registrationToken //We only have one host pool per deployment, we are using arrays for consistency.
-    WVDArtifactsURL: sessionHostItem.WVDArtifactsURL
-
-
-    // Join Domain
-    JoinObject: (sessionHostItem.SessionHostJoinType == 'ADDS') ? {
-      SessionHostJoinType:  sessionHostItem.SessionHostJoinType
-    } : {
-      SessionHostJoinType:  sessionHostItem.SessionHostJoinType //This broken, needs review (Join Object?)
-      //DomainName: sessionHostItem.DomainName
-      //OUPath: sessionHostItem.OUPath
-      //DomainJoinUserName: sessionHostItem.DomainJoinUserName
-      //DomainJoinPassword: sessionHostItem.DomainJoinPassword // TODO: Password is not secure like that
-    }
-  }
-}]
-*/

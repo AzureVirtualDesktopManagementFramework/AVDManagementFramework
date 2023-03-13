@@ -12,14 +12,10 @@ function Register-AVDMFReplacementPlan {
         [string] $HostPoolName,
 
         [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
-        [int] $NumberOfSessionHosts,
+        [int] $TargetSessionHostCount,
 
         [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
         [string] $SessionHostNamePrefix,
-
-        [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
-        [ValidateSet("AAD", "ADDS")]
-        [string] $SessionHostJoinType = $script:SessionHostJoinType,
 
         [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
         [string] $ADOrganizationalUnitPath,
@@ -44,29 +40,31 @@ function Register-AVDMFReplacementPlan {
     $script:ReplacementPlans[$resourceName] = [PSCustomObject]@{
         ResourceGroupName                            = $ResourceGroupName
         HostPoolName                                 = $HostPoolName
-        NumberOfSessionHosts                         = $NumberOfSessionHosts
+        TargetSessionHostCount                       = $TargetSessionHostCount
         SessionHostNamePrefix                        = $SessionHostNamePrefix
-        SessionHostJoinType                          = $SessionHostJoinType
         ADOrganizationalUnitPath                     = $ADOrganizationalUnitPath
         SubnetId                                     = $SubnetId
-        UseAvailabilityZones                         = $UseAvailabilityZones
+        SessionHostParameters                        = $SessionHostParameters.Parameters
+        #UseAvailabilityZones                         = $UseAvailabilityZones
+        Tags                                         = $Tags
+
+        # Replacement plan template
+        AllowDownsizing                              = $ReplacementPlanTemplate.AllowDownsizing
+        AppPlanName                                  = $ReplacementPlanTemplate.AppPlanName
+        AppPlanTier                                  = $ReplacementPlanTemplate.AppPlanTier
+        DrainGracePeriodHours                        = $ReplacementPlanTemplate.DrainGracePeriodHours
+        FixSessionHostTags                           = $ReplacementPlanTemplate.FixSessionHostTags
         FunctionAppZipUrl                            = $ReplacementPlanTemplate.FunctionAppZipUrl
-        AssignPermissions                            = $ReplacementPlanTemplate.AssignPermissions
+        MaxSimultaneousDeployments                   = $ReplacementPlanTemplate.MaxSimultaneousDeployments
+        ReplaceSessionHostOnNewImageVersion          = $ReplacementPlanTemplate.ReplaceSessionHostOnNewImageVersion
+        ReplaceSessionHostOnNewImageVersionDelayDays = $ReplacementPlanTemplate.ReplaceSessionHostOnNewImageVersionDelayDays
+        SessionHostInstanceNumberPadding             = $ReplacementPlanTemplate.SessionHostInstanceNumberPadding
+        SHRDeploymentPrefix                          = $ReplacementPlanTemplate.SHRDeploymentPrefix
         TagDeployTimestamp                           = $ReplacementPlanTemplate.TagDeployTimestamp
         TagIncludeInAutomation                       = $ReplacementPlanTemplate.TagIncludeInAutomation
         TagPendingDrainTimestamp                     = $ReplacementPlanTemplate.TagPendingDrainTimestamp
+        TagScalingPlanExclusionTag                   = $ReplacementPlanTemplate.TagScalingPlanExclusionTag
         TargetVMAgeDays                              = $ReplacementPlanTemplate.TargetVMAgeDays
-        DrainGracePeriodHours                        = $ReplacementPlanTemplate.DrainGracePeriodHours
-        FixSessionHostTags                           = $ReplacementPlanTemplate.FixSessionHostTags
-        SHRDeploymentPrefix                          = $ReplacementPlanTemplate.SHRDeploymentPrefix
-        MaxSimultaneousDeployments                   = $ReplacementPlanTemplate.MaxSimultaneousDeployments
         SessionHostTemplateUri                       = $ReplacementPlanTemplate.SessionHostTemplateUri
-        #SessionHostTemplateParametersPS1Uri          = $ReplacementPlanTemplate.SessionHostTemplateParametersPS1Uri
-        SessionHostParameters                        = $SessionHostParameters.Parameters
-        SessionHostInstanceNumberPadding             = $ReplacementPlanTemplate.SessionHostInstanceNumberPadding
-        ReplaceSessionHostOnNewImageVersion          = $ReplacementPlanTemplate.ReplaceSessionHostOnNewImageVersion
-        ReplaceSessionHostOnNewImageVersionDelayDays = $ReplacementPlanTemplate.ReplaceSessionHostOnNewImageVersionDelayDays
-        Tags                                         = $Tags
     }
-
 }

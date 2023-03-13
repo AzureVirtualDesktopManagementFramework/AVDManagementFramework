@@ -12,6 +12,10 @@ module StorageAccountModule 'Modules/StorageAccount.bicep' = [for item in Storag
     Kind: item.Kind
     Sku: item.accountType
     SoftDeleteDays: item.SoftDeleteDays
+    DirectoryServiceOptions: item.DirectoryServiceOptions
+    DomainName: item.DomainName
+    DomainGuid: item.DomainGuid
+    DefaultSharePermission: item.DefaultSharePermission
     Tags: item.Tags
   }
 }]

@@ -179,9 +179,8 @@ function Register-AVDMFHostPool {
         $replacementPlanParams = @{
             ResourceGroupName        = $resourceGroupName
             HostPoolName             = $resourceName
-            NumberOfSessionHosts     = $NumberOfSessionHosts
+            TargetSessionHostCount   = $NumberOfSessionHosts
             SessionHostNamePrefix    = $sessionHostNamePrefix
-            SessionHostJoinType      = $script:SessionHostJoinType
             ADOrganizationalUnitPath = $ADOrganizationalUnitPath
             SubnetId                 = $subnetID
             ReplacementPlanTemplate  = $script:ReplacementPlanTemplates[$ReplacementPlan]
