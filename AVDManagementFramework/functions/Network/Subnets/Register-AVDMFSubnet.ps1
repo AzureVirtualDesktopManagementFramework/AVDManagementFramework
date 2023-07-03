@@ -18,6 +18,8 @@ function Register-AVDMFSubnet {
         [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
         [string] $NSGID ,
 
+        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
+        [string] $RouteTableID ,
 
         [switch] $PassThru
 
@@ -42,13 +44,23 @@ function Register-AVDMFSubnet {
         $resourceName = New-AVDMFResourceName -ResourceType 'Subnet' -ParentName $NamePrefix -AddressPrefix $addressPrefix
         $resourceID = "$VirtualNetworkID/subnets/$resourceName"
 
+        #Build Subnet properties
+        $properties = @{
+            addressPrefix                  = $addressPrefix
+            privateEndpointNetworkPolicies = if ($PrivateLink) { "Disabled" } else { "Enabled" }
+        }
+        if ($NSGID) {
+            $properties['networkSecurityGroup'] = @{id = $NSGID }
+        }
+        if ($RouteTableID) {
+            $properties['routeTable'] = @{id = $RouteTableID }
+        }
+
         $script:Subnets[$resourceName] = [PSCustomObject]@{
             PSTypeName         = 'AVDMF.Network.Subnet'
             VirtualNetworkName = $VirtualNetworkName
             ResourceID         = $resourceID
-            AddressPrefix      = $addressPrefix
-            PrivateLink        = $PrivateLink
-            NSGID              = $NSGID
+            Properties         = $properties
         }
 
         if ($PassThru) { $resourceID }

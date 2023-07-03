@@ -25,4 +25,7 @@ publish/*
 LocalConfiguration/
 
 # ignore Build And Publish script
+# $APIKey = 'API key from PowerShell Gallery.com'
+# .\build\vsts-build.ps1 -ApiKey $APIKey -AutoVersion
+# Find-module AVDManagementFramework
 BuildAndPublish.ps1

@@ -1,3 +1,4 @@
+param Location string = resourceGroup().location
 param StorageAccounts array
 param PrivateLinks array
 param FileShares array
@@ -7,10 +8,14 @@ module StorageAccountModule 'Modules/StorageAccount.bicep' = [for item in Storag
   name: item.Name
   params: {
     StorageAccountName: item.Name
-    Location: resourceGroup().location
+    Location: Location
     Kind: item.Kind
     Sku: item.accountType
     SoftDeleteDays: item.SoftDeleteDays
+    DirectoryServiceOptions: item.DirectoryServiceOptions
+    DomainName: item.DomainName
+    DomainGuid: item.DomainGuid
+    DefaultSharePermission: item.DefaultSharePermission
     Tags: item.Tags
   }
 }]
@@ -19,7 +24,7 @@ module PrivateLinkModule 'Modules/PrivateLink.bicep' = [for item in PrivateLinks
   name: item.Name
   params: {
     PrivateLinkName: item.Name
-    Location: resourceGroup().location
+    Location: Location
     StorageAccountID: item.StorageAccountID
     SubnetID: item.SubnetID
     Tags: item.Tags

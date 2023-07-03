@@ -3,7 +3,7 @@ function Register-AVDMFNetworkSecurityGroup {
         [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
         [string] $ReferenceName,
 
-        [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
         [array] $SecurityRules,
 
         [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
@@ -31,7 +31,7 @@ function Register-AVDMFNetworkSecurityGroup {
             ResourceGroupName = $resourceGroupName
             ResourceID        = $resourceID
             ReferenceName     = $ReferenceName
-            SecurityRules     = @($SecurityRules | ForEach-Object { $_ | ConvertTo-PSFHashtable })
+            SecurityRules     = if($SecurityRules ) {@($SecurityRules | ForEach-Object { $_ | ConvertTo-PSFHashtable })} else {$null}
             Tags = $Tags
         }
     }

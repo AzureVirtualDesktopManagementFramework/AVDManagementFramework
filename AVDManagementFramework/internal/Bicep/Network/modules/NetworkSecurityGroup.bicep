@@ -14,10 +14,14 @@ resource NSG 'Microsoft.Network/networkSecurityGroups@2020-11-01' ={
         direction: rule.direction
         access: rule.access
         priority: rule.priority
-        sourceAddressPrefix: rule.source
-        sourcePortRange: rule.SourcePort
-        destinationAddressPrefix: rule.destination
-        destinationPortRange: rule.DestinationPort
+        sourceAddressPrefix: ( rule.SourceAny ? '*' : null )
+        sourceAddressPrefixes: rule.Sources
+        sourcePortRange: ( rule.SourcePortAny ? '*' : null )
+        sourcePortRanges: rule.SourcePorts
+        destinationAddressPrefix: ( rule.DestinationAny ? '*' : null )
+        destinationAddressPrefixes: rule.Destinations
+        destinationPortRange: ( rule.DestinationPortAny ? '*' : null )
+        destinationPortRanges:rule.DestinationPorts
         protocol: rule.protocol
       }
     }]

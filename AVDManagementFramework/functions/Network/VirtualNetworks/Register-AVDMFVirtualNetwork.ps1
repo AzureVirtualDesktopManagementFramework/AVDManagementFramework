@@ -3,13 +3,13 @@ function Register-AVDMFVirtualNetwork {
         [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
         [string] $ReferenceName,
 
-        [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
         [string[]] $DNSServers,
 
         [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
         [array] $DefaultSubnets,
 
-        [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
         [array] $VirtualNetworkPeerings,
 
         [string] $AccessLevel = 'All',
@@ -33,16 +33,26 @@ function Register-AVDMFVirtualNetwork {
         if (-not ($addressSpace -match '^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\/\d{2}$')) {
             throw "$addressSpace is not a valid address space"
         }
-
+        Write-PSFMessage -Level Verbose -Message 'Configuring peerings'
         # Configure Peerings
-        $peerings = @(foreach($peering in $VirtualNetworkPeerings){
-            $RemoteNetworkName = ($peering.RemoteVnetId -split "/")[-1]
-            @{
-                Name = "PeeringTo_$RemoteNetworkName"
-                RemoteNetworkID = $peering.RemoteVnetId
-                UseRemoteGateways = [bool] $peering.useRemoteGateways
-            }
-        })
+        $peerings = @(foreach ($peering in $VirtualNetworkPeerings) {
+                $RemoteNetworkName = ($peering.RemoteVnetId -split "/")[-1]
+                Write-PSFMessage -Level Verbose -Message "Configuring peering with $RemoteNetworkName"
+                @{
+                    Name              = "PeeringTo_$RemoteNetworkName"
+                    RemoteNetworkID   = $peering.RemoteVnetId
+                    UseRemoteGateways = [bool] $peering.useRemoteGateways
+                }
+                if ($peering.CreateRemotePeering) {
+                    Write-PSFMessage -Level Verbose -Message "Registering remote peering."
+                    Register-AVDMFRemotePeering -RemoteVNetResourceID $peering.RemoteVNetId -LocalVNetResourceId $resourceID
+                }
+                else {
+                    Write-PSFMessage -Level Warning -Message "Peering of Virtual Network '$ReferenceName ($resourceName)' to '$RemoteNetworkName' is not configured to create remote peering. You must manually create peering in the remote network." # Add link to help on website.
+                }
+            })
+
+
 
         $script:VirtualNetworks[$ReferenceName] = [PSCustomObject]@{
             PSTypeName             = 'AVDMF.Network.VirtualNetwork'
@@ -52,13 +62,18 @@ function Register-AVDMFVirtualNetwork {
             AddressSpace           = $addressSpace
             DNSServers             = $DNSServers
             VirtualNetworkPeerings = $peerings
-            Tags = $Tags
+            Tags                   = $Tags
         }
 
         #Register Default Subnets
         foreach ($subnet in $DefaultSubnets) {
-            $subnet | Register-AVDMFSubnet -VirtualNetworkName $resourceName -VirtualNetworkID $resourceID -ErrorAction Stop
-            #TODO Utilize value from pipeline of subnet object
+            $paramRegisterAVDMFSubnet = @{
+                VirtualNetworkName = $resourceName
+                VirtualNetworkID   = $resourceID
+            }
+            if ($subnet.NSG)        { $paramRegisterAVDMFSubnet['NSGID']        = $script:NetworkSecurityGroups[$subnet.NSG].ResourceID }
+            if ($subnet.RouteTable) { $paramRegisterAVDMFSubnet['RouteTableID'] = $script:RouteTables[$subnet.RouteTable].ResourceID }
+            $subnet | Register-AVDMFSubnet @paramRegisterAVDMFSubnet -ErrorAction Stop # TODO: Why do we have pipeline here?
         }
     }
 

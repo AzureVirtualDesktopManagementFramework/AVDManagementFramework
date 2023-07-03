@@ -27,6 +27,7 @@
 	# this module
 	RequiredModules   = @(
 		@{ ModuleName = 'PSFramework'; ModuleVersion = '1.6.181' }
+		'Az.Accounts'
 	)
 
 	# Assemblies that must be loaded prior to importing this module
@@ -94,6 +95,19 @@
 		'Get-AVDMFSessionHost'
 		'Get-AVDMFNameMapping'
 		'Get-AVDMFGlobalTag'
+		'Get-AVDMFRemotePeering'
+		'Get-AVDMFRouteTable'
+		'Get-AVDMFRemoteAppTemplate'
+		'Register-AVDMFRemoteAppTemplate'
+		'Unregister-AVDMFRemoteAppTemplate'
+		'Get-AVDMFRemoteApp'
+		'Register-AVDMFRemoteApp'
+		'Unregister-AVDMFRemoteApp'
+		'Get-AVDMFWorkspace'
+		'Get-AVDMFReplacementPlanTemplate'
+		'Register-AVDMFReplacementPlanTemplate'
+		'Get-AVDMFReplacementPlan'
+		'Register-AVDMFReplacementPlan'
 	)
 
 	# Cmdlets to export from this module

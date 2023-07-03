@@ -1,6 +1,6 @@
 function New-AVDMFSubnetRange {
     [cmdletBinding()]
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '',Justification = "Does not change any states")]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Justification = "Does not change any states")]
     param(
 
         # Address Space for the subnet, this can be any of the address spaces created under the vNet in the format X.X.X.X/X
@@ -121,7 +121,7 @@ function New-AVDMFSubnetRange {
     Write-Verbose -Message "ENTER: Collect vNet information"
 
     $vNetSubnets = foreach ($key in $script:Subnets.Keys) {
-        if ((ConvertFrom-DecimalIPtoBinary ($script:Subnets[$key].AddressPrefix.Substring(0, $script:Subnets[$key].AddressPrefix.IndexOf("/")))).Substring(0, $AddressSpaceMaskBits) `
+        if ((ConvertFrom-DecimalIPtoBinary ($script:Subnets[$key].Properties.AddressPrefix.Substring(0, $script:Subnets[$key].Properties.AddressPrefix.IndexOf("/")))).Substring(0, $AddressSpaceMaskBits) `
                 -eq
             (ConvertFrom-DecimalIPtoBinary ($AddressSpaceID)).Substring(0, $AddressSpaceMaskBits)) {
             $script:Subnets[$key]
@@ -131,9 +131,9 @@ function New-AVDMFSubnetRange {
     Write-Verbose -Message "Found $($vNetSubnets.count) subnets in the vNet belonging to the address space $AddressSpace"
 
     $UtilizedAddressesArray = foreach ($Subnet in $vNetSubnets) {
-        $IndexOfSubnetMask = $Subnet.AddressPrefix.indexOf("/")
-        $SubnetID = $Subnet.AddressPrefix.Substring(0, $IndexOfSubnetMask)
-        $MaskBits = $Subnet.AddressPrefix.Substring($IndexOfSubnetMask + 1)
+        $IndexOfSubnetMask = $Subnet.Properties.AddressPrefix.indexOf("/")
+        $SubnetID = $Subnet.Properties.AddressPrefix.Substring(0, $IndexOfSubnetMask)
+        $MaskBits = $Subnet.Properties.AddressPrefix.Substring($IndexOfSubnetMask + 1)
         Get-SubnetDetails -IPAddress $SubnetID -MaskBits $MaskBits
     }
 

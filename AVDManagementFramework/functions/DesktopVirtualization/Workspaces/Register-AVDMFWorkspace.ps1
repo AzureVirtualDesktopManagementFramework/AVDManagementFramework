@@ -10,6 +10,9 @@ function Register-AVDMFWorkspace {
         [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
         [string] $ReferenceName,
 
+        [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
+        [string] $FriendlyName,
+
         [PSCustomObject] $Tags = [PSCustomObject]@{}
     )
     process {
@@ -24,8 +27,9 @@ function Register-AVDMFWorkspace {
             ResourceID                 = $resourceID
             ReferenceName              = $ReferenceName
             ResourceGroupName          = $resourceGroupName
+            FriendlyName               = $FriendlyName
             ApplicationGroupReferences = @()
-            Tags = $Tags
+            Tags                       = $Tags
         }
     }
 }

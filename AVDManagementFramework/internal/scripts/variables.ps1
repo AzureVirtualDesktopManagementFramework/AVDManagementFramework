@@ -10,6 +10,8 @@ $script:VirtualNetworks = @{}
 $script:Subnets = @{}
 $Script:AddressSpaces = @()
 $script:NetworkSecurityGroups = @{}
+$script:RemotePeerings = @{}
+$script:RouteTables = @{}
 
 # Storage
 $script:StorageAccounts = @{}
@@ -19,9 +21,13 @@ $script:PrivateLinks = @{}
 # DesktopVirtualization
 $script:HostPools = @{}
 $script:ApplicationGroups = @{}
+$script:RemoteAppTemplates = @{}
+$script:RemoteApps = @{}
 $script:Workspaces = @{}
 $script:VMTemplates = @{}
 $script:SessionHosts = @{}
+$script:ReplacementPlanTemplates = @{}
+$script:ReplacementPlans= @{}
 
 # Tags
 $script:GlobalTags = @{}

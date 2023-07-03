@@ -22,7 +22,8 @@ function New-AVDMFResourceName {
         [Parameter()]
         [string] $ResourceType,
         [string] $DeploymentStage = $script:DeploymentStage,
-        [string] $ResourceCategory,
+        [string] $ResourceCategory, #This is part of the ABV category
+        [string] $NameSuffix,
         [string] $AccessLevel, # Enterprise, Specialist, Privileged
         [string] $HostPoolType, # Shared, Dedicated
 
@@ -31,8 +32,8 @@ function New-AVDMFResourceName {
         [string] $ParentName,
         [string] $AddressPrefix,
 
-
-        [Int] $InstanceNumber
+        [Int] $InstanceNumber,
+        [string] $UniqueNameString # For resources that require global name uniqueness (Storage Accounts / FunctionApps)
 
         #TODO: Change parameters to overloads so we don't have to provide them. (Except deployment stage?)
     )
@@ -47,7 +48,7 @@ function New-AVDMFResourceName {
             $componentName = $component -replace "Abv", ""
             $componentNC = $component -replace "Abv", "NC"
 
-            #Check if component naming convention is avaialbe
+            #Check if component naming convention is available
             # TODO: Use hashtable for naming conventions instead of dynamic variable names!
             # Assumption - hashtable stored in $script:namingConvention
             try { Get-Variable -Name $componentNC -ErrorAction Stop | Out-Null }
@@ -62,26 +63,34 @@ function New-AVDMFResourceName {
 
                 $namingConvention = (Get-Variable -Name $componentNC -Scope Script).Value
                 $filterScript = [ScriptBlock]::Create("`$_.DeploymentStage -eq `$DeploymentStage")
-                #$Command = "(`$Script:$componentNC | Where-Object DeploymentStage -contains `$DeploymentStage).$abbreviationMarker" #TODO: Remove me
+            }
+            elseif($componentName -eq 'Location'){
+
+                $namingConvention = (Get-Variable -Name $componentNC -Scope Script).Value
+                $filterScript = [ScriptBlock]::Create("`$_.Location -eq `$Script:Location")
             }
             else {
                 $namingConvention = (Get-Variable -Name $componentNC -Scope Script).Value
                 $filterScript = [ScriptBlock]::Create("`$_.$componentName -eq `$$componentName")
 
-                #$Command = "(`$Script:$componentNC | Where-Object $componentName -eq `$$componentName).$abbreviationMarker" #TODO: Remove me
-                #TODO: Review with Fred
-
             }
             #FRED: $script:namingConvention[$componentName].$abbreviationMarker
-            #$abv = Invoke-Expression -Command $Command #TODO:  Remove me
             $abv = ($namingConvention | Where-Object -FilterScript $filterScript).$abbreviationMarker
-            if (-not $abv) {throw "Could not find any abbreviation for $componentName`: $((Get-Variable -Name $componentName).Value)" }
+            if (-not $abv) {
+                throw "Could not find any abbreviation for $componentName`: $((Get-Variable -Name $componentName).Value)" }
             $abv
         }
+
+        if($component -like "static_*"){ $component -replace "static_","" }
+
         if ($component -in ('-', '_')) { $component }
 
         if ($component -eq 'ParentName') {
             $ParentName
+        }
+
+        if ($component -eq 'NameSuffix'){
+            $NameSuffix
         }
 
         if ($component -eq 'AddressPrefix') {
@@ -94,7 +103,7 @@ function New-AVDMFResourceName {
     $resourceName = $nameArray -join "" -replace "-All", "" -replace "All", ""
     if ($namingStyle.LowerCase) { $resourceName = $resourceName.ToLower() }
 
-    if ($namingStyle.NameComponents[-1] -eq 'InstanceNumber') {
+    if ($namingStyle.NameComponents -contains 'InstanceNumber') {
         #TODO: Move this part to the main loop.
         if ($InstanceNumber) {
             $resourceName = "{0}{1:D2}" -f $resourceName, $InstanceNumber
@@ -113,7 +122,16 @@ function New-AVDMFResourceName {
         }
     }
 
-    if ($resourceName.length -gt $namingStyle.MaxLength) { throw "resulting resource name is longer than $($namingStyle.MaxLength) characters '$resourceName'" }
+    if($namingStyle.NameComponents -contains 'UniqueNameString'){
+        $resourceName = "{0}{1}" -f $resourceName,$UniqueNameString
+    }
+    if($namingStyle.NameComponents -contains 'FillUnique'){
+        $subscriptionIdNoDash = $script:AzSubscriptionId -replace "-",""
+        $resourceName = "{0}x{1}" -f $resourceName,$subscriptionIdNoDash.substring(0,($namingStyle.MaxLength-$resourceName.length-1))
+    }
+
+
+    if ($resourceName.length -gt $namingStyle.MaxLength) { throw "Resulting resource name is longer than $($namingStyle.MaxLength) characters '$resourceName'" }
 
     $resourceName
 }
