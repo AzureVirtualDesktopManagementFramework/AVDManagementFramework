@@ -3,8 +3,7 @@ targetScope = 'subscription'
 param Location string
 param HostPools array
 param ApplicationGroups array
-//param SessionHosts array // TODO: Delete This
-param RemoteApps array
+param RemoteApps array = []
 param ReplacementPlan object
 param ResourceGroupName string
 
@@ -17,7 +16,7 @@ module hostPoolModule 'modules/HostPool.bicep' = [for hostpoolitem in HostPools:
     Location: Location
     PoolType: hostpoolitem.PoolType
     maxSessionLimit: hostpoolitem.MaxSessionLimit
-    SessionHostJoinType: hostpoolitem.SessionHostJoinType
+    //SessionHostJoinType: hostpoolitem.SessionHostJoinType
     Tags: hostpoolitem.Tags
     CustomRdpProperty: hostpoolitem.CustomRdpProperty
   }
@@ -54,11 +53,11 @@ module RemoteAppModule 'modules/RemoteApp.bicep' = [for (remoteAppItem, i) in Re
 
 module ReplacementPlanModule 'modules/ReplacementPlan.bicep' = {
   scope: resourceGroup(ResourceGroupName)
-  name: 'ReplacementPlan_${replace(replace(ReplacementPlan.Name, '/', '_'), ' ', '')}'
+  name: 'deploy_ReplacementPlan'
   params: {
     Location: Location
     //Storage Account
-    StorageAccountName: 'safuncshr${uniqueString(ReplacementPlan.Name)}'
+    StorageAccountName: 'stavdrp${uniqueString(ReplacementPlan.Name)}'
 
     // Log Analytics Workspace
     LogAnalyticsWorkspaceName: '${ReplacementPlan.Name}-LAW-01'

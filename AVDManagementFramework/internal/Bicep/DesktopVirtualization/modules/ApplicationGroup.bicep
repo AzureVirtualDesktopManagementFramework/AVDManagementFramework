@@ -6,7 +6,9 @@ param FriendlyName string
 param Tags object = {}
 param RoleDefinitionId string = '1d18fff3-a72a-46b5-b4a9-0b38a3cd7e63'
 param PrincipalId array
-param SessionHostJoinType string
+
+@allowed(['AAD','ADDS'])
+param SessionHostJoinType string ='ADDS'
 
 //Variables
 var AADVVMUserLoginRoleId = 'fb879df8-f326-4884-b1cf-06f3ad86be52'

@@ -45,7 +45,6 @@ function Register-AVDMFReplacementPlan {
         ADOrganizationalUnitPath                     = $ADOrganizationalUnitPath
         SubnetId                                     = $SubnetId
         SessionHostParameters                        = $SessionHostParameters.Parameters
-        #UseAvailabilityZones                         = $UseAvailabilityZones
         Tags                                         = $Tags
 
         # Replacement plan template

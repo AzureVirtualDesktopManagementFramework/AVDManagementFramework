@@ -27,6 +27,7 @@
 	# this module
 	RequiredModules   = @(
 		@{ ModuleName = 'PSFramework'; ModuleVersion = '1.6.181' }
+		'Az.Accounts'
 	)
 
 	# Assemblies that must be loaded prior to importing this module

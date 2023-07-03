@@ -8,6 +8,7 @@ param DirectoryServiceOptions string = 'None'
 param DomainName string
 param DomainGuid string
 param DefaultSharePermission string = 'None'
+param PublicNetworkAccess string = 'Disabled'
 
 resource StorageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
   name: StorageAccountName
@@ -25,6 +26,7 @@ resource StorageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
       }
       defaultSharePermission: DefaultSharePermission
     }
+    publicNetworkAccess: PublicNetworkAccess
   }
   resource FileServices 'fileServices' = {
     name: 'default'

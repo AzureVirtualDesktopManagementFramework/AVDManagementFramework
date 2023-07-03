@@ -3,7 +3,7 @@ param Location string
 param PoolType string
 param maxSessionLimit int
 param Tags object = {}
-param SessionHostJoinType string
+param SessionHostJoinType string = 'AD'
 
 param CustomRdpProperty string = 'autoreconnectionenabled:i:1;camerastoredirect:s:;devicestoredirect:s:;drivestoredirect:s:;redirectclipboard:i:1;redirectcomports:i:0;redirectlocation:i:0;redirectprinters:i:0;redirectsmartcards:i:0;redirectwebauthn:i:0;usbdevicestoredirect:s:'
 

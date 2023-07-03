@@ -12,7 +12,7 @@ function Set-AVDMFConfiguration {
     )
 
     #region: Initialize Variables
-    $configurationVersion = '1.0.57'
+    $configurationVersion = '1.0.58'
     #endregion: Initialize Variables
 
     #region: Load Custom Environment Variables
@@ -63,25 +63,9 @@ function Set-AVDMFConfiguration {
     Write-PSFMessage -Message "Configuration version: {0}" -StringValues $configurationVersion
 
     $script:Location = $GeneralConfiguration.Location
-    $script:TimeZone = $generalConfiguration.TimeZone
+    $script:TimeZone = $generalConfiguration.TimeZone # TODO: Remove this variable from all files.
 
-    # Azure AD or Domain Joined
-    $script:SessionHostJoinType = $generalConfiguration.SessionHostJoinType
-    switch ($script:SessionHostJoinType) {
-        # AAD => Azure AD Joined Session Hosts
-        "AAD" {
-            #TODO: Build logic for Intune managed session hosts.
-        }
 
-        # ADDS => Domain Joined Session Hosts
-        "ADDS" {
-            $Script:DomainJoinUserName = $generalConfiguration.DomainJoinCredential.SecretName
-            $Script:DomainJoinPassword = Get-AzKeyVaultSecret -ResourceId $generalConfiguration.DomainJoinCredential.KeyVaultID -Name $generalConfiguration.DomainJoinCredential.SecretName -AsPlainText
-
-        }
-
-        Default { throw "SessionHostJoin in GeneralConfiguration.jsonc must be ADDS or AAD " }
-    }
 
     #endregion
 
@@ -107,9 +91,9 @@ function Set-AVDMFConfiguration {
         'GlobalTags'               = @{Command = (Get-Command -Name Register-AVDMFGlobalTag); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "GlobalTags") }
         # Network
         'AddressSpaces'            = @{Command = (Get-Command Register-AVDMFAddressSpace); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "Network\AddressSpaces") }
-        'VirtualNetworks'          = @{Command = (Get-Command Register-AVDMFVirtualNetwork); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "Network\VirtualNetworks") }
         'RouteTables'              = @{Command = (Get-Command Register-AVDMFRouteTable); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "Network\RouteTables") }
         'NetworkSecurityGroups'    = @{Command = (Get-Command Register-AVDMFNetworkSecurityGroup); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "Network\NetworkSecurityGroups") }
+        'VirtualNetworks'          = @{Command = (Get-Command Register-AVDMFVirtualNetwork); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "Network\VirtualNetworks") }
         # Storage
         'StorageAccounts'          = @{Command = (Get-Command Register-AVDMFStorageAccount); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "Storage\StorageAccounts") }
         # Desktop Virtualization

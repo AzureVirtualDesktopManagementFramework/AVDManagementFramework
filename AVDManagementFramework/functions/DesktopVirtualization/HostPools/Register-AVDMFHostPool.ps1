@@ -70,7 +70,7 @@ function Register-AVDMFHostPool {
 
         [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
         [ValidateSet("AAD", "ADDS")]
-        [string] $SessionHostJoinType = $script:SessionHostJoinType,
+        [string] $SessionHostJoinType = "ADDS",
 
         [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
         [string] $ADOrganizationalUnitPath,
@@ -126,14 +126,13 @@ function Register-AVDMFHostPool {
 
             VMTemplate           = $VMTemplate
 
-            SessionHostJoinType  = $script:SessionHostJoinType
+            # SessionHostJoinType  = $script:SessionHostJoinType
 
             Tags                 = $Tags
 
 
 
         }
-
         #TODO: Check if users are provided.
         if ($PoolType -eq "RemoteApp") {
             # We assume only Remote App AGs are used for RemoteApp Host Pools
@@ -148,25 +147,25 @@ function Register-AVDMFHostPool {
                     FriendlyName         = $applicationGroup.Name
                     ApplicationGroupType = 'RemoteApp'
                     RemoteAppReference   = $applicationGroup.RemoteAppReference
-                    SessionHostJoinType  = $script:SessionHostJoinType
+                    SessionHostJoinType  = $SessionHostJoinType
 
 
                 }
                 #TODO: Add logic to check if all remote app references exist
-                Register-AVDMFApplicationGroup @applicationGroupParams
+                Register-AVDMFApplicationGroup @applicationGroupParams -ErrorAction Stop
             }
         }
         else {
             # This would apply for pooled and personal pools. Only creating one AG of type Desktop.
             $applicationGroupParams = @{
-                HostPoolName             = $resourceName
-                ResourceGroupName        = $resourceGroupName
-                HostPoolResourceId       = $resourceID
-                Users                    = $Users
-                FriendlyName             = $FriendlyName
-                ApplicationGroupType     = 'Desktop'
-                SessionHostJoinType      = $SessionHostJoinType
-                ADOrganizationalUnitPath = $ADOrganizationalUnitPath
+                HostPoolName         = $resourceName
+                ResourceGroupName    = $resourceGroupName
+                HostPoolResourceId   = $resourceID
+                Users                = $Users
+                Name                 = "Desktop"
+                FriendlyName         = $FriendlyName
+                ApplicationGroupType = 'Desktop'
+                SessionHostJoinType  = $SessionHostJoinType
 
             }
             Register-AVDMFApplicationGroup @applicationGroupParams
@@ -187,36 +186,5 @@ function Register-AVDMFHostPool {
             SessionHostParameters    = $script:VMTemplates[$VMTemplate]
         }
         Register-AVDMFReplacementPlan @replacementPlanParams
-
-        # Register Session Host
-        $hostPoolInstance = $ResourceName.Substring($ResourceName.Length - 2, 2)
-
-        switch ($SessionHostJoinType) {
-            "AAD" {
-                # TODO: Handle Intune managed session hosts
-            }
-            "ADDS" {
-                $domainName = ($ADOrganizationalUnitPath -split "," | Where-Object { $_ -like "DC=*" } | ForEach-Object { $_.replace("DC=", "") }) -join "."
-            }
-        }
-
-        $zone = 1
-        for ($i = 1; $i -le $NumberOfSessionHosts; $i++) {
-            #TODO: Change all parameters to use splatting
-            $SessionHostParams = @{
-                subnetID            = $subnetID
-                SessionHostJoinType = $SessionHostJoinType
-            }
-            if ($SessionHostJoinType -eq "ADDS") {
-                $SessionHostParams['DomainName'] = $domainName
-                $SessionHostParams['OUPath'] = $ADOrganizationalUnitPath
-            }
-            if ($UseAvailabilityZones) {
-                $SessionHostParams['AvailabilityZone'] = $zone
-                $zone++
-                if ($zone -eq 4) { $zone = 1 }
-            }
-            Register-AVDMFSessionHost -ResourceGroupName $resourceGroupName -AccessLevel $AccessLevel -HostPoolType $PoolType -HostPoolInstance $hostPoolInstance -InstanceNumber $i -VMTemplate $script:VMTemplates[$VMTemplate] @SessionHostParams -Tags $Tags
-        }
     }
 }

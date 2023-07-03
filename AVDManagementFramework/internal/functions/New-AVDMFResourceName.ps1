@@ -63,18 +63,18 @@ function New-AVDMFResourceName {
 
                 $namingConvention = (Get-Variable -Name $componentNC -Scope Script).Value
                 $filterScript = [ScriptBlock]::Create("`$_.DeploymentStage -eq `$DeploymentStage")
-                #$Command = "(`$Script:$componentNC | Where-Object DeploymentStage -contains `$DeploymentStage).$abbreviationMarker" #TODO: Remove me
+            }
+            elseif($componentName -eq 'Location'){
+
+                $namingConvention = (Get-Variable -Name $componentNC -Scope Script).Value
+                $filterScript = [ScriptBlock]::Create("`$_.Location -eq `$Script:Location")
             }
             else {
                 $namingConvention = (Get-Variable -Name $componentNC -Scope Script).Value
                 $filterScript = [ScriptBlock]::Create("`$_.$componentName -eq `$$componentName")
 
-                #$Command = "(`$Script:$componentNC | Where-Object $componentName -eq `$$componentName).$abbreviationMarker" #TODO: Remove me
-                #TODO: Review with Fred
-
             }
             #FRED: $script:namingConvention[$componentName].$abbreviationMarker
-            #$abv = Invoke-Expression -Command $Command #TODO:  Remove me
             $abv = ($namingConvention | Where-Object -FilterScript $filterScript).$abbreviationMarker
             if (-not $abv) {
                 throw "Could not find any abbreviation for $componentName`: $((Get-Variable -Name $componentName).Value)" }
@@ -125,6 +125,11 @@ function New-AVDMFResourceName {
     if($namingStyle.NameComponents -contains 'UniqueNameString'){
         $resourceName = "{0}{1}" -f $resourceName,$UniqueNameString
     }
+    if($namingStyle.NameComponents -contains 'FillUnique'){
+        $subscriptionIdNoDash = $script:AzSubscriptionId -replace "-",""
+        $resourceName = "{0}x{1}" -f $resourceName,$subscriptionIdNoDash.substring(0,($namingStyle.MaxLength-$resourceName.length-1))
+    }
+
 
     if ($resourceName.length -gt $namingStyle.MaxLength) { throw "Resulting resource name is longer than $($namingStyle.MaxLength) characters '$resourceName'" }
 

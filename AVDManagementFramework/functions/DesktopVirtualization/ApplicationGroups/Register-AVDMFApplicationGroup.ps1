@@ -27,7 +27,8 @@ function Register-AVDMFApplicationGroup {
         [string[]] $Users,
 
         [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
-        [string] $SessionHostJoinType,
+        [ValidateSet("AAD", "ADDS")]
+        [string] $SessionHostJoinType = "ADDS",
 
         [PSCustomObject] $Tags = [PSCustomObject]@{}
     )
@@ -73,19 +74,22 @@ function Register-AVDMFApplicationGroup {
         # Link Application group to workspace
         $script:Workspaces.GetEnumerator() | Where-Object { $_.value.ReferenceName -eq $script:hostpools.$hostpoolname.WorkspaceReference } | ForEach-Object { $_.value.ApplicationGroupReferences += $resourceID }
 
-        Write-PSFMessage -Level Verbose -Message "Registering Remote Apps"
+
         # Register remote Apps
-        foreach ($remoteApp in $RemoteAppReference) {
-            if ($script:RemoteAppTemplates[$remoteApp]) {
-                $registerRemoteAppParams = @{
-                    ResourceGroupName    = $resourceGroupName
-                    ApplicationGroupName = $resourceName
-                    RemoteAppTemplate    = $script:RemoteAppTemplates[$remoteApp]
+        if ($RemoteAppReference) {
+            Write-PSFMessage -Level Verbose -Message "Registering Remote Apps"
+            foreach ($remoteApp in $RemoteAppReference) {
+                if ($script:RemoteAppTemplates[$remoteApp]) {
+                    $registerRemoteAppParams = @{
+                        ResourceGroupName    = $resourceGroupName
+                        ApplicationGroupName = $resourceName
+                        RemoteAppTemplate    = $script:RemoteAppTemplates[$remoteApp]
+                    }
+                    Register-AVDMFRemoteApp @registerRemoteAppParams
                 }
-                Register-AVDMFRemoteApp @registerRemoteAppParams
-            }
-            else {
-                throw "Could not find RemoteApp Template: $remoteApp"
+                else {
+                    throw "Could not find RemoteApp Template: $remoteApp"
+                }
             }
         }
     }
