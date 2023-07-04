@@ -17,6 +17,81 @@ If you don't care to deal with the details, this is what you need to do to get s
  If you want to make sure your code too will survive OS-specific path notations, get used to using `Resolve-path` or the more powerful `Resolve-PSFPath`.
 
  ## change history
+  - **AVDMF v1.0.72 (Configuration v1.0.58)**:
+    - New:
+      - Support for Scaling Plans and Start VM On Connect
+        - Now you can deploy a scaling plan and Start VM On Connect as part of the host pool deployment.
+        - This will also configure permissions for Azure Virtual Desktop Service Principal over the subscription.
+        - Configure Scaling Plan Templates under `DesktopVirtualization > ScalingPlanTemplates`
+          ```JSON
+          {
+              "ReferenceName": "ScalingPlan01",
+              "timeZone": "Arabian Standard Time",
+              "Schedules": [
+                  "WeekdaySchedule",
+                  "WeekendSchedule"
+              ],
+              "ExclusionTag": "ScalingPlanExclusion",
+              "Tags": {}
+          }
+          ```
+        - Configure Schedules under `DesktopVirtualization > ScalingPlanScheduleTemplates`
+          ```JSON
+          {
+              "ReferenceName": "WeekendSchedule",
+              "Parameters": {
+                  "name": "WeekendSchedule",
+                  "daysOfWeek": [
+                      "Friday",
+                      "Saturday"
+                  ],
+                  // RAMP UP //
+                  "rampUpStartTime": {
+                      "hour": 9,
+                      "minute": 0
+                  },
+                  "rampUpCapacityThresholdPct": 90,
+                  "rampUpLoadBalancingAlgorithm": "DepthFirst",
+                  "rampUpMinimumHostsPct": 0,
+
+                  // PEAK //
+                  "peakStartTime": {
+                      "hour": 10,
+                      "minute": 0
+                  },
+                  "peakLoadBalancingAlgorithm": "DepthFirst",
+
+                  // RAMP DOWN //
+                  "rampDownStartTime": {
+                      "hour": 16,
+                      "minute": 0
+                  },
+                  "rampDownCapacityThresholdPct": 90,
+                  "rampDownForceLogoffUsers": true,
+                  "rampDownLoadBalancingAlgorithm": "DepthFirst",
+                  "rampDownMinimumHostsPct": 0,
+                  "rampDownNotificationMessage": "You will be logged off in 30 min. Make sure to save your work.",
+                  "rampDownStopHostsWhen": "ZeroActiveSessions",
+                  "rampDownWaitTimeMinutes": 30,
+
+                  // OFF PEAK //
+                  "offPeakStartTime": {
+                      "hour": 18,
+                      "minute": 0
+                  },
+                  "offPeakLoadBalancingAlgorithm": "DepthFirst"
+              }
+          }
+          ```
+        - Reference the scaling plan in Host Pool Configuration
+          ```JSON
+          {
+            ...
+              "ScalingPlan": "ScalingPlan01",
+              "StartVMOnConnect": true,
+              ...
+          }
+          ```
   - **AVDMF v1.0.71 (Configuration v1.0.58)**:
     - Fix:
       - Re-introduced Session Host Join Type in Host Pool Configuration, used for Azure AD Joined Session Hosts to assign Virtual Machine User role to users.

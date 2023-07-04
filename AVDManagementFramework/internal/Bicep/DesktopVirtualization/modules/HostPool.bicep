@@ -6,6 +6,7 @@ param Tags object = {}
 param SessionHostJoinType string = 'AD'
 
 param CustomRdpProperty string = 'autoreconnectionenabled:i:1;camerastoredirect:s:;devicestoredirect:s:;drivestoredirect:s:;redirectclipboard:i:1;redirectcomports:i:0;redirectlocation:i:0;redirectprinters:i:0;redirectsmartcards:i:0;redirectwebauthn:i:0;usbdevicestoredirect:s:'
+param StartVMOnConnect bool
 
 
 
@@ -15,7 +16,7 @@ var loadBalancerType = (PoolType == 'Personal') ? 'Persistent' : 'BreadthFirst'
 var hostPoolType = (PoolType == 'Personal') ? 'Personal' : 'Pooled'
 
 
-resource HostPool 'Microsoft.DesktopVirtualization/hostPools@2021-02-01-preview' = {
+resource HostPool 'Microsoft.DesktopVirtualization/hostPools@2022-09-09' = {
   name: HostPoolName
   location: Location
   properties: {
@@ -29,6 +30,7 @@ resource HostPool 'Microsoft.DesktopVirtualization/hostPools@2021-02-01-preview'
       expirationTime: TokenExpirationTime
     }
     customRdpProperty: (SessionHostJoinType == 'AAD') ?   'targetisaadjoined:i:1;enablerdsaadauth:i:1;${CustomRdpProperty}' : CustomRdpProperty
+    startVMOnConnect: StartVMOnConnect
   }
   tags:Tags
 }

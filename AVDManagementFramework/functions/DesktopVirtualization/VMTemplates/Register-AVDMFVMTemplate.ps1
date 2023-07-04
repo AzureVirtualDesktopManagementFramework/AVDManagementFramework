@@ -8,7 +8,7 @@ function Register-AVDMFVMTemplate {
     )
     process {
         $script:VMTemplates[$ReferenceName] = @{
-            Parameters = $Parameters | ConvertTo-Json -Depth 100 -Compress
+            Parameters = $Parameters | ConvertTo-Json -Depth 100 -Compress # Converting to JSON as this is how it is stored as a FunctipnApp Configuration.
         }
     }
 }

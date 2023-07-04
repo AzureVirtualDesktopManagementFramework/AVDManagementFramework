@@ -28,6 +28,9 @@ $script:VMTemplates = @{}
 $script:SessionHosts = @{}
 $script:ReplacementPlanTemplates = @{}
 $script:ReplacementPlans= @{}
+$script:ScalingPlanTemplates = @{}
+$script:ScalingPlanScheduleTemplates = @{}
+$script:ScalingPlans = @{}
 
 # Tags
 $script:GlobalTags = @{}

@@ -4,6 +4,7 @@ param Location string
 param HostPools array
 param ApplicationGroups array
 param RemoteApps array = []
+param ScalingPlan object = {}
 param ReplacementPlan object
 param ResourceGroupName string
 
@@ -19,6 +20,7 @@ module hostPoolModule 'modules/HostPool.bicep' = [for hostpoolitem in HostPools:
     //SessionHostJoinType: hostpoolitem.SessionHostJoinType
     Tags: hostpoolitem.Tags
     CustomRdpProperty: hostpoolitem.CustomRdpProperty
+    StartVMOnConnect: hostpoolitem.StartVMOnConnect
   }
 }]
 module applicationGroupModule 'modules/ApplicationGroup.bicep' = [for applicationGroupItem in ApplicationGroups: {
@@ -50,6 +52,24 @@ module RemoteAppModule 'modules/RemoteApp.bicep' = [for (remoteAppItem, i) in Re
     //SessionHostsModule // TODO: Check if all is well after removing this
   ]
 }]
+
+// Scaling Plan //
+module deployScalingPlanModule 'modules/ScalingPlan.bicep' = if (! empty(ScalingPlan)) {
+  scope: resourceGroup(ResourceGroupName)
+  name: 'deployScalingPlanModule'
+  params: {
+    Name: ScalingPlan.Name
+    Location: Location
+    HostPoolId: ScalingPlan.HostPoolId
+    ExclusionTag: ScalingPlan.ExclusionTag
+    Schedules: ScalingPlan.Schedules
+    Timezone: ScalingPlan.Timezone
+
+    Tags: ScalingPlan.Tags
+  }
+  dependsOn: hostPoolModule
+}
+
 
 module ReplacementPlanModule 'modules/ReplacementPlan.bicep' = {
   scope: resourceGroup(ResourceGroupName)
@@ -95,6 +115,14 @@ module ReplacementPlanModule 'modules/ReplacementPlan.bicep' = {
   dependsOn: hostPoolModule
 }
 
+module RBACAzureVirtualDesktopApp 'modules/RBACRoleAssignment.bicep' = if (! empty(ScalingPlan) || HostPools[0].StartVMOnConnect){
+  name: 'RBACAzureVirtualDesktopApp'
+  params: {
+    PrinicpalId: HostPools[0].AVDAppObjectId
+    RoleDefinitionId: '40c5ff49-9181-41f8-ae61-143b0e78555e' // Desktop Virtualization Power On Off Contributor
+    Scope: subscription().id
+  }
+}
 module RBACFunctionApphasDesktopVirtualizationVirtualMachineContributor 'modules/RBACRoleAssignment.bicep' = {
   name: 'RBACFunctionApphasDesktopVirtualizationVirtualMachineContributor'
   params: {
