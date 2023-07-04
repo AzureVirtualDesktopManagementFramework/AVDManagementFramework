@@ -1,5 +1,5 @@
 ﻿# AVD Management Framework
-## change history
+## Change History
   - **AVDMF v1.0.72 (Configuration v1.0.58)**:
     - New:
       - Support for Scaling Plans and Start VM On Connect
