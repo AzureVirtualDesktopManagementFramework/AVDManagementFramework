@@ -35,6 +35,9 @@ function Register-AVDMFHostPool {
         [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
         [string] $ReplacementPlan,
 
+        [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
+        [string] $ScalingPlan,
+
         [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
         [int] $MaxSessionLimit,
 
@@ -79,6 +82,9 @@ function Register-AVDMFHostPool {
         [bool] $UseAvailabilityZones = $false,
 
         [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
+        [bool] $StartVMOnConnect = $false,
+
+        [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
         [string] $CustomRdpProperty = "drivestoredirect:s:;redirectwebauthn:i:0;redirectlocation:i:0;redirectclipboard:i:1;redirectprinters:i:0;devicestoredirect:s:;redirectcomports:i:0;redirectsmartcards:i:0;usbdevicestoredirect:s:;camerastoredirect:s:;autoreconnectionenabled:i:1;",
 
         [PSCustomObject] $Tags = [PSCustomObject]@{}
@@ -109,6 +115,10 @@ function Register-AVDMFHostPool {
             Register-AVDMFFileShare -Name $resourceName.ToLower() -StorageAccountName $storageAccount.Name -ResourceGroupName $storageAccount.ResourceGroupName
         }
 
+        # Get Azure Virtual Desktop App Object Id for permission assignment
+        Write-PSFMessage -Level Verbose -Message "Getting Azure Virtual Desktop App (9cdead84-a844-4324-93f2-b2e6bb768d07) Object Id for permission assignment"
+        $avdAppObjectId = (Get-AzADServicePrincipal -ApplicationId '9cdead84-a844-4324-93f2-b2e6bb768d07').Id
+        Write-PSFMessage -Level Verbose -Message "Azure Virtual Desktop App Object Id is: {0}" -StringValues $avdAppObjectId
 
         $script:HostPools[$ResourceName] = [PSCustomObject]@{
             PSTypeName           = 'AVDMF.DesktopVirtualization.HostPool'
@@ -119,6 +129,8 @@ function Register-AVDMFHostPool {
             MaxSessionLimit      = $MaxSessionLimit
             NumberOfSessionHosts = $NumberOfSessionHosts
             CustomRdpProperty    = $CustomRdpProperty
+            StartVMOnConnect     = $StartVMOnConnect
+            AVDAppObjectId       = $avdAppObjectId
 
             WorkSpaceReference   = $WorkSpaceReference
 
@@ -172,6 +184,17 @@ function Register-AVDMFHostPool {
         }
 
 
+        # Register Scaling Plan
+        if (-Not [string]::IsNullOrEmpty($ScalingPlan)) {
+            $scalingPlanParams = @{
+                ResourceGroupName   = $resourceGroupName
+                HostPoolName        = $resourceName
+                HostPoolId          = $resourceID
+                ScalingPlanTemplate = $script:ScalingPlanTemplates[$ScalingPlan]
+            }
+            Register-AVDMFScalingPlan @scalingPlanParams
+        }
+
         # Register Replacement Plan
         $hostPoolInstance = $ResourceName.Substring($ResourceName.Length - 2, 2)
         $sessionHostNamePrefix = New-AVDMFResourceName -ResourceType 'SessionHostPrefix' -AccessLevel $AccessLevel -HostPoolType $PoolType -HostPoolInstance $hostPoolInstance
@@ -184,6 +207,10 @@ function Register-AVDMFHostPool {
             SubnetId                 = $subnetID
             ReplacementPlanTemplate  = $script:ReplacementPlanTemplates[$ReplacementPlan]
             SessionHostParameters    = $script:VMTemplates[$VMTemplate]
+        }
+        if (-Not [string]::IsNullOrEmpty($ScalingPlan)) {
+
+            $replacementPlanParams.ScalingPlanExclusionTag = $script:ScalingPlanTemplates[$ScalingPlan].ExclusionTag
         }
         Register-AVDMFReplacementPlan @replacementPlanParams
     }

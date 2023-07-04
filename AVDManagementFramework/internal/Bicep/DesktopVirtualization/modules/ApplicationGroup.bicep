@@ -13,7 +13,7 @@ param SessionHostJoinType string ='ADDS'
 //Variables
 var AADVVMUserLoginRoleId = 'fb879df8-f326-4884-b1cf-06f3ad86be52'
 
-resource ApplicationGroup 'Microsoft.DesktopVirtualization/applicationGroups@2021-02-01-preview' = {
+resource ApplicationGroup 'Microsoft.DesktopVirtualization/applicationGroups@2022-09-09' = {
   name: ApplicationGroupName
   location: Location
   properties:{
@@ -24,7 +24,7 @@ resource ApplicationGroup 'Microsoft.DesktopVirtualization/applicationGroups@202
   tags: Tags
 }
 
-resource RoleAssignment 'Microsoft.Authorization/roleAssignments@2020-08-01-preview' = [for item in PrincipalId:{
+resource RoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = [for item in PrincipalId:{
   name: guid(item,ApplicationGroup.id)
   scope: ApplicationGroup
   properties:{

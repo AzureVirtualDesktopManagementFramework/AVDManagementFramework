@@ -88,20 +88,22 @@ function Set-AVDMFConfiguration {
     #region: Define Registrable Components
     $components = [ordered] @{
         # Tags
-        'GlobalTags'               = @{Command = (Get-Command -Name Register-AVDMFGlobalTag); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "GlobalTags") }
+        'GlobalTags'                   = @{Command = (Get-Command -Name Register-AVDMFGlobalTag); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "GlobalTags") }
         # Network
-        'AddressSpaces'            = @{Command = (Get-Command Register-AVDMFAddressSpace); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "Network\AddressSpaces") }
-        'RouteTables'              = @{Command = (Get-Command Register-AVDMFRouteTable); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "Network\RouteTables") }
-        'NetworkSecurityGroups'    = @{Command = (Get-Command Register-AVDMFNetworkSecurityGroup); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "Network\NetworkSecurityGroups") }
-        'VirtualNetworks'          = @{Command = (Get-Command Register-AVDMFVirtualNetwork); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "Network\VirtualNetworks") }
+        'AddressSpaces'                = @{Command = (Get-Command Register-AVDMFAddressSpace); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "Network\AddressSpaces") }
+        'RouteTables'                  = @{Command = (Get-Command Register-AVDMFRouteTable); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "Network\RouteTables") }
+        'NetworkSecurityGroups'        = @{Command = (Get-Command Register-AVDMFNetworkSecurityGroup); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "Network\NetworkSecurityGroups") }
+        'VirtualNetworks'              = @{Command = (Get-Command Register-AVDMFVirtualNetwork); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "Network\VirtualNetworks") }
         # Storage
-        'StorageAccounts'          = @{Command = (Get-Command Register-AVDMFStorageAccount); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "Storage\StorageAccounts") }
+        'StorageAccounts'              = @{Command = (Get-Command Register-AVDMFStorageAccount); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "Storage\StorageAccounts") }
         # Desktop Virtualization
-        'Workspaces'               = @{Command = (Get-Command Register-AVDMFWorkspace); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "DesktopVirtualization\Workspaces") }
-        'VMTemplates'              = @{Command = (Get-Command Register-AVDMFVMTemplate); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "DesktopVirtualization\VMTemplates") }
-        'RemoteAppTemplates'       = @{Command = (Get-Command Register-AVDMFRemoteAppTemplate); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "DesktopVirtualization\RemoteAppTemplates") }
-        'ReplacementPlanTemplates' = @{Command = (Get-Command Register-AVDMFReplacementPlanTemplate); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "DesktopVirtualization\ReplacementPlanTemplates") }
-        'HostPools'                = @{Command = (Get-Command Register-AVDMFHostPool); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "DesktopVirtualization\HostPools") }
+        'Workspaces'                   = @{Command = (Get-Command Register-AVDMFWorkspace); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "DesktopVirtualization\Workspaces") }
+        'VMTemplates'                  = @{Command = (Get-Command Register-AVDMFVMTemplate); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "DesktopVirtualization\VMTemplates") }
+        'RemoteAppTemplates'           = @{Command = (Get-Command Register-AVDMFRemoteAppTemplate); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "DesktopVirtualization\RemoteAppTemplates") }
+        'ReplacementPlanTemplates'     = @{Command = (Get-Command Register-AVDMFReplacementPlanTemplate); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "DesktopVirtualization\ReplacementPlanTemplates") }
+        'ScalingPlanScheduleTemplates' = @{Command = (Get-Command Register-AVDMFScalingPlanScheduleTemplate); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "DesktopVirtualization\ScalingPlanScheduleTemplates") }
+        'ScalingPlanTemplates'         = @{Command = (Get-Command Register-AVDMFScalingPlanTemplate); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "DesktopVirtualization\ScalingPlanTemplates") }
+        'HostPools'                    = @{Command = (Get-Command Register-AVDMFHostPool); ConfigurationPath = (Join-Path -Path $ConfigurationPath -ChildPath "DesktopVirtualization\HostPools") }
 
     }
     #endregion: Define Registrable Components

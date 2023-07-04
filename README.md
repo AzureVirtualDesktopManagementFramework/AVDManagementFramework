@@ -1,22 +1,80 @@
-﻿# PSFModule guidance
+﻿# AVD Management Framework
+## Change History
+  - **AVDMF v1.0.72 (Configuration v1.0.58)**:
+    - New:
+      - Support for Scaling Plans and Start VM On Connect
+        - Now you can deploy a scaling plan and Start VM On Connect as part of the host pool deployment.
+        - This will also configure permissions for Azure Virtual Desktop Service Principal over the subscription.
+        - Configure Scaling Plan Templates under `DesktopVirtualization > ScalingPlanTemplates`
+          ```JSON
+          {
+              "ReferenceName": "ScalingPlan01",
+              "timeZone": "Arabian Standard Time",
+              "Schedules": [
+                  "WeekdaySchedule",
+                  "WeekendSchedule"
+              ],
+              "ExclusionTag": "ScalingPlanExclusion",
+              "Tags": {}
+          }
+          ```
+        - Configure Schedules under `DesktopVirtualization > ScalingPlanScheduleTemplates`
+          ```JSON
+          {
+              "ReferenceName": "WeekendSchedule",
+              "Parameters": {
+                  "name": "WeekendSchedule",
+                  "daysOfWeek": [
+                      "Friday",
+                      "Saturday"
+                  ],
+                  // RAMP UP //
+                  "rampUpStartTime": {
+                      "hour": 9,
+                      "minute": 0
+                  },
+                  "rampUpCapacityThresholdPct": 90,
+                  "rampUpLoadBalancingAlgorithm": "DepthFirst",
+                  "rampUpMinimumHostsPct": 0,
 
-This is a finished module layout optimized for implementing the PSFramework.
+                  // PEAK //
+                  "peakStartTime": {
+                      "hour": 10,
+                      "minute": 0
+                  },
+                  "peakLoadBalancingAlgorithm": "DepthFirst",
 
-If you don't care to deal with the details, this is what you need to do to get started seeing results:
+                  // RAMP DOWN //
+                  "rampDownStartTime": {
+                      "hour": 16,
+                      "minute": 0
+                  },
+                  "rampDownCapacityThresholdPct": 90,
+                  "rampDownForceLogoffUsers": true,
+                  "rampDownLoadBalancingAlgorithm": "DepthFirst",
+                  "rampDownMinimumHostsPct": 0,
+                  "rampDownNotificationMessage": "You will be logged off in 30 min. Make sure to save your work.",
+                  "rampDownStopHostsWhen": "ZeroActiveSessions",
+                  "rampDownWaitTimeMinutes": 30,
 
- - Add the functions you want to publish to `/functions/`
- - Update the `FunctionsToExport` node in the module manifest (AVDManagementFramework.psd1). All functions you want to publish should be in a list.
- - Add internal helper functions the user should not see to `/internal/functions/`
-
- ## Path Warning
-
- > If you want your module to be compatible with Linux and MacOS, keep in mind that those OS are case sensitive for paths and files.
-
- `Import-ModuleFile` is preconfigured to resolve the path of the files specified, so it will reliably convert weird path notations the system can't handle.
- Content imported through that command thus need not mind the path separator.
- If you want to make sure your code too will survive OS-specific path notations, get used to using `Resolve-path` or the more powerful `Resolve-PSFPath`.
-
- ## change history
+                  // OFF PEAK //
+                  "offPeakStartTime": {
+                      "hour": 18,
+                      "minute": 0
+                  },
+                  "offPeakLoadBalancingAlgorithm": "DepthFirst"
+              }
+          }
+          ```
+        - Reference the scaling plan in Host Pool Configuration
+          ```JSON
+          {
+            ...
+            "ScalingPlan": "ScalingPlan01",
+            "StartVMOnConnect": true,
+            ...
+          }
+          ```
   - **AVDMF v1.0.71 (Configuration v1.0.58)**:
     - Fix:
       - Re-introduced Session Host Join Type in Host Pool Configuration, used for Azure AD Joined Session Hosts to assign Virtual Machine User role to users.

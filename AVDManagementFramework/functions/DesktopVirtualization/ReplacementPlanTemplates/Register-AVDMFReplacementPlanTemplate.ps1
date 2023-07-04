@@ -43,8 +43,6 @@ function Register-AVDMFReplacementPlanTemplate {
         [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
         [string] $TagPendingDrainTimestamp = 'AutoReplacePendingDrainTimestamp',
         [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
-        [string] $TagScalingPlanExclusionTag = 'ScalingPlanExclusion',
-        [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
         [int] $TargetVMAgeDays =  45,
         [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
         [string] $SessionHostTemplateUri
@@ -71,7 +69,6 @@ function Register-AVDMFReplacementPlanTemplate {
         TagDeployTimestamp                           = $TagDeployTimestamp
         TagIncludeInAutomation                       = $TagIncludeInAutomation
         TagPendingDrainTimestamp                     = $TagPendingDrainTimestamp
-        TagScalingPlanExclusionTag                   = $TagScalingPlanExclusionTag
         TargetVMAgeDays                              = $TargetVMAgeDays
         SessionHostTemplateUri                       = $SessionHostTemplateUri
 

@@ -108,6 +108,11 @@
 		'Register-AVDMFReplacementPlanTemplate'
 		'Get-AVDMFReplacementPlan'
 		'Register-AVDMFReplacementPlan'
+		'Get-AVDMFScalingPlanScheduleTemplate'
+		'Register-AVDMFScalingPlanScheduleTemplate'
+		'Get-AVDMFScalingPlanTemplate'
+		'Register-AVDMFScalingPlanTemplate'
+		'Get-AVDMFScalingPlan'
 	)
 
 	# Cmdlets to export from this module

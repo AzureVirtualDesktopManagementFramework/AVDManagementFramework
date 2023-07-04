@@ -27,7 +27,7 @@ function Register-AVDMFReplacementPlan {
         [object] $ReplacementPlanTemplate,
 
         [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
-        [bool] $UseAvailabilityZones = $false,
+        [string] $ScalingPlanExclusionTag = "ScalingPlanExclusion",
 
         [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
         [string] $UniqueNameString = "",
@@ -45,6 +45,7 @@ function Register-AVDMFReplacementPlan {
         ADOrganizationalUnitPath                     = $ADOrganizationalUnitPath
         SubnetId                                     = $SubnetId
         SessionHostParameters                        = $SessionHostParameters.Parameters
+        TagScalingPlanExclusionTag                   = $ScalingPlanExclusionTag
         Tags                                         = $Tags
 
         # Replacement plan template
@@ -62,7 +63,6 @@ function Register-AVDMFReplacementPlan {
         TagDeployTimestamp                           = $ReplacementPlanTemplate.TagDeployTimestamp
         TagIncludeInAutomation                       = $ReplacementPlanTemplate.TagIncludeInAutomation
         TagPendingDrainTimestamp                     = $ReplacementPlanTemplate.TagPendingDrainTimestamp
-        TagScalingPlanExclusionTag                   = $ReplacementPlanTemplate.TagScalingPlanExclusionTag
         TargetVMAgeDays                              = $ReplacementPlanTemplate.TargetVMAgeDays
         SessionHostTemplateUri                       = $ReplacementPlanTemplate.SessionHostTemplateUri
     }

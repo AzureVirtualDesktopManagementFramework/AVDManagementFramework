@@ -77,7 +77,8 @@ function New-AVDMFResourceName {
             #FRED: $script:namingConvention[$componentName].$abbreviationMarker
             $abv = ($namingConvention | Where-Object -FilterScript $filterScript).$abbreviationMarker
             if (-not $abv) {
-                throw "Could not find any abbreviation for $componentName`: $((Get-Variable -Name $componentName).Value)" }
+                throw "Could not find any abbreviation for $componentName`: $((Get-Variable -Name $componentName).Value)"
+            }
             $abv
         }
 
