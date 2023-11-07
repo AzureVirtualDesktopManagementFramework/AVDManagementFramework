@@ -1,5 +1,28 @@
 ﻿# AVD Management Framework
 ## Change History
+  - **AVDMF v1.0.73 (Configuration v1.0.58)**:
+    - New:
+      - File Share Auto Grow Logic App
+        - Now you can deploy a Logic App to each storage account that will automatically grow the file share keeping a minimum buffer.
+        - Configure this in the Storage Account configuration under `Storage > StorageAccounts`
+          ```diff
+          {
+              "ReferenceName" : "ProfileSA01",
+              "AccessLevel": "All",
+              "HostPoolType": "All",
+              "accountType": "Premium_LRS",
+              "kind": "FileStorage",
+              "shareSoftDeleteRetentionDays": 7,
+          +    "FileShareAutoGrow":{
+          +        "Enabled": true,
+          +        "TargetFreeSpaceGB": 50
+              },
+              "DirectoryServiceOptions": "AADKerb",
+              "DomainName": "orpic.om",
+              "DomainGuid": "76a7401a-f3cb-4ede-9201-1867c4210908",
+              "DefaultSharePermission" : "StorageFileDataSmbShareContributor"
+          }
+          ```
   - **AVDMF v1.0.72 (Configuration v1.0.58)**:
     - New:
       - Support for Scaling Plans and Start VM On Connect
