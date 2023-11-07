@@ -1,0 +1,26 @@
+[
+    {
+        "HostPoolType": "Personal",
+        "Abbreviation": "Personal",
+        "VirtualMachineAbv": "p",
+        "SessionHostPrefixAbv": "p"
+    },
+    {
+        "HostPoolType": "Pooled",
+        "Abbreviation": "Desktop",
+        "VirtualMachineAbv": "d",
+        "SessionHostPrefixAbv": "d"
+    },
+    {
+        "HostPoolType": "RemoteApp",
+        "Abbreviation": "RemoteApp",
+        "VirtualMachineAbv": "r",
+        "SessionHostPrefixAbv": "r"
+    },
+    {
+        "HostPoolType": "All",
+        "Abbreviation": "All",
+        "VirtualMachineAbv": null,
+        "SessionHostPrefixAbv": null
+    }
+]

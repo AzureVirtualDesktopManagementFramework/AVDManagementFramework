@@ -1,0 +1,14 @@
+{ // NOT USED IN CURRENT SETUP
+    "ReferenceName" : "MSIX_PBIDESKTOP",
+    "name": "Power BI Desktop",
+    "properties": {
+        "description": "Power BI Desktop",
+        "friendlyName": "Power BI Desktop",
+        "commandLineSetting": "DoNotAllow",
+        "showInPortal": true,
+        "iconIndex": 0,
+        "applicationType": "MsixApplication",
+        "msixPackageFamilyName": "PowerBIDesktop_wme76hs9efbj6",
+        "msixPackageApplicationId": "PBIDESKTOP"
+    }
+}

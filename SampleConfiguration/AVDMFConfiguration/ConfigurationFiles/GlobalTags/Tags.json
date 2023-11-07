@@ -1,0 +1,26 @@
+[
+    {
+        "ResourceType": "All",
+        "Tags": {
+            "Environment": "%EnvironmentTag%",
+            "Parent Business": "End User Computing",
+            "Portfolio": "Digital and Technology",
+            "Product": "Azure Virtual Desktop",
+            "Service": "End User Computing",
+            "Service Line": "Technology Services",
+            "Service Offering": "Azure Virtual Desktop"
+        }
+    },
+    {
+        "ResourceType": "ResourceGroup",
+        "Tags": {
+            "Environment": "%EnvironmentTag%",
+            "Parent Business": "End User Computing",
+            "Portfolio": "Digital and Technology",
+            "Product": "Azure Virtual Desktop",
+            "Service": "End User Computing",
+            "Service Line": "Technology Services",
+            "Service Offering": "Azure Virtual Desktop"
+        }
+    }
+]

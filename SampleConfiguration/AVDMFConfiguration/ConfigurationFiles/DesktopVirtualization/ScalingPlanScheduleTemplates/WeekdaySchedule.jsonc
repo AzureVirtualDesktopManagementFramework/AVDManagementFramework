@@ -1,0 +1,49 @@
+{
+    "ReferenceName": "WeekdaySchedule",
+    "Parameters": {
+        "name": "WeekdaySchedule",
+        "daysOfWeek": [
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday"
+        ],
+
+        // RAMP UP //
+        "rampUpCapacityThresholdPct": 80,
+        "rampUpLoadBalancingAlgorithm": "BreadthFirst",
+        "rampUpMinimumHostsPct": 20,
+        "rampUpStartTime": {
+            "hour": 7,
+            "minute": 0
+        },
+
+        // PEAK //
+        "peakLoadBalancingAlgorithm": "DepthFirst",
+        "peakStartTime": {
+            "hour": 9,
+            "minute": 0
+        },
+
+        // RAMP DOWN //
+        "rampDownCapacityThresholdPct": 90,
+        "rampDownForceLogoffUsers": true,
+        "rampDownLoadBalancingAlgorithm": "DepthFirst",
+        "rampDownMinimumHostsPct": 0,
+        "rampDownNotificationMessage": "You will be logged off in 30 min. Make sure to save your work.",
+        "rampDownStartTime": {
+            "hour": 18,
+            "minute": 0
+        },
+        "rampDownStopHostsWhen": "ZeroActiveSessions",
+        "rampDownWaitTimeMinutes": 30,
+
+        // OFF PEAK //
+        "offPeakLoadBalancingAlgorithm": "DepthFirst",
+        "offPeakStartTime": {
+            "hour": 20,
+            "minute": 0
+        }
+    }
+}

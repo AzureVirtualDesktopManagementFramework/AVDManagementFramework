@@ -1,0 +1,46 @@
+{
+    "AccessLevel": "All",
+    "PoolType": "RemoteApp",
+    "FriendlyName": "Enterprise Desktop Pool",
+    "maxSessionLimit": 10,
+    "ReplacementPlan": "AVDReplacementPlan",
+    "VMTemplate": "VMTemplate01",
+    "ScalingPlan": "ScalingPlan01",
+    "StartVMOnConnect": true,
+    "CustomRdpProperty": "drivestoredirect:s:;redirectwebauthn:i:0;redirectlocation:i:0;redirectclipboard:i:1;redirectprinters:i:0;devicestoredirect:s:;redirectcomports:i:0;redirectsmartcards:i:0;usbdevicestoredirect:s:;camerastoredirect:s:;autoreconnectionenabled:i:1;enablerdsaadauth:i:1;",
+    "NumberOfSessionHosts": {
+        "DeploymentStage": {
+            "Development": 2,
+            "Preview": 4,
+            "GeneralAvailability": 10
+        }
+    },
+    "SubnetNSG": "NSG01",
+    "SubnetRouteTable": "RouteTable01",
+    "WorkSpaceReference": "DefaultWorkspace",
+    "VirtualNetworkReference": "DefaultVirtualNetwork",
+    "StorageAccountReference": "ProfileSA01",
+    "ADOrganizationalUnitPath": "OU=SessionHosts,OU=RemoteApp01,OU=%StageName%,OU=%PipelineName%,OU=AVD,DC=orpic,DC=om",
+    "RemoteAppGroups": [
+        {
+            "Name": "CommonApps",
+            "RemoteAppReference": [
+                "ChatGPT",
+                "Notepad"
+            ],
+            "Users": [
+                "AVD-%StageNameAbv%-RemoteApp01-AG-Common"
+            ]
+        },
+        {
+            "Name": "SuperUsers",
+            "RemoteAppReference": [
+                "RDP"
+            ],
+            "Users": [
+                "AVD-%StageNameAbv%-RemoteApp01-AG-SuperUsers"
+            ]
+        }
+    ],
+    "Tags": {}
+}

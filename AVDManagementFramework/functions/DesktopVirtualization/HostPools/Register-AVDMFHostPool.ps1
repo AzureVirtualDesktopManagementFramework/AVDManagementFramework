@@ -32,13 +32,13 @@ function Register-AVDMFHostPool {
         [ValidateSet("Personal", "Pooled", "RemoteApp")]
         [string] $PoolType,
 
-        [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
+        [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
         [string] $ReplacementPlan,
 
         [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
         [string] $ScalingPlan,
 
-        [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
+        [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
         [int] $MaxSessionLimit,
 
         [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
@@ -90,6 +90,25 @@ function Register-AVDMFHostPool {
         [PSCustomObject] $Tags = [PSCustomObject]@{}
     )
     process {
+        #Validate the value of Pooled only parameters against PoolType parameter
+        $exclusiveParameters = @(
+           @{Name = "ReplacementPlan"; PoolTypes = @("Pooled","RemoteApp")}
+           @{Name = "MaxSessionLimit"; PoolTypes = @("Pooled","RemoteApp")}
+        )
+        foreach($parameter in $exclusiveParameters){
+            $parameterValue = (Get-Variable -Name $parameter.Name -ErrorAction SilentlyContinue).Value
+            if($PoolType -in $parameter.PoolTypes -and ( [string]::IsNullOrEmpty($parameterValue))){
+                $errorMessage = "Parameter ({0}) is required for {1} Host Pools" -f $parameter.Name,  ($parameter.PoolTypes -join ' and ')
+                Write-PSFMessage -Level Error -Message $errorMessage
+                throw $errorMessage
+            }
+            elseif($PoolType -notin $parameter.PoolTypes -and (-Not [string]::IsNullOrEmpty($parameterValue))){
+                $errorMessage = "Parameter ({0}) is not supported for {1} Host Pools" -f $parameter.Name, ($parameter.PoolTypes -join ' and ')
+                Write-PSFMessage -Level Error -Message $errorMessage
+                throw $errorMessage
+            }
+        }
+
         $ResourceName = New-AVDMFResourceName -ResourceType 'HostPool' -AccessLevel $AccessLevel -HostPoolType $PoolType
         $resourceGroupName = New-AVDMFResourceName -ResourceType "ResourceGroup" -ResourceCategory 'HostPool' -AccessLevel $AccessLevel -HostPoolType $PoolType
         Register-AVDMFResourceGroup -Name $resourceGroupName -ResourceCategory 'HostPool'

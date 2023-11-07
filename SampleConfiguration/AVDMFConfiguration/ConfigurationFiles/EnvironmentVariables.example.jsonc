@@ -1,0 +1,12 @@
+/*
+    Use this file to customize environment variables for local testing. This file should not be committed to DevOps, always add it to .gitignore
+    Example:
+    {
+        "ENV:SYSTEM_STAGEDISPLAYNAME": "Development",
+        "Env:SYSTEM_DEFINITIONNAME" : "Development"
+    }
+*/
+{
+    "ENV:SYSTEM_STAGEDISPLAYNAME": "Development",
+    "Env:SYSTEM_DEFINITIONNAME" : "Development"
+}

@@ -1,0 +1,17 @@
+[
+    {
+        "name": "ChatGPT",
+        "ReferenceName": "ChatGPT",
+        "properties": {
+            "showInPortal": true,
+            "iconIndex": 0,
+            "applicationType": "Inbuilt",
+            "friendlyName": "ChatGPT",
+            "commandLineSetting": "Require",
+            "filePath": "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+            "description": "",
+            "iconPath": "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+            "commandLineArguments": "--app=https://chat.openai.com"
+        }
+    }
+]

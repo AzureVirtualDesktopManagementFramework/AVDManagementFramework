@@ -1,0 +1,7 @@
+[
+    {
+        "ReferenceName": "NSG01",
+        "AccessLevel": "All",
+        "HostPoolType": "All"
+    }
+]

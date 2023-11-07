@@ -2,6 +2,7 @@ param Location string = resourceGroup().location
 param StorageAccounts array
 param PrivateLinks array
 param FileShares array
+param FileShareAutoGrowLogicApps array
 
 
 module StorageAccountModule 'Modules/StorageAccount.bicep' = [for item in StorageAccounts: {
@@ -42,4 +43,14 @@ module FileShareModule 'Modules/FileShare.bicep' = [for item in FileShares:{
   dependsOn: [
     StorageAccountModule
   ]
+}]
+
+module FileShareAutoGrowLogicAppModule 'Modules/FileShareAutoGrowLogicApp.bicep' = [for item in FileShareAutoGrowLogicApps: {
+  name: item.Name
+  params:{
+    Location: Location
+    Name: item.Name
+    StorageAccountId:item.StorageAccountResourceId
+    TargetFreeSpaceGB: item.TargetFreeSpaceGB
+  }
 }]

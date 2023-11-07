@@ -1,0 +1,18 @@
+[
+  {
+    "SubscriptionName": "h104p-windowsvirtualdesktop-production",
+    "Abbreviation": "AVD",
+    "DeploymentStage": [
+      "Canary",
+      "Preview",
+      "GeneralAvailability"
+    ]
+  },
+  {
+    "SubscriptionName": "h104s-windowsvirtualdesktop-sandpit",
+    "Abbreviation": "AVD",
+    "DeploymentStage": [
+      "Development"
+    ]
+  }
+]

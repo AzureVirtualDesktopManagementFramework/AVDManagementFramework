@@ -1,0 +1,15 @@
+{
+    "ReferenceName" : "Notepad",
+    "name": "Notepad",
+    "properties": {
+        "applicationType": "Inbuilt",
+        "friendlyName": "Notepad",
+        "description": "",
+        "filePath": "C:\\Windows\\system32\\notepad.exe",
+        "iconPath": "C:\\Windows\\system32\\notepad.exe",
+        "iconIndex": 0,
+        "commandLineSetting": "DoNotAllow",
+        "commandLineArguments": "",
+        "showInPortal": true
+    }
+}

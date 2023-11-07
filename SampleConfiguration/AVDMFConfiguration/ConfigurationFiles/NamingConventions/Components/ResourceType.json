@@ -1,0 +1,70 @@
+[
+  {
+    "ResourceType": "ResourceGroup",
+    "Abbreviation": "rg"
+  },
+  {
+    "ResourceType": "FunctionApp",
+    "Abbreviation": "func"
+  },
+  {
+    "ResourceType": "AutomationAccount",
+    "Abbreviation": "aa"
+  },
+  {
+    "ResourceType": "LogAnalyticsworkspace",
+    "Abbreviation": "log"
+  },
+  {
+    "ResourceType": "LogicApp",
+    "Abbreviation": "logic"
+  },
+  {
+    "ResourceType": "NetworkSecurityGroup",
+    "Abbreviation": "nsg"
+  },
+  {
+    "ResourceType": "NetworkWater",
+    "Abbreviation": "nw"
+  },
+  {
+    "ResourceType": "VirtualNetwork",
+    "Abbreviation": "vnet"
+  },
+  {
+    "ResourceType": "RouteTable",
+    "Abbreviation": "rt"
+  },
+  {
+    "ResourceType": "StorageAccount",
+    "Abbreviation": "sa"
+  },
+  {
+    "ResourceType": "PrivateLink",
+    "Abbreviation": "pl"
+  },
+  {
+    "ResourceType": "HostPool",
+    "Abbreviation": "hp"
+  },
+  {
+    "ResourceType": "ApplicationGroup",
+    "Abbreviation": "ag"
+  },
+  {
+    "ResourceType": "Workspace",
+    "Abbreviation": "ws"
+  },
+  {
+    "ResourceType": "VirtualMachine",
+    "Abbreviation": "avd"
+  },
+  {
+    "ResourceType": "SessionHostPrefix",
+    "Abbreviation": "avd"
+  },
+  {
+    "ResourceType": "ScalingPlan",
+    "Abbreviation": "vdscaling"
+  }
+]

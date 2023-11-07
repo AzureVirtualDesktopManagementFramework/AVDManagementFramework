@@ -1,0 +1,5 @@
+{
+    "ConfigurationVersion": "1.0.58",
+    "Location": "WestEurope"
+    //"SessionHostJoinType": "ADDS", // "AAD" | "ADDS" - Azure AD or Domain Joined session hosts.
+}

@@ -1,0 +1,18 @@
+[
+    {
+      "ResourceCategory": "Network",
+      "Abbreviation": "Network"
+    },
+    {
+      "ResourceCategory": "Storage",
+      "Abbreviation": "Storage"
+    },
+    {
+      "ResourceCategory": "HostPool",
+      "Abbreviation": "HostPool"
+    },
+    {
+      "ResourceCategory": "Workspace",
+      "Abbreviation": "Workspace"
+    }
+  ]

@@ -1,0 +1,36 @@
+[
+    {
+        "Name": "StageName",
+        "VariableName": "env:SYSTEM_STAGEDISPLAYNAME",
+        "Value": {
+            "Development": "Development",
+            "Preview": "Preview",
+            "GeneralAvailability": "GeneralAvailability"
+        }
+    },
+    {
+        "Name": "StageNameAbv",
+        "VariableName": "env:SYSTEM_STAGEDISPLAYNAME",
+        "Value": {
+            "Development": "Dev",
+            "Preview": "Prv",
+            "GeneralAvailability": "GA"
+        }
+    },
+    {
+        "Name": "PipelineName",
+        "VariableName": "env:SYSTEM_DEFINITIONNAME",
+        "Value": {
+            "Development": "Development",
+            "Production": "Production"
+        }
+    },
+    {
+        "Name": "EnvironmentTag",
+        "VariableName": "env:SYSTEM_DEFINITIONNAME",
+        "Value": {
+            "Development Pipeline": "Dev",
+            "Production": "Prod"
+        }
+    }
+]

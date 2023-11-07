@@ -1,0 +1,10 @@
+{
+    "ReferenceName": "ScalingPlan01",
+    "timeZone": "Arabian Standard Time",
+    "Schedules": [
+        "WeekdaySchedule",
+        "WeekendSchedule"
+    ],
+    "ExclusionTag": "ScalingPlanExclusion",
+    "Tags": {}
+}

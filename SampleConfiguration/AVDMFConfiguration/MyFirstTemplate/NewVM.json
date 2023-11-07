@@ -1,0 +1,89 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "functions": [],
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2020-12-01",
+            "name": "TestARMvm",
+            "location": "East US",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkInterfaces', 'TestARMvm-vNIC01')]"
+            ],
+            "properties": {
+                "storageProfile": {
+                    "imageReference":{
+                        "publisher": "MicrosoftWindowsDesktop",
+                        "offer": "Office-365",
+                        "sku": "20h2-evd-o365pp-g2",
+                        "version": "Latest"
+                    },
+                    "osDisk" :{
+                        "createOption": "FromImage",
+                        "managedDisk" :{
+                            "storageAccountType": "Premium_LRS"
+                        }
+                    }
+                },
+
+                "hardwareProfile":{
+                    "vmSize": "Standard_B4ms"
+                },
+                "osProfile":{
+                    "computerName" : "TestARMvm",
+                    "adminUsername": "AzureUser",
+                    "adminPassword" : "P@ssw0rd1234"
+                },
+                "networkProfile":{
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', string('TestARMvm-vNIC01'))]"
+                        }
+                    ]
+                }
+
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2020-11-01",
+            "name": "TestARMvm-vNIC01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', 'TestARMvm-pip01')]"
+            ],
+            "location" : "East US",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "domainjoined",
+                        "properties":{
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet":{
+                                "id": "/subscriptions/89f2b949-44fe-4969-9a1c-f53a85990a5d/resourceGroups/PFE_Labs/providers/Microsoft.Network/virtualNetworks/Labs_VNET_EUS/subnets/Subnet0"
+                            },
+                            "publicIPAddress":{
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses',string('TestARMvm-pip01'))]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion" : "2020-11-01",
+            "name" : "TestARMvm-pip01",
+            "location": "East US",
+            "sku" :{
+                "name" : "Basic"
+            },
+            "properties": {
+                "publicIPAllocationMethod": "Dynamic"
+            }
+        }
+    ],
+    "outputs": {}
+}

@@ -17,6 +17,7 @@ $script:RouteTables = @{}
 $script:StorageAccounts = @{}
 $script:FileShares = @{}
 $script:PrivateLinks = @{}
+$script:FileShareAutoGrowLogicApps = @{}
 
 # DesktopVirtualization
 $script:HostPools = @{}
@@ -27,7 +28,7 @@ $script:Workspaces = @{}
 $script:VMTemplates = @{}
 $script:SessionHosts = @{}
 $script:ReplacementPlanTemplates = @{}
-$script:ReplacementPlans= @{}
+$script:ReplacementPlans = @{}
 $script:ScalingPlanTemplates = @{}
 $script:ScalingPlanScheduleTemplates = @{}
 $script:ScalingPlans = @{}

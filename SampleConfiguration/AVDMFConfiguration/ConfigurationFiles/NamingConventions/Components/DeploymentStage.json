@@ -1,0 +1,18 @@
+[
+    {
+        "DeploymentStage": "Preview",
+        "Abbreviation": "prv"
+    },
+    {
+        "DeploymentStage": "GeneralAvailability",
+        "Abbreviation": "ga"
+    },
+    {
+        "DeploymentStage": "Development",
+        "Abbreviation": "dev"
+    },
+    {
+        "DeploymentStage": "Canary",
+        "Abbreviation": "can"
+    }
+]

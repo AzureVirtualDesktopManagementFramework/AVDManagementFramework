@@ -1,0 +1,142 @@
+[
+    {
+        "ResourceType": "Default",
+        "NameComponents": [
+            "SubscriptionAbv",
+            "-",
+            "DeploymentStageAbv",
+            "-",
+            "ResourceTypeAbv",
+            "-",
+            "AccessLevelAbv",
+            "-",
+            "HostPoolTypeAbv",
+            "-",
+            "InstanceNumber"
+        ],
+        "MaxLength": 256,
+        "LowerCase": false
+    },
+    {
+        "ResourceType": "Subnet",
+        "NameComponents": [
+            "ParentName",
+            "_",
+            "AddressPrefix"
+        ],
+        "MaxLength": 256,
+        "LowerCase": false
+    },
+    {
+        "ResourceType": "PrivateLink",
+        "NameComponents": [
+            "ParentName",
+            "-",
+            "ResourceTypeAbv",
+            "-",
+            "InstanceNumber"
+        ],
+        "MaxLength": 256,
+        "LowerCase": false
+    },
+    {
+        "ResourceType": "ScalingPlan",
+        "NameComponents": [
+            "ParentName",
+            "-",
+            "ResourceTypeAbv"
+        ],
+        "MaxLength": 256,
+        "LowerCase": false
+    },
+    {
+        "ResourceType": "ApplicationGroup",
+        "NameComponents": [
+            "ParentName",
+            "-",
+            "ResourceTypeAbv",
+            "-",
+            "NameSuffix",
+            "-",
+            "InstanceNumber"
+        ],
+        "MaxLength": 256,
+        "LowerCase": false
+    },
+    {
+        "ResourceType": "ResourceGroup",
+        "NameComponents": [
+            "SubscriptionAbv",
+            "-",
+            "DeploymentStageAbv",
+            "-",
+            "ResourceTypeAbv",
+            "-",
+            "ResourceCategoryAbv",
+            "-",
+            "AccessLevelAbv",
+            "-",
+            "HostPoolTypeAbv",
+            "-",
+            "InstanceNumber"
+        ],
+        "MaxLength": 256,
+        "LowerCase": false
+    },
+    {
+        "ResourceType": "StorageAccount",
+        "NameComponents": [
+            "SubscriptionAbv",
+            "ResourceTypeAbv",
+            "DeploymentStageAbv",
+            "AccessLevelAbv",
+            "HostPoolTypeAbv",
+            "InstanceNumber",
+            "FillUnique"
+
+        ],
+        "MaxLength": 24,
+        "LowerCase": true
+    },
+    {
+        "ResourceType": "VirtualMachine", //TODO: Remove this as we are switching to Replacement Plans
+        "NameComponents": [
+            "ResourceTypeAbv",
+            "DeploymentStageAbv",
+            "AccessLevelAbv",
+            "HostPoolTypeAbv",
+            "HostPoolInstance",
+            "-",
+            "InstanceNumber"
+        ],
+        "MaxLength": 14,
+        "LowerCase": true
+    },
+    {
+        "ResourceType": "SessionHostPrefix", //TODO: Remove this as we are switching to Replacement Plans
+        "NameComponents": [
+            "ResourceTypeAbv",
+            "DeploymentStageAbv",
+            "AccessLevelAbv",
+            "HostPoolTypeAbv",
+            "HostPoolInstance"
+        ],
+        "MaxLength": 10, // We need to leave room for the instance number and hyphen (-001)
+        "LowerCase": true
+    },
+    {
+        "ResourceType": "FunctionApp",
+        "NameComponents": [
+            "ParentName",
+            "-",
+            "ResourceTypeAbv",
+            "-",
+            "NameSuffix",
+            "-",
+            "InstanceNumber",
+            "UniqueNameString"
+        ],
+        "MaxLength": 60,
+        "LowerCase": false
+    }
+]

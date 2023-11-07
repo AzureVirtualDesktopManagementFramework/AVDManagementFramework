@@ -23,6 +23,7 @@ publish/*
 
 # ignore local configuration
 LocalConfiguration/
+LocalOnly/
 
 # ignore Build And Publish script
 # $APIKey = 'API key from PowerShell Gallery.com'

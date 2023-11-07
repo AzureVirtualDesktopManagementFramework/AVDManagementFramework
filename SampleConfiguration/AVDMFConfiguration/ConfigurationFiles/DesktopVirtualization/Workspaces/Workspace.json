@@ -1,0 +1,15 @@
+[
+    {
+        "ReferenceName": "DefaultWorkspace",
+        "AccessLevel": "All",
+        "HostPoolType": "All",
+        "FriendlyName": {
+            "DeploymentStage": {
+                "Development": "AVD Development",
+                "Preview": "AVD Preview",
+                "GeneralAvailability": "OQ AVD"
+            }
+        },
+        "_comments": ""
+    }
+]

@@ -1,0 +1,15 @@
+{
+    "ReferenceName" : "RDP",
+    "name": "Remote Desktop Connection",
+    "properties": {
+        "applicationType": "Inbuilt",
+        "friendlyName": "Remote Desktop Connection",
+        "description": "",
+        "filePath": "C:\\Windows\\system32\\mstsc.exe",
+        "iconPath": "C:\\Windows\\system32\\mstsc.exe",
+        "iconIndex": 0,
+        "commandLineSetting": "DoNotAllow",
+        "commandLineArguments": "",
+        "showInPortal": true
+    }
+}

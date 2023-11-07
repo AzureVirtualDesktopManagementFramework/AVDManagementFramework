@@ -34,9 +34,8 @@ function Register-AVDMFStorageAccount {
         [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
         [string] $DefaultSharePermission,
 
-
-        #[Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
-        #[PSCustomObject] $FileShareQuotaOptimization,
+        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
+        [PSCustomObject] $FileShareAutoGrow,
 
         [PSCustomObject] $Tags = [PSCustomObject]@{}
     )
@@ -68,5 +67,11 @@ function Register-AVDMFStorageAccount {
 
         #register Private Link
         Register-AVDMFPrivateLink -ResourceGroupName $resourceGroupName -StorageAccountName $ResourceName -StorageAccountID $resourceID
+
+        # register Auto Grow Logic App
+        if($null -ne $FileShareAutoGrow.Enabled){
+            Register-AVDMFFileShareAutoGrowLogicApp -ResourceGroupName $resourceGroupName -StorageAccountResourceId $resourceID -TargetFreeSpaceGB $FileShareAutoGrow.TargetFreeSpaceGB -Enabled $FileShareAutoGrow.Enabled
+        }
+
     }
 }
