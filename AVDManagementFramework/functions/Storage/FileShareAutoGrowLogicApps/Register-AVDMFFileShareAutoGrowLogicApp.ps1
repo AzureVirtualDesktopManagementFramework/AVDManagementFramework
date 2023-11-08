@@ -13,6 +13,9 @@ function Register-AVDMFFileShareAutoGrowLogicApp {
         [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
         [bool] $Enabled = $true,
 
+        [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
+        [bool] $AllowShrink = $true,
+
 
 
         [PSCustomObject] $Tags = [PSCustomObject]@{}
@@ -32,6 +35,7 @@ function Register-AVDMFFileShareAutoGrowLogicApp {
         StorageAccountResourceId = $StorageAccountResourceId
         TargetFreeSpaceGB        = $TargetFreeSpaceGB
         Enabled                  = $Enabled
+        AllowShrink              = $AllowShrink
         Tags                     = $Tags
     }
 

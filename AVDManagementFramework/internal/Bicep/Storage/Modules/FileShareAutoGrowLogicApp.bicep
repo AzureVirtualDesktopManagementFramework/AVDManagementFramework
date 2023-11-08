@@ -3,6 +3,7 @@ param Location string = resourceGroup().location
 param Name string
 param StorageAccountId string
 param TargetFreeSpaceGB int
+param AllowShrink bool = true
 param Enabled bool = true
 
 var varStateValue = Enabled ? 'Enabled' : 'Disabled'
@@ -19,8 +20,14 @@ resource deployLogicApp 'Microsoft.Logic/workflows@2019-05-01' = {
       '$schema': 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#'
       contentVersion: '1.0.0.0'
       parameters: {
+        AllowShrink: {
+          defaultValue: AllowShrink
+          type: 'Bool'
+        }
         StorageAccoutIds: {
-          defaultValue: [StorageAccountId]
+          defaultValue: [
+            StorageAccountId
+          ]
           type: 'Array'
         }
         TargetFreeSpaceGB: {
@@ -191,11 +198,33 @@ resource deployLogicApp 'Microsoft.Logic/workflows@2019-05-01' = {
                     ]
                   }
                   expression: {
-                    and: [
+                    or: [
                       {
                         greater: [
                           '@int(first(split(string(div(add(variables(\'File Capacity\'),variables(\'TargetFreeSpace\')),1073741824)),\'.\')))'
                           '@items(\'Process_for_each_File_Share\')?[\'properties\']?[\'shareQuota\']'
+                        ]
+                      }
+                      {
+                        and: [
+                          {
+                            less: [
+                              '@int(first(split(string(div(add(variables(\'File Capacity\'),variables(\'TargetFreeSpace\')),1073741824)),\'.\')))'
+                              '@items(\'Process_for_each_File_Share\')?[\'properties\']?[\'shareQuota\']'
+                            ]
+                          }
+                          {
+                            less: [
+                              '@items(\'Process_for_each_File_Share\')?[\'properties\']?[\'lastModifiedTime\']'
+                              '@addDays(utcNow(),-1)'
+                            ]
+                          }
+                          {
+                            equals: [
+                              '@parameters(\'AllowShrink\')'
+                              true
+                            ]
+                          }
                         ]
                       }
                     ]
@@ -229,7 +258,7 @@ resource deployLogicApp 'Microsoft.Logic/workflows@2019-05-01' = {
                     }
                   }
                   runAfter: {
-                    Parse_File_Capacity_metric_value: [
+                    Reset_File_Capacity_Variable: [
                       'Succeeded'
                     ]
                   }
@@ -379,6 +408,18 @@ resource deployLogicApp 'Microsoft.Logic/workflows@2019-05-01' = {
                       }
                       type: 'object'
                     }
+                  }
+                }
+                Reset_File_Capacity_Variable: {
+                  runAfter: {
+                    Parse_File_Capacity_metric_value: [
+                      'Succeeded'
+                    ]
+                  }
+                  type: 'SetVariable'
+                  inputs: {
+                    name: 'File Capacity'
+                    value: 0
                   }
                 }
               }

@@ -15,7 +15,8 @@
               "shareSoftDeleteRetentionDays": 7,
           +    "FileShareAutoGrow":{
           +        "Enabled": true,
-          +        "TargetFreeSpaceGB": 50
+          +        "TargetFreeSpaceGB": 50,
+          +    }   "AllowShrink": true
               },
               "DirectoryServiceOptions": "AADKerb",
               "DomainName": "orpic.om",

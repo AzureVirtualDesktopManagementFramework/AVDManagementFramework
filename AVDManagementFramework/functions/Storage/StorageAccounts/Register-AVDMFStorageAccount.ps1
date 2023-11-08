@@ -70,7 +70,7 @@ function Register-AVDMFStorageAccount {
 
         # register Auto Grow Logic App
         if($null -ne $FileShareAutoGrow.Enabled){
-            Register-AVDMFFileShareAutoGrowLogicApp -ResourceGroupName $resourceGroupName -StorageAccountResourceId $resourceID -TargetFreeSpaceGB $FileShareAutoGrow.TargetFreeSpaceGB -Enabled $FileShareAutoGrow.Enabled
+            Register-AVDMFFileShareAutoGrowLogicApp -ResourceGroupName $resourceGroupName -StorageAccountResourceId $resourceID -TargetFreeSpaceGB $FileShareAutoGrow.TargetFreeSpaceGB -Enabled $FileShareAutoGrow.Enabled -AllowShrink $FileShareAutoGrow.AllowShrink
         }
 
     }
