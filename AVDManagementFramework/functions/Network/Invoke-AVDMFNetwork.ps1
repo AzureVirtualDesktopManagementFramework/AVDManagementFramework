@@ -4,6 +4,9 @@ function Invoke-AVDMFNetwork {
         [ValidateSet('All', 'DeployNetwork', 'RemotePeering')]
         [string[]] $Action = 'All'
     )
+    if($script:Offline){
+        throw "Cannot deploy when working offline. Please reload configuration without the offline switch."
+    }
 
     if ($Action -contains 'All' -or $Action -contains 'DeployNetwork') {
         Write-PSFMessage -Level Verbose -Message "Starting Action: DeployNetwork"

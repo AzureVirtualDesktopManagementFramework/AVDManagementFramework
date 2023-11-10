@@ -9,24 +9,24 @@
 	GUID              = '4f70498b-54a3-474a-b2e0-c8186ab8d4ed'
 
 	# Author of this module
-	Author            = 'wmoselhy'
+	Author            = 'Willy Moselhy'
 
 	# Company or vendor of this module
-	CompanyName       = 'MyCompany'
+	CompanyName       = 'Willy Moselhy'
 
 	# Copyright statement for this module
-	Copyright         = 'Copyright (c) 2021 wmoselhy'
+	Copyright         = 'Copyright (c) 2023 Willy Moselhy'
 
 	# Description of the functionality provided by this module
 	Description       = 'Azure Virtual Desktop Management Framework'
 
 	# Minimum version of the Windows PowerShell engine required by this module
-	PowerShellVersion = '5.0'
+	PowerShellVersion = '7.0'
 
 	# Modules that must be imported into the global environment prior to importing
 	# this module
 	RequiredModules   = @(
-		@{ ModuleName = 'PSFramework'; ModuleVersion = '1.6.181' }
+		@{ ModuleName = 'PSFramework'; ModuleVersion = '1.9.0' }
 		'Az.Accounts'
 	)
 

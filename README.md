@@ -1,5 +1,10 @@
 ﻿# AVD Management Framework
 ## Change History
+  - **AVDMF v1.0.XX
+    - New:
+      - `Set-AVDMFConfiguration` now accepts a new switch parameter `-Offline`. This can be used for testing only and will not attempt to resolve any Ids.
+    - Fixes:
+      - Improved debug logging and errors for name generator.
   - **AVDMF v1.0.74 (Configuration v1.0.58)**:
     - New:
       - File Share Auto Grow Logic App

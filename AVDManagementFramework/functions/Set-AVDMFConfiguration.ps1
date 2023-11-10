@@ -7,7 +7,10 @@ function Set-AVDMFConfiguration {
         $ConfigurationPath,
 
         [string] $AzSubscriptionId = (Get-AzContext).Subscription.Id,
-        [switch] $Force
+        [switch] $Force,
+
+        # Use this parameter for testing offline to avoid Id resolutions.
+        [switch] $Offline
 
     )
 
@@ -30,8 +33,14 @@ function Set-AVDMFConfiguration {
         throw "Deployment Stage is not defined, if running from local device create EnvironmentVariables.json file. Otherwise review environment variables."
         #TODO: Include environment variable name in error message.
     }
-
     #endregion: Set DeploymentStage
+
+    #region: Offline Switch
+    if($Offline){
+        $script:Offline = $true
+        Write-PSFMessage -Level "Warning" -Message "Working offline. Deployment blocked."
+    }
+    #endregion: Offline Switch
 
     #region: Register Name Mappings
 

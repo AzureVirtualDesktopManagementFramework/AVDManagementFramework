@@ -4,6 +4,10 @@ function Invoke-AVDMFConfiguration {
 
     )
 
+    if($script:Offline){
+        throw "Cannot deploy when working offline. Please reload configuration without the offline switch."
+    }
+
     # Create resource groups
     Write-PSFMessage -Level Host -Message "Invoking resource groups."
     foreach ($rg in $script:ResourceGroups.Keys) {

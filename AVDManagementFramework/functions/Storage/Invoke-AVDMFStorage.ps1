@@ -3,6 +3,9 @@ function Invoke-AVDMFStorage {
     param (
 
     )
+    if($script:Offline){
+        throw "Cannot deploy when working offline. Please reload configuration without the offline switch."
+    }
     #region: Initialize Variables
     $bicepStorage = "$($moduleRoot)\internal\Bicep\Storage\Storage.bicep"
     #endregion: Initialize Variables

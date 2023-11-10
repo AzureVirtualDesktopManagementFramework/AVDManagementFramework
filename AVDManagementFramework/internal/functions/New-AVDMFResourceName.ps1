@@ -37,11 +37,14 @@ function New-AVDMFResourceName {
 
         #TODO: Change parameters to overloads so we don't have to provide them. (Except deployment stage?)
     )
+    Write-PSFMessage -Level Debug -Message "Calculating a name for a resource of type {0}" -StringValues $ResourceType
 
+    # Selecting a naming style
     $namingStyle = $script:NamingStyles | Where-Object { $_.ResourceType -eq $ResourceType }
     if (-not $namingStyle) {
         $namingStyle = $script:NamingStyles | Where-Object { $_.ResourceType -eq 'Default' }
     }
+    Write-PSFMessage -Level Debug -Message "Resource type '{0}' is configured to use '{1}' naming style" -StringValues $ResourceType, $namingStyle.ResourceType
 
     [array] $nameArray = foreach ($component in $namingStyle.NameComponents) {
         if ($component -like "*Abv") {
@@ -55,7 +58,7 @@ function New-AVDMFResourceName {
             catch { throw "Could not find a naming convention for component: $componentName. It should be supplied in configuration as .\NamingConvention\Components\$($componentName).json" }
 
             # Default or custom abbreviation
-            $componentNCmembers = (get-variable -Name $componentNC).value | Get-Member -MemberType NoteProperty | Where-Object Name -NE $componentName
+            $componentNCmembers = (Get-Variable -Name $componentNC).value | Get-Member -MemberType NoteProperty | Where-Object Name -NE $componentName
             $abbreviationMarker = ($componentNCmembers | Where-Object Name -EQ ("{0}Abv" -f $ResourceType)).Name
             if (-Not $abbreviationMarker) { $abbreviationMarker = "Abbreviation" }
 
@@ -64,7 +67,7 @@ function New-AVDMFResourceName {
                 $namingConvention = (Get-Variable -Name $componentNC -Scope Script).Value
                 $filterScript = [ScriptBlock]::Create("`$_.DeploymentStage -eq `$DeploymentStage")
             }
-            elseif($componentName -eq 'Location'){
+            elseif ($componentName -eq 'Location') {
 
                 $namingConvention = (Get-Variable -Name $componentNC -Scope Script).Value
                 $filterScript = [ScriptBlock]::Create("`$_.Location -eq `$Script:Location")
@@ -77,12 +80,14 @@ function New-AVDMFResourceName {
             #FRED: $script:namingConvention[$componentName].$abbreviationMarker
             $abv = ($namingConvention | Where-Object -FilterScript $filterScript).$abbreviationMarker
             if (-not $abv) {
-                throw "Could not find any abbreviation for $componentName`: $((Get-Variable -Name $componentName).Value)"
+                $errorMessage = "Resource Type: {0} - Naming Style: {1} - Could not find abbreviation for $componentName`: $((Get-Variable -Name $componentName).Value)" -f $ResourceType,$namingStyle.ResourceType
+                Write-PSFMessage -Level Error -Message $errorMessage
+                throw $errorMessage
             }
             $abv
         }
 
-        if($component -like "static_*"){ $component -replace "static_","" }
+        if ($component -like "static_*") { $component -replace "static_", "" }
 
         if ($component -in ('-', '_')) { $component }
 
@@ -90,7 +95,7 @@ function New-AVDMFResourceName {
             $ParentName
         }
 
-        if ($component -eq 'NameSuffix'){
+        if ($component -eq 'NameSuffix') {
             $NameSuffix
         }
 
@@ -115,20 +120,20 @@ function New-AVDMFResourceName {
             $count = ($scriptResourceType.Keys | Where-Object -FilterScript $filterScript).Count
 
             #TODO: Fix this once we have resource name attribute for all resource
-            if($count -eq 0){
-                $count = ($scriptResourceType.GetEnumerator() | ForEach-Object{$_.Value.ResourceName} | Where-Object -FilterScript $filterScript).count
+            if ($count -eq 0) {
+                $count = ($scriptResourceType.GetEnumerator() | ForEach-Object { $_.Value.ResourceName } | Where-Object -FilterScript $filterScript).count
             }
 
             $resourceName = "{0}{1:D2}" -f $resourceName, ($Count + 1)
         }
     }
 
-    if($namingStyle.NameComponents -contains 'UniqueNameString'){
-        $resourceName = "{0}{1}" -f $resourceName,$UniqueNameString
+    if ($namingStyle.NameComponents -contains 'UniqueNameString') {
+        $resourceName = "{0}{1}" -f $resourceName, $UniqueNameString
     }
-    if($namingStyle.NameComponents -contains 'FillUnique'){
-        $subscriptionIdNoDash = $script:AzSubscriptionId -replace "-",""
-        $resourceName = "{0}x{1}" -f $resourceName,$subscriptionIdNoDash.substring(0,($namingStyle.MaxLength-$resourceName.length-1))
+    if ($namingStyle.NameComponents -contains 'FillUnique') {
+        $subscriptionIdNoDash = $script:AzSubscriptionId -replace "-", ""
+        $resourceName = "{0}x{1}" -f $resourceName, $subscriptionIdNoDash.substring(0, ($namingStyle.MaxLength - $resourceName.length - 1))
     }
 
 

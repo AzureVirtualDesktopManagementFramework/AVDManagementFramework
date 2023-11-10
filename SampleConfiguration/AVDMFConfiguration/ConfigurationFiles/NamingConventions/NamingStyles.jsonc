@@ -1,6 +1,6 @@
 [
     {
-        "ResourceType": "Default",
+        "ResourceType": "Default", //The 'Default' naming style is required.
         "NameComponents": [
             "SubscriptionAbv",
             "-",
@@ -13,6 +13,18 @@
             "HostPoolTypeAbv",
             "-",
             "InstanceNumber"
+        ],
+        "MaxLength": 256,
+        "LowerCase": false
+    },
+    {
+        "ResourceType": "LogicApp",
+        "NameComponents": [
+            "ParentName",
+            "-",
+            "ResourceTypeAbv",
+            "-",
+            "NameSuffix"
         ],
         "MaxLength": 256,
         "LowerCase": false

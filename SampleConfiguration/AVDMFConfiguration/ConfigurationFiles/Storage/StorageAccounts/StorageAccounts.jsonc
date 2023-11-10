@@ -6,13 +6,14 @@
         "accountType": "Premium_LRS",
         "kind": "FileStorage",
         "shareSoftDeleteRetentionDays": 7,
-        "FileShareQuotaOptimization":{
+        "FileShareAutoGrow":{
             "Enabled": true,
-            "BufferGB": 50 // Buffer size in GB - this is not working yet.
+            "TargetFreeSpaceGB": 50,
+            "AllowShrink": true
         },
         "DirectoryServiceOptions": "AADKerb",
-        "DomainName": "orpic.om",
-        "DomainGuid": "76a7401a-f3cb-4ede-9201-1867c4210908",
+        "DomainName": "contoso.com",
+        "DomainGuid": "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX",
         "DefaultSharePermission" : "StorageFileDataSmbShareContributor"
     }
 ]

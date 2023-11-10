@@ -3,7 +3,9 @@ function Invoke-AVDMFDesktopVirtualization {
     param (
 
     )
-
+    if($script:Offline){
+        throw "Cannot deploy when working offline. Please reload configuration without the offline switch."
+    }
     #region: Initialize Variables
 
     $bicepWorkspaces = "$($moduleRoot)\internal\Bicep\DesktopVirtualization\Workspaces.bicep"

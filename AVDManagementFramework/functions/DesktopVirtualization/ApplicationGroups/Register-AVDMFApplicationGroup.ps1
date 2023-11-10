@@ -43,11 +43,22 @@ function Register-AVDMFApplicationGroup {
                 try {
                     if ($user -like "*@*" ) {
                         Write-PSFMessage -Level Verbose -Message "Resolving Id for user: $user"
-                        $id = (Get-AzADUser -UserPrincipalName $user -ErrorAction Stop).Id
+                        if(-Not $script:Offline){
+                            $id = (Get-AzADUser -UserPrincipalName $user -ErrorAction Stop).Id
+                        }
+                        else{
+                            $id = 'XXXXXX-XXXX-XXXX-XXXX-OFFLINE'
+                        }
+
                     }
                     else {
                         Write-PSFMessage -Level Verbose -Message "Resolving Id for group: $user"
-                        $id = (Get-AzADGroup -DisplayName $user -ErrorAction Stop).Id
+                        if(-Not $script:Offline){
+                            $id = (Get-AzADGroup -DisplayName $user -ErrorAction Stop).Id
+                        }
+                        else{
+                            $id = 'XXXXXX-XXXX-XXXX-XXXX-OFFLINE'
+                        }
                     }
                     if ($null -eq $id) {
                         throw

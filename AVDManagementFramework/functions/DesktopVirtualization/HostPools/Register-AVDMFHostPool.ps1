@@ -136,7 +136,13 @@ function Register-AVDMFHostPool {
 
         # Get Azure Virtual Desktop App Object Id for permission assignment
         Write-PSFMessage -Level Verbose -Message "Getting Azure Virtual Desktop App (9cdead84-a844-4324-93f2-b2e6bb768d07) Object Id for permission assignment"
-        $avdAppObjectId = (Get-AzADServicePrincipal -ApplicationId '9cdead84-a844-4324-93f2-b2e6bb768d07').Id
+        if(-Not $script:Offline){
+            $avdAppObjectId = (Get-AzADServicePrincipal -ApplicationId '9cdead84-a844-4324-93f2-b2e6bb768d07').Id
+        }
+        else{
+            $avdAppObjectId = 'XXXXXX-XXXX-XXXX-XXXX-OFFLINE'
+        }
+
         Write-PSFMessage -Level Verbose -Message "Azure Virtual Desktop App Object Id is: {0}" -StringValues $avdAppObjectId
 
         $script:HostPools[$ResourceName] = [PSCustomObject]@{
@@ -201,7 +207,6 @@ function Register-AVDMFHostPool {
             }
             Register-AVDMFApplicationGroup @applicationGroupParams
         }
-
 
         # Register Scaling Plan
         if (-Not [string]::IsNullOrEmpty($ScalingPlan)) {
