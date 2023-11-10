@@ -1,6 +1,6 @@
 ﻿# AVD Management Framework
 ## Change History
-  - **AVDMF v1.0.73 (Configuration v1.0.58)**:
+  - **AVDMF v1.0.74 (Configuration v1.0.58)**:
     - New:
       - File Share Auto Grow Logic App
         - Now you can deploy a Logic App to each storage account that will automatically grow the file share keeping a minimum buffer.
