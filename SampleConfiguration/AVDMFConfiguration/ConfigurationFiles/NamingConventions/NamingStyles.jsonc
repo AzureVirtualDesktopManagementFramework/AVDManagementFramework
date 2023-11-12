@@ -12,6 +12,8 @@
             "-",
             "HostPoolTypeAbv",
             "-",
+            "LocationAbv",
+            "-",
             "InstanceNumber"
         ],
         "MaxLength": 256,

@@ -3,6 +3,8 @@
   - **AVDMF v1.0.XX
     - New:
       - `Set-AVDMFConfiguration` now accepts a new switch parameter `-Offline`. This can be used for testing only and will not attempt to resolve any Ids.
+      - Added support for Location as a naming component.
+        - Just add a new component `LocationAbv` to your naming styles, and provide the desired abbreviations in the component file.
     - Fixes:
       - Improved debug logging and errors for name generator.
   - **AVDMF v1.0.74 (Configuration v1.0.58)**:

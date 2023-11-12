@@ -26,6 +26,7 @@ function New-AVDMFResourceName {
         [string] $NameSuffix,
         [string] $AccessLevel, # Enterprise, Specialist, Privileged
         [string] $HostPoolType, # Shared, Dedicated
+        [string] $Location = $script:Location,
 
         [string] $HostPoolInstance,
 
