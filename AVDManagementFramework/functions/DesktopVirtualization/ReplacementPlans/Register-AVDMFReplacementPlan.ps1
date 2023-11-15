@@ -37,9 +37,12 @@ function Register-AVDMFReplacementPlan {
         [PSCustomObject] $Tags = [PSCustomObject]@{}
     )
     $resourceName = New-AVDMFResourceName -ResourceType 'FunctionApp' -ParentName $HostPoolName -InstanceNumber 1 -UniqueNameString $UniqueNameString -NameSuffix $ReplacementPlanTemplate.ReplacementPlanNameSuffix
+    $resourceID = "/Subscriptions/$script:AzSubscriptionId/resourceGroups/$resourceGroupName/providers/Microsoft.Web/site/$ResourceName"
+
     $script:ReplacementPlans[$resourceName] = [PSCustomObject]@{
         ResourceGroupName                            = $ResourceGroupName
         HostPoolName                                 = $HostPoolName
+        ResourceID                                   = $resourceID
         TargetSessionHostCount                       = $TargetSessionHostCount
         SessionHostNamePrefix                        = $SessionHostNamePrefix
         ADOrganizationalUnitPath                     = $ADOrganizationalUnitPath

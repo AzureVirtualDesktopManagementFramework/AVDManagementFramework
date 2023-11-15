@@ -7,6 +7,7 @@
         - Just add a new component `LocationAbv` to your naming styles, and provide the desired abbreviations in the component file.
     - Fixes:
       - Improved debug logging and errors for name generator.
+      - Fixed a bug when generating storage name for AVD ReplacementPlan
   - **AVDMF v1.0.74 (Configuration v1.0.58)**:
     - New:
       - File Share Auto Grow Logic App

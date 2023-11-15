@@ -148,9 +148,9 @@
             "NameSuffix",
             "-",
             "InstanceNumber",
-            "UniqueNameString"
+            "FillUnique"
         ],
-        "MaxLength": 60,
+        "MaxLength": 58,
         "LowerCase": false
     }
 ]

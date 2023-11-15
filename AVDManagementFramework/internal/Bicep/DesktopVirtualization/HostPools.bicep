@@ -77,7 +77,7 @@ module ReplacementPlanModule 'modules/ReplacementPlan.bicep' = {
   params: {
     Location: Location
     //Storage Account
-    StorageAccountName: 'stavdrp${uniqueString(ReplacementPlan.Name)}'
+    StorageAccountName: 'stavdrp${uniqueString(ReplacementPlan.ResourceId)}'
 
     // Log Analytics Workspace
     LogAnalyticsWorkspaceName: '${ReplacementPlan.Name}-LAW-01'

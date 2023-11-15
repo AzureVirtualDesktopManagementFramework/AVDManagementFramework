@@ -1,12 +1,12 @@
 [
     {
-        "ReferenceName" : "ProfileSA01",
+        "ReferenceName": "ProfileSA01",
         "AccessLevel": "All",
         "HostPoolType": "All",
         "accountType": "Premium_LRS",
         "kind": "FileStorage",
         "shareSoftDeleteRetentionDays": 7,
-        "FileShareAutoGrow":{
+        "FileShareAutoGrow": {
             "Enabled": true,
             "TargetFreeSpaceGB": 50,
             "AllowShrink": true
@@ -14,6 +14,6 @@
         "DirectoryServiceOptions": "AADKerb",
         "DomainName": "contoso.com",
         "DomainGuid": "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX",
-        "DefaultSharePermission" : "StorageFileDataSmbShareContributor"
+        "DefaultSharePermission": "StorageFileDataSmbShareContributor"
     }
 ]
