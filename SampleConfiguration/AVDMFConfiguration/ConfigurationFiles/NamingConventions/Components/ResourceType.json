@@ -66,5 +66,9 @@
   {
     "ResourceType": "ScalingPlan",
     "Abbreviation": "vdscaling"
+  },
+  {
+    "ResourceType": "TemplateSpec",
+    "Abbreviation": "spec"
   }
 ]

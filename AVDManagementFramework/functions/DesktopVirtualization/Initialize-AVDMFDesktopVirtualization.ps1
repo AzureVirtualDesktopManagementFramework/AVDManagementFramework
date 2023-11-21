@@ -30,12 +30,16 @@ function Initialize-AVDMFDesktopVirtualization {
             $filteredScalingPlans = @{}
             $script:ScalingPlans.GetEnumerator() | Where-Object { $_.value.ResourceGroupName -eq $ResourceGroupName } | ForEach-Object { $filteredScalingPlans.Add($_.Key, $_.Value) }
 
+            $filteredTemplateSpecs = @{}
+            $script:TemplateSpecs.GetEnumerator() | Where-Object { $_.value.ResourceGroupName -eq $ResourceGroupName } | ForEach-Object { $filteredTemplateSpecs.Add($_.Key, $_.Value) }
+
             $templateParams = @{
                 HostPools         = [array] ($filteredHostPools | Convert-HashtableToArray)
                 ApplicationGroups = [array] ($filteredApplicationGroups | Convert-HashtableToArray)
                 RemoteApps        = $filteredRemoteApps
-                ScalingPlan       = if($filteredScalingPlans.Keys.Count) {([array] ($filteredScalingPlans | Convert-HashtabletoArray))[0]} else {@{}} #TODO: There can only be one, review the code here.
-                ReplacementPlan   = ([array] ($filteredReplacementPlans | Convert-HashtabletoArray))[0] #TODO: There can only be one, review the code here.
+                ScalingPlan       = if ($filteredScalingPlans.Keys.Count) { ([array] ($filteredScalingPlans | Convert-HashtableToArray))[0] } else { @{} } #TODO: There can only be one, review the code here.
+                ReplacementPlan   = ([array] ($filteredReplacementPlans | Convert-HashtableToArray))[0] #TODO: There can only be one, review the code here.
+                TemplateSpec      = ([array] ($filteredTemplateSpecs | Convert-HashtableToArray))[0]  #TODO: There can only be one, review the code here.
                 ResourceGroupName = $ResourceGroupName
                 Location          = $script:Location
             }

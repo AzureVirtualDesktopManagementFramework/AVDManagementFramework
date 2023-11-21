@@ -15,7 +15,7 @@ function Set-AVDMFConfiguration {
     )
 
     #region: Initialize Variables
-    $configurationVersion = '1.0.58'
+    $configurationVersion = '1.1.1'
     #endregion: Initialize Variables
 
     #region: Load Custom Environment Variables
@@ -56,6 +56,7 @@ function Set-AVDMFConfiguration {
 
     #region: Populate Script Variables
     $script:AzSubscriptionId = $AzSubscriptionId
+    $script:ConfigurationPath = $ConfigurationPath
 
     #endregion: Populate Script Variables
 

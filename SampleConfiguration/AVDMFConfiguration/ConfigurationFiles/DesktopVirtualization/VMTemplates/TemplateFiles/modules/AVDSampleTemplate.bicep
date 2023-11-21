@@ -1,3 +1,5 @@
+// This is a sample bicep file //
+
 param VMName string
 param VMSize string
 param TimeZone string
@@ -7,8 +9,6 @@ param AdminUsername string
 
 @secure()
 param AdminPassword string = newGuid()
-
-param AvailabilityZone string
 
 param AcceleratedNetworking bool
 
@@ -30,7 +30,6 @@ param DomainJoinPassword string = ''
 
 //---- Variables ----//
 var varRequireNvidiaGPU =  startsWith(VMSize, 'Standard_NC') || contains(VMSize, '_A10_v5')
-// var varRequireAMDGPU =
 
 resource vNIC 'Microsoft.Network/networkInterfaces@2023-05-01' = {
   name: '${VMName}-vNIC'
@@ -55,7 +54,6 @@ resource VM 'Microsoft.Compute/virtualMachines@2023-07-01' = {
   name: VMName
   location: Location
   identity: (DomainJoinObject.DomainType == 'AzureActiveDirectory') ? { type: 'SystemAssigned' } : any(null)
-  zones: empty(AvailabilityZone) ? [] : [ '${AvailabilityZone}' ]
   properties: {
     osProfile: {
       computerName: VMName
@@ -138,7 +136,6 @@ resource VM 'Microsoft.Compute/virtualMachines@2023-07-01' = {
     }
     dependsOn: [ deployIntegrityMonitoring ]
   }
-  // PreJoin Command //
 
   // Domain Join //
   resource AADJoin 'extensions@2023-07-01' = if (DomainJoinObject.DomainType == 'AzureActiveDirectory') {

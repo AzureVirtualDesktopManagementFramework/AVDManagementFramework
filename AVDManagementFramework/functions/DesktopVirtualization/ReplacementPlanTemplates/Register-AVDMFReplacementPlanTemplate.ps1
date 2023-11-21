@@ -43,9 +43,12 @@ function Register-AVDMFReplacementPlanTemplate {
         [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
         [string] $TagPendingDrainTimestamp = 'AutoReplacePendingDrainTimestamp',
         [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
-        [int] $TargetVMAgeDays =  45,
+        [int] $TargetVMAgeDays = 45,
         [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
-        [string] $SessionHostTemplateUri
+        [bool] $RemoveAzureADDevice
+
+
+
     )
 
     #register AVD Replacement Plan Template
@@ -70,7 +73,6 @@ function Register-AVDMFReplacementPlanTemplate {
         TagIncludeInAutomation                       = $TagIncludeInAutomation
         TagPendingDrainTimestamp                     = $TagPendingDrainTimestamp
         TargetVMAgeDays                              = $TargetVMAgeDays
-        SessionHostTemplateUri                       = $SessionHostTemplateUri
-
+        RemoveAzureADDevice                          = $RemoveAzureADDevice
     }
 }

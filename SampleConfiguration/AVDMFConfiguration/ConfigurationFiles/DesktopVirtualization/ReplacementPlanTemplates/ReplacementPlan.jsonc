@@ -3,11 +3,10 @@
     "ReplacementPlanNameSuffix": "ReplacementPlan", // This is used to name the function in Azure
     "FunctionAppZipUrl": {
         "DeploymentStage": {
-            "Default": "https://github.com/WillyMoselhy/AVDReplacementPlans/releases/download/v0.1.5/FunctionApp.zip"
+            "Default": "https://github.com/WillyMoselhy/AVDReplacementPlans/releases/download/v0.2.1/FunctionApp.zip"
         }
     },
     "FixSessionHostTags": true,
-    "SessionHostTemplateUri": "https://stavdsharedresources01.blob.core.windows.net/sessionhosttemplates/SessionHostAutoReplace01/SessionHost_%StageNameAbv%.json?sp=rl&st=2023-04-02T07:09:19Z&se=2026-04-02T15:09:19Z&spr=https&sv=2021-12-02&sr=c&sig=gy53bk4vyf5pIgs1gFlAVQ%2BEmB7htFA17U4t80dsBDQ%3D",
     "ReplaceSessionHostOnNewImageVersionDelayDays": {
         "DeploymentStage": {
             "Development": 0,
@@ -15,5 +14,6 @@
             "GeneralAvailability": 10
         }
     },
+    "RemoveAzureADDevice": true, // Set this to true if you are using Entra ID joined session hosts.
     "Tags": {}
 }

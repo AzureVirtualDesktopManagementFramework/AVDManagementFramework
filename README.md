@@ -1,7 +1,13 @@
 ﻿# AVD Management Framework
 ## Change History
-  - **AVDMF v1.0.XX
+  - **AVDMF v1.0.80 (Configuration v1.1.1)**:
+    - Breaking Change
+      - Upgraded to the latest version of AVD Replacement Plans
+      - We now use TemplateSpecs to for the Replacement Plan Template.
+      - You can add bicep templates under .\DesktopVirtualization\VMTemplates\TemplateFiles
+      - Use a `New-AVDMFConfiguration` to create a new configuration folder with sample files.
     - New:
+      - New command `New-AVDMFConfiguration` to create a new configuration folder with sample files.
       - `Set-AVDMFConfiguration` now accepts a new switch parameter `-Offline`. This can be used for testing only and will not attempt to resolve any Ids.
       - Added support for Location as a naming component.
         - Just add a new component `LocationAbv` to your naming styles, and provide the desired abbreviations in the component file.

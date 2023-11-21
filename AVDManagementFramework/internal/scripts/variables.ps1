@@ -26,6 +26,7 @@ $script:RemoteAppTemplates = @{}
 $script:RemoteApps = @{}
 $script:Workspaces = @{}
 $script:VMTemplates = @{}
+$script:TemplateSpecs = @{} # We have one template spec created per host pool.
 $script:SessionHosts = @{}
 $script:ReplacementPlanTemplates = @{}
 $script:ReplacementPlans = @{}

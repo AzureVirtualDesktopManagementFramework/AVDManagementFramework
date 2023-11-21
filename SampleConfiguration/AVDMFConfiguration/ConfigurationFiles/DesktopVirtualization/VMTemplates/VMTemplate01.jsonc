@@ -1,22 +1,17 @@
 [
   {
     "ReferenceName": "VMTemplate01",
+    "TemplateFileName": "DeploySessionHosts.bicep",
     "Parameters": {
       "AdminUsername": "AVDAdmin",
-      "PreJoinRunCommand": {
-        "Name": "DeployApps",
-        "ScriptURL": "https://stavdsharedresources01.blob.core.windows.net/sessionhosttemplates/Sources/SessionHostCustomizations_%StageNameAbv%.ps1?sp=rl&st=2023-04-02T07:09:19Z&se=2026-04-02T15:09:19Z&spr=https&sv=2021-12-02&sr=c&sig=gy53bk4vyf5pIgs1gFlAVQ%2BEmB7htFA17U4t80dsBDQ%3D"
-      },
       "TimeZone": "GMT Standard Time",
       "DomainJoinObject": {
-        "DomainType": "ActiveDirectory",
-        "UserName": "AVDDomainJoin",
-        "OUPath": null,
-        "DomainName": "contoso.com"
+        "DomainType": "AzureActiveDirectory",
+        "IntuneJoin": false
       },
       "VMSize": {
         "DeploymentStage": {
-          "Development": "Standard_D4ds_v5",
+          "Development": "Standard_D2ds_v5",
           "Preview": "Standard_D4ds_v5",
           "GeneralAvailability": "Standard_D8ds_v5"
         }
@@ -29,18 +24,7 @@
         "sku": "win11-22h2-avd",
         "version": "latest"
       },
-      /*
-      "DomainJoinPassword": {
-        "reference": {
-          "keyVault": {
-            "id": "resource Id of the key vault"
-          },
-          "secretName": "AVDDomainJoin"
-        }
-      },
-      */
-      "WVDArtifactsURL": "https://wvdportalstorageblob.blob.core.windows.net/galleryartifacts/Configuration_01-19-2023.zip",
-      "AvailabilityZone": "1"
+      "WVDArtifactsURL": "https://wvdportalstorageblob.blob.core.windows.net/galleryartifacts/Configuration_01-19-2023.zip"
     }
   }
 ]

@@ -76,9 +76,6 @@ function Register-AVDMFHostPool {
         [string] $SessionHostJoinType = "ADDS",
 
         [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
-        [string] $ADOrganizationalUnitPath,
-
-        [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
         [bool] $UseAvailabilityZones = $false,
 
         [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
@@ -92,17 +89,17 @@ function Register-AVDMFHostPool {
     process {
         #Validate the value of Pooled only parameters against PoolType parameter
         $exclusiveParameters = @(
-           @{Name = "ReplacementPlan"; PoolTypes = @("Pooled","RemoteApp")}
-           @{Name = "MaxSessionLimit"; PoolTypes = @("Pooled","RemoteApp")}
+            @{Name = "ReplacementPlan"; PoolTypes = @("Pooled", "RemoteApp") }
+            @{Name = "MaxSessionLimit"; PoolTypes = @("Pooled", "RemoteApp") }
         )
-        foreach($parameter in $exclusiveParameters){
+        foreach ($parameter in $exclusiveParameters) {
             $parameterValue = (Get-Variable -Name $parameter.Name -ErrorAction SilentlyContinue).Value
-            if($PoolType -in $parameter.PoolTypes -and ( [string]::IsNullOrEmpty($parameterValue))){
-                $errorMessage = "Parameter ({0}) is required for {1} Host Pools" -f $parameter.Name,  ($parameter.PoolTypes -join ' and ')
+            if ($PoolType -in $parameter.PoolTypes -and ( [string]::IsNullOrEmpty($parameterValue))) {
+                $errorMessage = "Parameter ({0}) is required for {1} Host Pools" -f $parameter.Name, ($parameter.PoolTypes -join ' and ')
                 Write-PSFMessage -Level Error -Message $errorMessage
                 throw $errorMessage
             }
-            elseif($PoolType -notin $parameter.PoolTypes -and (-Not [string]::IsNullOrEmpty($parameterValue))){
+            elseif ($PoolType -notin $parameter.PoolTypes -and (-Not [string]::IsNullOrEmpty($parameterValue))) {
                 $errorMessage = "Parameter ({0}) is not supported for {1} Host Pools" -f $parameter.Name, ($parameter.PoolTypes -join ' and ')
                 Write-PSFMessage -Level Error -Message $errorMessage
                 throw $errorMessage
@@ -136,10 +133,10 @@ function Register-AVDMFHostPool {
 
         # Get Azure Virtual Desktop App Object Id for permission assignment
         Write-PSFMessage -Level Verbose -Message "Getting Azure Virtual Desktop App (9cdead84-a844-4324-93f2-b2e6bb768d07) Object Id for permission assignment"
-        if(-Not $script:Offline){
+        if (-Not $script:Offline) {
             $avdAppObjectId = (Get-AzADServicePrincipal -ApplicationId '9cdead84-a844-4324-93f2-b2e6bb768d07').Id
         }
-        else{
+        else {
             $avdAppObjectId = 'XXXXXX-XXXX-XXXX-XXXX-OFFLINE'
         }
 
@@ -219,18 +216,33 @@ function Register-AVDMFHostPool {
             Register-AVDMFScalingPlan @scalingPlanParams
         }
 
+        # Register TemplateSpec
+        $templateSpecParams = @{
+            ResourceGroupName = $resourceGroupName
+            HostPoolName      = $resourceName
+            TemplateFileName  = $script:VMTemplates[$VMTemplate].TemplateFileName
+        }
+        $templateSpecResourceId = Register-AVDMFTemplateSpec @templateSpecParams
+
+
+
         # Register Replacement Plan
         $hostPoolInstance = $ResourceName.Substring($ResourceName.Length - 2, 2)
         $sessionHostNamePrefix = New-AVDMFResourceName -ResourceType 'SessionHostPrefix' -AccessLevel $AccessLevel -HostPoolType $PoolType -HostPoolInstance $hostPoolInstance
+
+        $hostPoolSessionHostParameters = $script:VMTemplates[$VMTemplate].Parameters | ConvertFrom-Json -Depth 99 -AsHashtable
+        $hostPoolSessionHostParameters['SubnetID'] = $subnetID
+
+
         $replacementPlanParams = @{
             ResourceGroupName        = $resourceGroupName
             HostPoolName             = $resourceName
             TargetSessionHostCount   = $NumberOfSessionHosts
             SessionHostNamePrefix    = $sessionHostNamePrefix
-            ADOrganizationalUnitPath = $ADOrganizationalUnitPath
             SubnetId                 = $subnetID
             ReplacementPlanTemplate  = $script:ReplacementPlanTemplates[$ReplacementPlan]
-            SessionHostParameters    = $script:VMTemplates[$VMTemplate]
+            SessionHostParameters    = $hostPoolSessionHostParameters | ConvertTo-Json -Depth 99 -Compress
+            SessionHostTemplate      = $templateSpecResourceId
         }
         if (-Not [string]::IsNullOrEmpty($ScalingPlan)) {
 

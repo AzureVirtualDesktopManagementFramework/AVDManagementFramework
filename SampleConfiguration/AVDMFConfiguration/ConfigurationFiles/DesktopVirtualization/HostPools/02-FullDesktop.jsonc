@@ -4,16 +4,16 @@
     "FriendlyName": "Jumpbox Desktop",
     "maxSessionLimit": 10,
     "ReplacementPlan": "AVDReplacementPlan",
-    "VMTemplate": "VMTemplate02",
+    "VMTemplate": "VMTemplate01",
     "SessionHostJoinType": "AAD",
     "ScalingPlan": "ScalingPlan01",
     "StartVMOnConnect": true,
     "CustomRdpProperty": "drivestoredirect:s:;redirectwebauthn:i:0;redirectlocation:i:0;redirectclipboard:i:1;redirectprinters:i:0;devicestoredirect:s:;redirectcomports:i:0;redirectsmartcards:i:0;usbdevicestoredirect:s:;camerastoredirect:s:;autoreconnectionenabled:i:1;enablerdsaadauth:i:1;",
     "NumberOfSessionHosts": {
         "DeploymentStage": {
-            "Development": 1,
+            "Development": 2,
             "Preview": 4,
-            "GeneralAvailability": 0
+            "GeneralAvailability": 10
         }
     },
     "Users": [

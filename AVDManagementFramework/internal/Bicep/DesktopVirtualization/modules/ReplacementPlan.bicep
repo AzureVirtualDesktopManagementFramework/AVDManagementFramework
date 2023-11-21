@@ -68,16 +68,10 @@ param MaxSimultaneousDeployments int = 20
 param SessionHostNamePrefix string
 
 @description('Required: Yes | URI of the arm template used to deploy the session hosts.')
-param SessionHostTemplateUri string
+param SessionHostTemplate string
 
 @description('Required: Yes | A compressed (one line) json string containing the parameters of the template used to deploy the session hosts.')
 param SessionHostParameters string
-
-@description('Required: Yes, for Active Directory Domain Services | Distinguished Name of the OU to join session hosts to.')
-param ADOrganizationalUnitPath string = ''
-
-@description('Required: Yes | Resource ID of the subnet to deploy session hosts to.')
-param SubnetId string
 
 @description('Required: No | Number of digits to use for the instance number of the session hosts (eg. AVDVM-01). | Default: 2')
 param SessionHostInstanceNumberPadding int = 2
@@ -94,8 +88,11 @@ param AppPlanName string = 'Y1'
 @description('Required: No | App Service Plan Tier | Default: Dynamic for consumption based plan')
 param AppPlanTier string = 'Dynamic'
 
+param RemoveAzureADDevice bool
+
 @description('Required: No | Allow deleting session hosts if count exceeds target. | Default: true')
 param AllowDownsizing bool = true
+
 
 //-------//
 
@@ -150,20 +147,12 @@ var varFunctionAppSettings = [
     value: SubscriptionId
   }
   {
-    name: '_SessionHostTemplateUri'
-    value: SessionHostTemplateUri
+    name: '_SessionHostTemplate'
+    value: SessionHostTemplate
   }
   {
     name: '_SessionHostParameters'
     value: SessionHostParameters
-  }
-  {
-    name: '_ADOrganizationalUnitPath'
-    value: ADOrganizationalUnitPath
-  }
-  {
-    name: '_SubnetId'
-    value: SubnetId
   }
   {
     name: '_SessionHostInstanceNumberPadding'
@@ -224,6 +213,10 @@ var varFunctionAppSettings = [
   {
     name: '_AllowDownsizing'
     value: AllowDownsizing
+  }
+  {
+    name: '_RemoveAzureADDevice'
+    value: RemoveAzureADDevice
   }
 ]
 
@@ -295,7 +288,7 @@ resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
       use32BitWorkerProcess: false
       powerShellVersion: '7.2'
       netFrameworkVersion: 'v6.0'
-      appSettings: varFunctionAppSettings
+      appSettings: any(varFunctionAppSettings)
       ftpsState: 'Disabled'
     }
   }

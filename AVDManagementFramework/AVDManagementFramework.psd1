@@ -116,6 +116,8 @@
 		'Get-AVDMFScalingPlan'
 		'Register-AVDMFFileShareAutoGrowLogicApp'
 		'Get-AVDMFFileShareAutoGrowLogicApp'
+		'Get-AVDMFTemplateSpec'
+		'Register-AVDMFTemplateSpec'
 	)
 
 	# Cmdlets to export from this module

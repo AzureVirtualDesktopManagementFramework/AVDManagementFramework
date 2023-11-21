@@ -32,6 +32,9 @@ function Register-AVDMFReplacementPlan {
         [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
         [string] $UniqueNameString = "",
 
+        [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
+        [string] $SessionHostTemplate,
+
         [PSCustomObject] $SessionHostParameters,
 
         [PSCustomObject] $Tags = [PSCustomObject]@{}
@@ -45,9 +48,9 @@ function Register-AVDMFReplacementPlan {
         ResourceID                                   = $resourceID
         TargetSessionHostCount                       = $TargetSessionHostCount
         SessionHostNamePrefix                        = $SessionHostNamePrefix
-        ADOrganizationalUnitPath                     = $ADOrganizationalUnitPath
         SubnetId                                     = $SubnetId
-        SessionHostParameters                        = $SessionHostParameters.Parameters
+        SessionHostTemplate                          = $SessionHostTemplate
+        SessionHostParameters                        = $SessionHostParameters
         TagScalingPlanExclusionTag                   = $ScalingPlanExclusionTag
         Tags                                         = $Tags
 
@@ -67,6 +70,6 @@ function Register-AVDMFReplacementPlan {
         TagIncludeInAutomation                       = $ReplacementPlanTemplate.TagIncludeInAutomation
         TagPendingDrainTimestamp                     = $ReplacementPlanTemplate.TagPendingDrainTimestamp
         TargetVMAgeDays                              = $ReplacementPlanTemplate.TargetVMAgeDays
-        SessionHostTemplateUri                       = $ReplacementPlanTemplate.SessionHostTemplateUri
+        RemoveAzureADDevice                          = $ReplacementPlanTemplate.RemoveAzureADDevice
     }
 }

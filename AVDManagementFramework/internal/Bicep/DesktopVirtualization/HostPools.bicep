@@ -5,6 +5,7 @@ param HostPools array
 param ApplicationGroups array
 param RemoteApps array = []
 param ScalingPlan object = {}
+param TemplateSpec object
 param ReplacementPlan object
 param ResourceGroupName string
 
@@ -70,7 +71,15 @@ module deployScalingPlanModule 'modules/ScalingPlan.bicep' = if (! empty(Scaling
   dependsOn: hostPoolModule
 }
 
-
+module deployTemplateSpec 'modules/TemplateSpec.bicep' = {
+  name: 'deployTemplateSpec'
+  scope: resourceGroup(ResourceGroupName)
+  params: {
+    Location: Location
+    Name: TemplateSpec.Name
+    TemplateJSON: TemplateSpec.TemplateJSON
+  }
+}
 module ReplacementPlanModule 'modules/ReplacementPlan.bicep' = {
   scope: resourceGroup(ResourceGroupName)
   name: 'deploy_ReplacementPlan'
@@ -107,10 +116,9 @@ module ReplacementPlanModule 'modules/ReplacementPlan.bicep' = {
     HostPoolName: ReplacementPlan.HostPoolName
     SessionHostNamePrefix: ReplacementPlan.SessionHostNamePrefix
     SessionHostParameters: ReplacementPlan.SessionHostParameters
-    SessionHostTemplateUri: ReplacementPlan.SessionHostTemplateUri
-    SubnetId: ReplacementPlan.SubnetId
+    SessionHostTemplate: ReplacementPlan.SessionHostTemplate
     TargetSessionHostCount: ReplacementPlan.TargetSessionHostCount
-    ADOrganizationalUnitPath: ReplacementPlan.ADOrganizationalUnitPath
+    RemoveAzureADDevice: ReplacementPlan.RemoveAzureADDevice
   }
   dependsOn: hostPoolModule
 }
@@ -131,4 +139,12 @@ module RBACFunctionApphasDesktopVirtualizationVirtualMachineContributor 'modules
     Scope: subscription().id //We assign the permission at the subscription level to be able to attach the vnic to a subnet in a different resource group.
   }
   dependsOn: [ ReplacementPlanModule ]
+}
+module RBACFunctionAppHasTemplateSpecReader 'modules/RBACRoleAssignment.bicep' = if (! empty(ScalingPlan) || HostPools[0].StartVMOnConnect){
+  name: 'RBACFunctionAppHasTemplateSpecReader'
+  params: {
+    PrinicpalId: ReplacementPlanModule.outputs.FunctionAppSP
+    RoleDefinitionId: '392ae280-861d-42bd-9ea5-08ee6d83b80e' // Template Spec Reader
+    Scope: deployTemplateSpec.outputs.TemplateSpecResourceId
+  }
 }

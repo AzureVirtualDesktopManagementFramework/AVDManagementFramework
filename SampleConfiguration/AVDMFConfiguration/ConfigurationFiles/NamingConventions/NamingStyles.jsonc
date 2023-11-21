@@ -152,5 +152,17 @@
         ],
         "MaxLength": 58,
         "LowerCase": false
+    },
+    {
+        "ResourceType": "TemplateSpec",
+        "NameComponents": [
+            "ParentName",
+            "-",
+            "ResourceTypeAbv",
+            "-",
+            "InstanceNumber"
+        ],
+        "MaxLength": 256,
+        "LowerCase": false
     }
 ]
