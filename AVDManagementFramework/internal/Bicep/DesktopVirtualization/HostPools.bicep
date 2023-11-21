@@ -80,7 +80,7 @@ module ReplacementPlanModule 'modules/ReplacementPlan.bicep' = {
     StorageAccountName: 'stavdrp${uniqueString(ReplacementPlan.ResourceId)}'
 
     // Log Analytics Workspace
-    LogAnalyticsWorkspaceName: '${ReplacementPlan.Name}-LAW-01'
+    LogAnalyticsWorkspaceName: 'LAW-AVDReplacementPlan'
 
     //FunctionApp
     FunctionAppName: ReplacementPlan.Name

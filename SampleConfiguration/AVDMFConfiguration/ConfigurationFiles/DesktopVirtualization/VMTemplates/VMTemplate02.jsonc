@@ -22,10 +22,10 @@
         }
       ]
     },
-    "TimeZone": "Arabian Standard Time",
+    "TimeZone": "GMT Standard Time",
     "DomainJoinObject": {
       "DomainType": "AzureActiveDirectory",
-      "IntuneJoin": true // Only valid for Azure Active Directory Domain Type
+      "IntuneJoin": false // Only valid for Azure Active Directory Domain Type where Intune is configured for the tenant.
     },
     "VMSize": {
       "DeploymentStage": {

@@ -70,6 +70,15 @@ function Register-AVDMFApplicationGroup {
                 }
             }
         }
+        else{
+
+            if($ApplicationGroupType -eq 'RemoteApp'){
+                Write-PSFMessage -Level Warning -Message "No users defined for Host Pool: {0} - RemoteApp: {1}. Review documentation for how to assign users or groups in AVDMF configuration." -StringValues $HostPoolName, $resourceName
+            }
+            else{
+                Write-PSFMessage -Level Warning -Message "No users defined for Host Pool: {0}. Review documentation for how to assign users or groups in AVDMF configuration." -StringValues $HostPoolName
+            }
+        }
 
         $script:ApplicationGroups[$resourceName] = [PSCustomObject]@{
             PSTypeName           = 'AVDMF.DesktopVirtualization.ApplicationGroup'

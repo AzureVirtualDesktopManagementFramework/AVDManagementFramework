@@ -43,6 +43,7 @@
 	FunctionsToExport = @(
 		'Invoke-AVDMFConfiguration'
 		'Set-AVDMFConfiguration'
+		'New-AVDMFConfiguration'
 		'Register-AVDMFGlobalSettings'
 		'Initialize-AVDMFNetwork'
 		'Invoke-AVDMFNetwork'

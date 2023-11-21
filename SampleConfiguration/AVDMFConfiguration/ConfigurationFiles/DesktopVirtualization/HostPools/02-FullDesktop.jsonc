@@ -17,7 +17,7 @@
         }
     },
     "Users": [
-        "AVD-%StageNameAbv%-Jumpbox01-Users"
+        //"AVD-%StageNameAbv%-Jumpbox01-Users"
     ],
     "UseAvailabilityZones": false, // TODO: Set to true if you want to use Availability Zones
     "SubnetNSG": "NSG01",
@@ -25,7 +25,7 @@
     "WorkSpaceReference": "DefaultWorkspace",
     "VirtualNetworkReference": "DefaultVirtualNetwork",
     "StorageAccountReference": "ProfileSA01",
-    "ADOrganizationalUnitPath": "OU=SessionHosts,OU=RemoteApp01,OU=%StageName%,OU=%PipelineName%,OU=AVD,DC=orpic,DC=om", //This is not used as we are using Azure AD Joined
+    //"ADOrganizationalUnitPath": "OU=SessionHosts,OU=RemoteApp01,OU=%StageName%,OU=%PipelineName%,OU=AVD,DC=contoso,DC=com", //This is not used as we are using Azure AD Joined
     "Tags": {},
     "_comments": ""
 }

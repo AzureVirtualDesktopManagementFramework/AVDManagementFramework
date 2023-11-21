@@ -5,11 +5,13 @@
         "10.85.4.5"
     ],
     "VirtualNetworkPeerings": [
+        /*
         {
-            "RemoteVnetId": "/subscriptions/dfad6942-7232-450c-a670-a1c36c92bfd5/resourceGroups/rg-ALZ-HubNetworking-01/providers/Microsoft.Network/virtualNetworks/vnet-alzhub-westeurope-01",
+            "RemoteVnetId": "/subscriptions/XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX/resourceGroups/rg-ALZ-HubNetworking-01/providers/Microsoft.Network/virtualNetworks/vnet-alzhub-westeurope-01",
             "UseRemoteGateways": true,
             "CreateRemotePeering": false
         }
+        */
     ],
     "DefaultSubnets": [
         {

@@ -10,7 +10,7 @@
     "CustomRdpProperty": "drivestoredirect:s:;redirectwebauthn:i:0;redirectlocation:i:0;redirectclipboard:i:1;redirectprinters:i:0;devicestoredirect:s:;redirectcomports:i:0;redirectsmartcards:i:0;usbdevicestoredirect:s:;camerastoredirect:s:;autoreconnectionenabled:i:1;enablerdsaadauth:i:1;",
     "NumberOfSessionHosts": {
         "DeploymentStage": {
-            "Development": 2,
+            "Development": 2, // You can control any value based on the stage name. So here we are defining different number of session hosts based in each deployment ring.
             "Preview": 4,
             "GeneralAvailability": 10
         }
@@ -20,7 +20,7 @@
     "WorkSpaceReference": "DefaultWorkspace",
     "VirtualNetworkReference": "DefaultVirtualNetwork",
     "StorageAccountReference": "ProfileSA01",
-    "ADOrganizationalUnitPath": "OU=SessionHosts,OU=RemoteApp01,OU=%StageName%,OU=%PipelineName%,OU=AVD,DC=orpic,DC=om",
+    // "ADOrganizationalUnitPath": "OU=SessionHosts,OU=RemoteApp01,OU=%StageName%,OU=%PipelineName%,OU=AVD,DC=contoso,DC=com",  // The sample uses Entra AD joined.
     "RemoteAppGroups": [
         {
             "Name": "CommonApps",
@@ -29,7 +29,7 @@
                 "Notepad"
             ],
             "Users": [
-                "AVD-%StageNameAbv%-RemoteApp01-AG-Common"
+                // "AVD-%StageNameAbv%-RemoteApp01-AG-Common" // This is a group that take its name from the stage name variable. So it could be AVD-Dev-RemoteApp01-AG-SuperUsers or AVD-Prod-RemoteApp01-AG-SuperUsers
             ]
         },
         {
@@ -38,7 +38,8 @@
                 "RDP"
             ],
             "Users": [
-                "AVD-%StageNameAbv%-RemoteApp01-AG-SuperUsers"
+                // "AVD-%StageNameAbv%-RemoteApp01-AG-SuperUsers"
+                // John@contoso.com
             ]
         }
     ],

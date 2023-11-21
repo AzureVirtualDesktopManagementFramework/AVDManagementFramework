@@ -7,12 +7,12 @@
         "Name": "DeployApps",
         "ScriptURL": "https://stavdsharedresources01.blob.core.windows.net/sessionhosttemplates/Sources/SessionHostCustomizations_%StageNameAbv%.ps1?sp=rl&st=2023-04-02T07:09:19Z&se=2026-04-02T15:09:19Z&spr=https&sv=2021-12-02&sr=c&sig=gy53bk4vyf5pIgs1gFlAVQ%2BEmB7htFA17U4t80dsBDQ%3D"
       },
-      "TimeZone": "Arabian Standard Time",
+      "TimeZone": "GMT Standard Time",
       "DomainJoinObject": {
         "DomainType": "ActiveDirectory",
         "UserName": "AVDDomainJoin",
         "OUPath": null,
-        "DomainName": "orpic.om"
+        "DomainName": "contoso.com"
       },
       "VMSize": {
         "DeploymentStage": {
@@ -29,16 +29,17 @@
         "sku": "win11-22h2-avd",
         "version": "latest"
       },
+      /*
       "DomainJoinPassword": {
         "reference": {
           "keyVault": {
-            "id": "/subscriptions/76ceaa29-e91d-49bf-b0fb-805a15e5dcf8/resourceGroups/rg-secrets-01/providers/Microsoft.KeyVault/vaults/kvoqsecrets01"
+            "id": "resource Id of the key vault"
           },
           "secretName": "AVDDomainJoin"
         }
       },
-      "WaitForHybridJoin": true,
-      "WVDArtifactsURL": "https://wvdportalstorageblob.blob.core.windows.net/galleryartifacts/Configuration_09-08-2022.zip",
+      */
+      "WVDArtifactsURL": "https://wvdportalstorageblob.blob.core.windows.net/galleryartifacts/Configuration_01-19-2023.zip",
       "AvailabilityZone": "1"
     }
   }

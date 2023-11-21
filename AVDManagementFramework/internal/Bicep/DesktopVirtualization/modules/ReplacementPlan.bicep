@@ -227,7 +227,7 @@ var varFunctionAppSettings = [
   }
 ]
 
-var varAppServicePlanName = '${FunctionAppName}-asp'
+var varAppServicePlanName = 'asp-AVDReplacementPlan'
 //-------//
 
 //------ Resources ------//

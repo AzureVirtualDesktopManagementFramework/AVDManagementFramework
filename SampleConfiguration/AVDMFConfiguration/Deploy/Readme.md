@@ -1,1 +1,0 @@
-This should be called by the release pipeline

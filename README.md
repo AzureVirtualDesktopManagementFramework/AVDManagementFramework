@@ -8,6 +8,8 @@
     - Fixes:
       - Improved debug logging and errors for name generator.
       - Fixed a bug when generating storage name for AVD ReplacementPlan
+      - Changed the name of the Log Analytics Workspace for AVD ReplacementPlan to LAW-AVDReplacementPlan. In a future release this will be configurable so you can use a pre-existing workspace.
+      - Change the name of the Application Service Plan to asp-AVDReplacementPlan. In a future release this will be configurable so you can set a naming convention.
   - **AVDMF v1.0.74 (Configuration v1.0.58)**:
     - New:
       - File Share Auto Grow Logic App
@@ -27,8 +29,8 @@
           +    }   "AllowShrink": true
               },
               "DirectoryServiceOptions": "AADKerb",
-              "DomainName": "orpic.om",
-              "DomainGuid": "76a7401a-f3cb-4ede-9201-1867c4210908",
+              "DomainName": "contoso.com",
+              "DomainGuid": "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX",
               "DefaultSharePermission" : "StorageFileDataSmbShareContributor"
           }
           ```
