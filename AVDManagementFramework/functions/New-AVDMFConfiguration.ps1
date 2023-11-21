@@ -23,7 +23,7 @@ Welcome To AVD Management Framework.
 
 You just created a new configuration. The first step is to review the configuration and add users in the Host Pools.
 
-You can deploy the configuration by running Set-AVDMFConfiguration -Path '$setPath' then Invoke-AVDMFConfiguration to create the resources in Azure.
+You can deploy the configuration by running Set-AVDMFConfiguration -ConfigurationPath '$setPath' then Invoke-AVDMFConfiguration to create the resources in Azure.
 
 Please make sure you connect to Azure using Add-AzAccount and Set-AzContext to your target subscription.
 

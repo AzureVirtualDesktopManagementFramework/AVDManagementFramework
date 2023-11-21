@@ -7,9 +7,9 @@
             {
                 "name": "DefaultGateway",
                 "properties":{
-                    "addressPrefix": "0.0.0.0/0",
+                    "addressPrefix": "192.168.1.1/32",
                     "nextHopType": "VirtualAppliance",
-                    "nextHopIpAddress": "10.85.1.4"
+                    "nextHopIpAddress": "10.10.1.4"
                 }
             }
         ],
