@@ -25,7 +25,6 @@
     "WorkSpaceReference": "DefaultWorkspace",
     "VirtualNetworkReference": "DefaultVirtualNetwork",
     "StorageAccountReference": "ProfileSA01",
-    //"ADOrganizationalUnitPath": "OU=SessionHosts,OU=RemoteApp01,OU=%StageName%,OU=%PipelineName%,OU=AVD,DC=contoso,DC=com", //This is not used as we are using Azure AD Joined
     "Tags": {},
     "_comments": ""
 }

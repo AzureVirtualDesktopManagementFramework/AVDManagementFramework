@@ -20,7 +20,6 @@
     "WorkSpaceReference": "DefaultWorkspace",
     "VirtualNetworkReference": "DefaultVirtualNetwork",
     "StorageAccountReference": "ProfileSA01",
-    // "ADOrganizationalUnitPath": "OU=SessionHosts,OU=RemoteApp01,OU=%StageName%,OU=%PipelineName%,OU=AVD,DC=contoso,DC=com",  // The sample uses Entra AD joined.
     "RemoteAppGroups": [
         {
             "Name": "CommonApps",

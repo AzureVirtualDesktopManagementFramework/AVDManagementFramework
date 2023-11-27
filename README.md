@@ -1,6 +1,6 @@
 ﻿# AVD Management Framework
 ## Change History
-  - **AVDMF v1.0.XX (Configuration v1.1.1)**:
+  - **AVDMF v1.0.82 (Configuration v1.1.1)**:
     - Fixes:
       - Fixes parameter name in New-AVDMFConfiguration
       - Fixed default route in Sample Configuration
