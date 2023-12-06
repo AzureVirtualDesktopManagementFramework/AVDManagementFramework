@@ -225,6 +225,12 @@ resource deployLogicApp 'Microsoft.Logic/workflows@2019-05-01' = {
                               true
                             ]
                           }
+                          {
+                            greater: [
+                              '@int(first(split(string(div(add(variables(\'File Capacity\'),variables(\'TargetFreeSpace\')),1073741824)),\'.\')))'
+                              107374182400
+                            ]
+                          }
                         ]
                       }
                     ]
