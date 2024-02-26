@@ -1,7 +1,7 @@
 function Invoke-AVDMFDesktopVirtualization {
     [CmdletBinding()]
     param (
-
+        [string] $TimeStamp = (Get-Date -Format 'FileDateTimeUniversal')
     )
     if($script:Offline){
         throw "Cannot deploy when working offline. Please reload configuration without the offline switch."
@@ -24,7 +24,7 @@ function Invoke-AVDMFDesktopVirtualization {
             catch {
                 New-AzResourceGroup -Name $rg -Location $script:Location
             }
-            $hostPoolJobs += New-AzSubscriptionDeployment -Location $script:Location -Name 'AVDMFHostPoolDeployment' -TemplateFile $bicepHostPools -TemplateParameterObject $templateParams
+            $hostPoolJobs += New-AzSubscriptionDeployment -Location $script:Location -Name "AVDMFHostPoolDeployment-$TimeStamp" -TemplateFile $bicepHostPools -TemplateParameterObject $templateParams
             #$hostPoolJobs += New-AzResourceGroupDeployment -ResourceGroupName $rg -Mode Incremental -TemplateFile $bicepHostPools @templateParams -ErrorAction Stop -Confirm:$false -Force -AsJob
             #TODO: We switched to incremental for the FunctionApp to take over host deployment. We need to add logic to remove RemoteApps, Application groups, that are no longer in configuration.
 

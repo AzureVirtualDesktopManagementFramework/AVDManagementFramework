@@ -1,5 +1,10 @@
 ﻿# AVD Management Framework
 ## Change History
+  - **AVDMF v1.0.83 (Configuration v1.1.1)**:
+    - New:
+      - Added a new parameter for workspaces to override default location. This is useful when deploying in a region that does not support Workspace resources.
+    - Fixes:
+      - Fixes error when deploying in the same subscription in a new location.
   - **AVDMF v1.0.82 (Configuration v1.1.1)**:
     - Fixes:
       - Fixes parameter name in New-AVDMFConfiguration

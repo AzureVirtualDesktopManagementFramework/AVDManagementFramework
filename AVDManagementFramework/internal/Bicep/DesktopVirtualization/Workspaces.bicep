@@ -1,4 +1,3 @@
-param Location string = resourceGroup().location
 param Workspaces array
 
 module workspaceModule 'modules/Workspace.bicep' = [for workspaceitem in Workspaces:{
@@ -6,7 +5,7 @@ module workspaceModule 'modules/Workspace.bicep' = [for workspaceitem in Workspa
   params:{
     WorkspaceName:workspaceitem.name
     ApplicationGroupReferences:workspaceitem.ApplicationGroupReferences
-    Location: Location
+    Location: workspaceitem.Location
     FriendlyName: workspaceitem.FriendlyName
     Tags: workspaceitem.Tags
   }

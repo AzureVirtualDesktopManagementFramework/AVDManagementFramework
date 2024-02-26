@@ -156,6 +156,8 @@
 			# ReleaseNotes of this module
 			# ReleaseNotes = ''
 
+			# Prerelease = 'nightly'
+
 		} # End of PSData hashtable
 
 	} # End of PrivateData hashtable
