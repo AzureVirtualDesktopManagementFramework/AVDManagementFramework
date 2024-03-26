@@ -8,6 +8,9 @@ function Register-AVDMFScalingPlan {
         [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
         [string] $ResourceGroupName,
 
+        [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
+        [string] $Location = $script:Location,
+
         [Parameter(Mandatory = $true , ValueFromPipelineByPropertyName = $true )]
         [string] $HostPoolName,
 
@@ -24,6 +27,7 @@ function Register-AVDMFScalingPlan {
 
     $script:ScalingPlans[$resourceName] = [PSCustomObject]@{
         ResourceGroupName = $ResourceGroupName
+        Location          = $Location
         HostPoolId        = $HostPoolId
         Timezone          = $ScalingPlanTemplate.Timezone
         Schedules         = $ScalingPlanTemplate.Schedules

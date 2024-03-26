@@ -8,6 +8,9 @@ param ScalingPlan object = {}
 param TemplateSpec object
 param ReplacementPlan object
 param ResourceGroupName string
+param TimeStamp string = utcNow()
+
+//---- Variables ----//
 
 //TODO: There is only one session host per RG, do we really need the complexity of an array loop here?
 module hostPoolModule 'modules/HostPool.bicep' = [for hostpoolitem in HostPools: {
@@ -15,7 +18,7 @@ module hostPoolModule 'modules/HostPool.bicep' = [for hostpoolitem in HostPools:
   name: hostpoolitem.name
   params: {
     HostPoolName: hostpoolitem.name
-    Location: Location
+    Location: hostpoolitem.Location
     PoolType: hostpoolitem.PoolType
     maxSessionLimit: hostpoolitem.MaxSessionLimit
     //SessionHostJoinType: hostpoolitem.SessionHostJoinType
@@ -30,7 +33,7 @@ module applicationGroupModule 'modules/ApplicationGroup.bicep' = [for applicatio
   params: {
     ApplicationGroupName: applicationGroupItem.name
     ApplicationGroupType: applicationGroupItem.ApplicationGroupType
-    Location: Location
+    Location: applicationGroupItem.Location
     HostPoolId: applicationGroupItem.HostPoolId
     FriendlyName: applicationGroupItem.FriendlyName
     Tags: applicationGroupItem.Tags
@@ -60,7 +63,7 @@ module deployScalingPlanModule 'modules/ScalingPlan.bicep' = if (! empty(Scaling
   name: 'deployScalingPlanModule'
   params: {
     Name: ScalingPlan.Name
-    Location: Location
+    Location: ScalingPlan.Location
     HostPoolId: ScalingPlan.HostPoolId
     ExclusionTag: ScalingPlan.ExclusionTag
     Schedules: ScalingPlan.Schedules
@@ -124,7 +127,7 @@ module ReplacementPlanModule 'modules/ReplacementPlan.bicep' = {
 }
 
 module RBACAzureVirtualDesktopApp 'modules/RBACRoleAssignment.bicep' = if (! empty(ScalingPlan) || HostPools[0].StartVMOnConnect){
-  name: 'RBACAzureVirtualDesktopApp'
+  name: 'RBACAzureVirtualDesktopApp-${TimeStamp}'
   params: {
     PrinicpalId: HostPools[0].AVDAppObjectId
     RoleDefinitionId: '40c5ff49-9181-41f8-ae61-143b0e78555e' // Desktop Virtualization Power On Off Contributor
@@ -132,7 +135,7 @@ module RBACAzureVirtualDesktopApp 'modules/RBACRoleAssignment.bicep' = if (! emp
   }
 }
 module RBACFunctionApphasDesktopVirtualizationVirtualMachineContributor 'modules/RBACRoleAssignment.bicep' = {
-  name: 'RBACFunctionApphasDesktopVirtualizationVirtualMachineContributor'
+  name: 'RBACFunctionAppDTV-${TimeStamp}'
   params: {
     PrinicpalId: ReplacementPlanModule.outputs.FunctionAppSP
     RoleDefinitionId: 'a959dbd1-f747-45e3-8ba6-dd80f235f97c' // Desktop Virtualization Virtual Machine Contributor
@@ -141,7 +144,7 @@ module RBACFunctionApphasDesktopVirtualizationVirtualMachineContributor 'modules
   dependsOn: [ ReplacementPlanModule ]
 }
 module RBACFunctionAppHasTemplateSpecReader 'modules/RBACRoleAssignment.bicep' = if (! empty(ScalingPlan) || HostPools[0].StartVMOnConnect){
-  name: 'RBACFunctionAppHasTemplateSpecReader'
+  name: 'RBACFunctionAppTS-${TimeStamp}'
   params: {
     PrinicpalId: ReplacementPlanModule.outputs.FunctionAppSP
     RoleDefinitionId: '392ae280-861d-42bd-9ea5-08ee6d83b80e' // Template Spec Reader

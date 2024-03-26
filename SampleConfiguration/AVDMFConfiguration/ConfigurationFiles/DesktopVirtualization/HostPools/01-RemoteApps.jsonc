@@ -2,6 +2,7 @@
     "AccessLevel": "All",
     "PoolType": "RemoteApp",
     "FriendlyName": "Enterprise Desktop Pool",
+    "HostPoolMetadataLocation": "WestEurope", // (optional) Location of the Host Pool, Scaling plan, etc... . if not specified, the location in GeneralConfiguration will be used.
     "maxSessionLimit": 10,
     "ReplacementPlan": "AVDReplacementPlan",
     "VMTemplate": "VMTemplate01",

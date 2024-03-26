@@ -1,8 +1,9 @@
 ﻿# AVD Management Framework
 ## Change History
-  - **AVDMF v1.0.83 (Configuration v1.1.1)**:
+  - **AVDMF v1.0.85 (Configuration v1.1.1)**:
     - New:
-      - Added a new parameter for workspaces to override default location. This is useful when deploying in a region that does not support Workspace resources.
+      - Added a new parameter (`Location`) for workspaces to override default location. This is useful when deploying in a region that does not support Workspace resources.
+      - Added a new parameter (`HostPoolMetadataLocation`) for Host Pool to override default location. This also affects the Scaling Plan and Application Groups. This is useful when deploying in a region that does not support Host Pool resources.
     - Fixes:
       - Fixes error when deploying in the same subscription in a new location.
   - **AVDMF v1.0.82 (Configuration v1.1.1)**:

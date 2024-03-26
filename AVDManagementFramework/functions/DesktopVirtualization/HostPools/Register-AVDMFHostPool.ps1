@@ -33,6 +33,9 @@ function Register-AVDMFHostPool {
         [string] $PoolType,
 
         [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
+        [string] $HostPoolMetadataLocation = $script:Location,
+
+        [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
         [string] $ReplacementPlan,
 
         [Parameter(Mandatory = $false , ValueFromPipelineByPropertyName = $true )]
@@ -147,6 +150,7 @@ function Register-AVDMFHostPool {
             ResourceGroupName    = $resourceGroupName
             ResourceID           = $resourceID
 
+            Location             = $HostPoolMetadataLocation
             PoolType             = $PoolType
             MaxSessionLimit      = $MaxSessionLimit
             NumberOfSessionHosts = $NumberOfSessionHosts
@@ -175,6 +179,7 @@ function Register-AVDMFHostPool {
                 $applicationGroupParams = @{
                     HostPoolName         = $resourceName
                     ResourceGroupName    = $resourceGroupName
+                    Location             = $HostPoolMetadataLocation
                     HostPoolResourceId   = $resourceID
                     Users                = $applicationGroup.Users
                     Name                 = $applicationGroup.Name
@@ -194,6 +199,7 @@ function Register-AVDMFHostPool {
             $applicationGroupParams = @{
                 HostPoolName         = $resourceName
                 ResourceGroupName    = $resourceGroupName
+                Location             = $HostPoolMetadataLocation
                 HostPoolResourceId   = $resourceID
                 Users                = $Users
                 Name                 = "Desktop"
@@ -209,6 +215,7 @@ function Register-AVDMFHostPool {
         if (-Not [string]::IsNullOrEmpty($ScalingPlan)) {
             $scalingPlanParams = @{
                 ResourceGroupName   = $resourceGroupName
+                Location            = $HostPoolMetadataLocation
                 HostPoolName        = $resourceName
                 HostPoolId          = $resourceID
                 ScalingPlanTemplate = $script:ScalingPlanTemplates[$ScalingPlan]
@@ -235,14 +242,14 @@ function Register-AVDMFHostPool {
 
 
         $replacementPlanParams = @{
-            ResourceGroupName        = $resourceGroupName
-            HostPoolName             = $resourceName
-            TargetSessionHostCount   = $NumberOfSessionHosts
-            SessionHostNamePrefix    = $sessionHostNamePrefix
-            SubnetId                 = $subnetID
-            ReplacementPlanTemplate  = $script:ReplacementPlanTemplates[$ReplacementPlan]
-            SessionHostParameters    = $hostPoolSessionHostParameters | ConvertTo-Json -Depth 99 -Compress
-            SessionHostTemplate      = $templateSpecResourceId
+            ResourceGroupName       = $resourceGroupName
+            HostPoolName            = $resourceName
+            TargetSessionHostCount  = $NumberOfSessionHosts
+            SessionHostNamePrefix   = $sessionHostNamePrefix
+            SubnetId                = $subnetID
+            ReplacementPlanTemplate = $script:ReplacementPlanTemplates[$ReplacementPlan]
+            SessionHostParameters   = $hostPoolSessionHostParameters | ConvertTo-Json -Depth 99 -Compress
+            SessionHostTemplate     = $templateSpecResourceId
         }
         if (-Not [string]::IsNullOrEmpty($ScalingPlan)) {
 
